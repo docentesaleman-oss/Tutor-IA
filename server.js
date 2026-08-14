@@ -23,42 +23,43 @@ app.get("/", (req, res) => {
 
 
 // ============================================================
-// FUNCIONES GENERALES
+// UTILIDADES
 // ============================================================
 
 function limpiarTexto(texto) {
-
     return String(texto || "")
         .replace(/\s+/g, " ")
         .trim();
-
 }
 
 
-function normalizarTexto(texto) {
-
+function normalizar(texto) {
     return limpiarTexto(texto)
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
+}
 
+
+function quitarBasura(texto) {
+    return limpiarTexto(texto)
+        .replace(/\u200b/g, "")
+        .replace(/\uFEFF/g, "")
+        .trim();
 }
 
 
 // ============================================================
-// ELEMENTOS TÉCNICOS
+// ELEMENTOS QUE NO SON CONTENIDO PEDAGÓGICO
 // ============================================================
 
 function esElementoTecnico(texto) {
 
-    const t = limpiarTexto(texto);
-    const n = normalizarTexto(t);
+    const t = normalizar(texto);
 
     if (!t) return true;
 
-
     const tecnicos = [
-
         "playback controls",
         "misc controls",
         "slide navigation",
@@ -71,48 +72,26 @@ function esElementoTecnico(texto) {
         "play",
         "pause",
         "replay",
-        "slide progress",
-
-        "rectangle",
-        "group",
-
-        "line 1",
-        "line 2",
-        "line 3",
-        "line 4",
-        "line 5",
-        "line 6",
-        "line 7",
-
-        "量"
-
+        "slide progress"
     ];
 
-
-    if (tecnicos.includes(n)) {
+    if (tecnicos.includes(t)) {
         return true;
     }
-
 
     if (
         /\.(png|jpg|jpeg|gif|svg|webp)$/i.test(t)
     ) {
-
         return true;
-
     }
-
 
     if (
         /^rectangle\s*\d*$/i.test(t) ||
         /^line\s*\d*$/i.test(t) ||
         /^group\s*\d*$/i.test(t)
     ) {
-
         return true;
-
     }
-
 
     return false;
 }
@@ -128,273 +107,77 @@ function obtenerTextosUtiles(textos) {
         return [];
     }
 
-
     const resultado = [];
-
 
     for (const texto of textos) {
 
-        const limpio =
-            limpiarTexto(texto);
+        const limpio = quitarBasura(texto);
 
-
-        if (!limpio) {
-            continue;
-        }
-
+        if (!limpio) continue;
 
         if (esElementoTecnico(limpio)) {
             continue;
         }
 
-
         if (!resultado.includes(limpio)) {
             resultado.push(limpio);
         }
-
     }
-
 
     return resultado;
 }
 
 
 // ============================================================
-// DETECTAR IDIOMAS / CARACTERES
+// CLASIFICAR TEXTOS
 // ============================================================
 
-function contieneChino(texto) {
+function pareceNivel(texto) {
 
-    return /[\u3400-\u9FFF]/.test(
-        String(texto || "")
+    const t = limpiarTexto(texto);
+
+    return (
+        /^中文\s*[A-Z]\d+/i.test(t) ||
+        /^español\s*[A-Z]\d+/i.test(t) ||
+        /^english\s*[A-Z]\d+/i.test(t)
     );
-
 }
 
 
-function contieneIngles(texto) {
+function pareceModulo(texto) {
 
-    return /[A-Za-z]/.test(
-        String(texto || "")
+    const t = limpiarTexto(texto);
+
+    return (
+        /^单元\s*\d+/i.test(t) ||
+        /^unit\s*\d+/i.test(t)
     );
-
 }
 
 
-// ============================================================
-// DETECTAR NIVEL
-// ============================================================
+function pareceTema(texto) {
 
-function obtenerNivel(textos) {
+    const t = limpiarTexto(texto);
 
-    if (!Array.isArray(textos)) {
-        return "";
-    }
-
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        /*
-        Ejemplos:
-
-        中文 A2
-        中文 B1
-        Español B2
-        English C1
-        */
-
-        if (
-            /^(中文|chinese|español|english|ingles|espanol)\s+[ABC]\d$/i
-                .test(t)
-        ) {
-
-            return t;
-
-        }
-
-
-        /*
-        Búsqueda más flexible
-        */
-
-        const coincidencia =
-            t.match(
-                /\b[ABC][12]\b/i
-            );
-
-
-        if (
-            coincidencia &&
-            (
-                contieneChino(t) ||
-                contieneIngles(t)
-            )
-        ) {
-
-            /*
-            Solo aceptamos textos cortos
-            para no confundirlos con contenido.
-            */
-
-            if (t.length <= 30) {
-                return t;
-            }
-
-        }
-
-    }
-
-
-    return "";
+    return (
+        /^第.+课/i.test(t) ||
+        /^lesson\s*\d+/i.test(t) ||
+        /^lección\s*\d+/i.test(t) ||
+        /^leccion\s*\d+/i.test(t)
+    );
 }
 
 
-// ============================================================
-// DETECTAR MÓDULO / UNIDAD
-// ============================================================
+function pareceInstruccion(texto) {
 
-function obtenerModulo(textos) {
+    const t = normalizar(texto);
 
-    if (!Array.isArray(textos)) {
-        return "";
-    }
-
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        /*
-        Ejemplo:
-
-        单元 3 | 你学习还是工作? | Nǐ xuéxí háishì gōngzuò? | Do you study or work?
-        */
-
-
-        if (
-            /单元\s*\d+/i.test(t) &&
-            t.length > 8
-        ) {
-
-            return t;
-
-        }
-
-
-        /*
-        También soportamos:
-
-        Unit 3 | ...
-        Unidad 3 | ...
-        Module 3 | ...
-        Módulo 3 | ...
-        */
-
-        if (
-            /^(unit|unidad|module|modulo|módulo)\s*\d+/i
-                .test(t)
-        ) {
-
-            return t;
-
-        }
-
-    }
-
-
-    return "";
-}
-
-
-// ============================================================
-// DETECTAR TEMA
-// ============================================================
-
-function obtenerTema(textos) {
-
-    if (!Array.isArray(textos)) {
-        return "";
-    }
-
-
-    /*
-    Prioridad 1:
-    textos chinos que contienen "第...课"
-
-    Ejemplo:
-
-    第四课 | 退休 | Tuìxiū | Unit 4 | The retirement
-    */
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        if (
-            /第\s*[\d一二三四五六七八九十百]+\s*课/i
-                .test(t)
-        ) {
-
-            return t;
-
-        }
-
-    }
-
-
-    /*
-    Prioridad 2:
-    Unit / Unidad / Lesson
-    */
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        if (
-            /^(unit|unidad|lesson|lección|leccion)\s*\d+/i
-                .test(t)
-        ) {
-
-            return t;
-
-        }
-
-    }
-
-
-    return "";
-}
-
-
-// ============================================================
-// DETECTAR OBJETIVO / INSTRUCCIÓN
-// ============================================================
-
-function esInstruccion(texto) {
-
-    const t =
-        normalizarTexto(texto);
-
-
-    const instrucciones = [
-
+    const palabras = [
         "selecciona",
         "seleccione",
         "elige",
         "elija",
         "escoge",
-        "escoja",
         "escoger",
         "completa",
         "complete",
@@ -409,280 +192,249 @@ function esInstruccion(texto) {
         "marca",
         "marque",
         "indica",
-        "indique",
-        "elige la",
-        "selecciona la",
-        "seleccione la",
-        "escoge la",
-        "escoger la",
-        "responde",
-        "responda",
-        "elige la respuesta"
-
+        "indique"
     ];
 
-
-    for (const palabra of instrucciones) {
-
-        if (
-            t.startsWith(palabra) ||
-            t.includes(" " + palabra + " ")
-        ) {
-
-            return true;
-
-        }
-
-    }
-
-
-    return false;
+    return palabras.some(p => t.startsWith(p));
 }
 
 
-function obtenerObjetivo(textos) {
+function parecePreguntaContenido(texto) {
 
-    if (!Array.isArray(textos)) {
-        return "";
-    }
+    const t = limpiarTexto(texto);
 
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        if (!t) continue;
-
-
-        if (esInstruccion(t)) {
-
-            /*
-            Evitamos elementos diminutos
-            */
-
-            if (t.length >= 8) {
-                return t;
-            }
-
-        }
-
-    }
-
-
-    return "";
-}
-
-
-// ============================================================
-// DETECTAR TÍTULO REAL DE LA LECCIÓN
-// ============================================================
-
-function pareceTituloLeccion(texto) {
-
-    const t =
-        limpiarTexto(texto);
-
-
-    if (!t) return false;
-
-
-    if (esElementoTecnico(t)) {
-        return false;
-    }
-
-
-    /*
-    No queremos instrucciones.
-    */
-
-    if (esInstruccion(t)) {
-        return false;
-    }
-
-
-    /*
-    No queremos el módulo.
-    */
-
-    if (
-        /单元\s*\d+/i.test(t)
-    ) {
-
-        return false;
-
-    }
-
-
-    /*
-    No queremos el tema.
-    */
-
-    if (
-        /第\s*[\d一二三四五六七八九十百]+\s*课/i
-            .test(t)
-    ) {
-
-        return false;
-
-    }
-
-
-    /*
-    No queremos el nivel.
-    */
-
-    if (
-        /^(中文|chinese|español|english|ingles|espanol)\s+[ABC]\d$/i
-            .test(t)
-    ) {
-
-        return false;
-
-    }
-
-
-    /*
-    Los títulos de las lecciones
-    suelen contener una pregunta.
-
-    Ejemplo:
-
-    你已经退休了吗？
-    Nǐ yǐjīng tuìxiūle ma?
-    */
-
-    if (
+    return (
         t.includes("?") ||
         t.includes("？")
-    ) {
-
-        /*
-        No aceptar instrucciones que terminen
-        accidentalmente en pregunta.
-        */
-
-        return true;
-
-    }
-
-
-    return false;
-}
-
-
-function obtenerTituloLeccion(textos) {
-
-    if (!Array.isArray(textos)) {
-        return "";
-    }
-
-
-    /*
-    PRIMERA PRIORIDAD:
-    pregunta / frase principal de la lección.
-    */
-
-    for (const texto of textos) {
-
-        const t =
-            limpiarTexto(texto);
-
-
-        if (
-            pareceTituloLeccion(t)
-        ) {
-
-            return t;
-
-        }
-
-    }
-
-
-    /*
-    SEGUNDA PRIORIDAD:
-
-    Si no existe signo de interrogación,
-    buscar textos largos que tengan chino
-    y caracteres latinos.
-    */
-
-    const candidatos =
-        textos.filter(texto => {
-
-            const t =
-                limpiarTexto(texto);
-
-
-            if (!t) return false;
-
-            if (esElementoTecnico(t)) {
-                return false;
-            }
-
-            if (esInstruccion(t)) {
-                return false;
-            }
-
-            if (
-                /单元\s*\d+/i.test(t)
-            ) {
-                return false;
-            }
-
-            if (
-                /第\s*[\d一二三四五六七八九十百]+\s*课/i
-                    .test(t)
-            ) {
-                return false;
-            }
-
-            if (
-                /^(中文|chinese|español|english|ingles|espanol)\s+[ABC]\d$/i
-                    .test(t)
-            ) {
-                return false;
-            }
-
-            if (t.length < 8) {
-                return false;
-            }
-
-            return (
-                contieneChino(t) &&
-                contieneIngles(t)
-            );
-
-        });
-
-
-    /*
-    Elegimos el candidato más corto.
-    Normalmente el título real de la lección
-    es más corto que el módulo completo.
-    */
-
-    if (candidatos.length > 0) {
-
-        candidatos.sort(
-            (a, b) =>
-                a.length - b.length
-        );
-
-
-        return candidatos[0];
-
-    }
-
-
-    return "";
+    );
 }
 
 
 // ============================================================
-// MAPA DE ESCENAS
+// ANALIZAR CONTEXTO DE LA DIAPOSITIVA
+// ============================================================
+
+function analizarContexto(actual) {
+
+    const textos =
+        obtenerTextosUtiles(actual?.textos || []);
+
+    let nivel = "";
+    let modulo = "";
+    let tema = "";
+    let objetivo = "";
+
+    for (const texto of textos) {
+
+        if (!nivel && pareceNivel(texto)) {
+            nivel = texto;
+            continue;
+        }
+
+        if (!modulo && pareceModulo(texto)) {
+            modulo = texto;
+            continue;
+        }
+
+        if (!tema && pareceTema(texto)) {
+            tema = texto;
+            continue;
+        }
+    }
+
+
+    /*
+    ------------------------------------------------------------
+    OBJETIVO / INSTRUCCIÓN
+    ------------------------------------------------------------
+    */
+
+    for (const texto of textos) {
+
+        if (pareceInstruccion(texto)) {
+
+            objetivo = texto;
+            break;
+        }
+    }
+
+
+    /*
+    ------------------------------------------------------------
+    TÍTULO PEDAGÓGICO
+    ------------------------------------------------------------
+
+    NO utilizamos directamente actual.titulo.
+
+    Storyline puede devolver:
+
+        "Escoger uno"
+
+    aunque el verdadero título esté dentro de
+    data-acc-text.
+
+    Por eso buscamos un texto que:
+
+    - no sea técnico
+    - no sea nivel
+    - no sea módulo
+    - no sea tema
+    - no sea instrucción
+    - tenga contenido lingüístico
+    */
+
+    let tituloLeccion = "";
+
+
+    for (const texto of textos) {
+
+        if (texto === nivel) continue;
+        if (texto === modulo) continue;
+        if (texto === tema) continue;
+        if (texto === objetivo) continue;
+
+        if (texto.length < 4) continue;
+
+        /*
+        Evitamos controles y nombres de imágenes.
+        */
+
+        if (esElementoTecnico(texto)) continue;
+
+
+        /*
+        Si es claramente una pregunta,
+        puede ser una pregunta de ejercicio.
+        */
+        if (parecePreguntaContenido(texto)) {
+
+            /*
+            Solo lo usamos como título si todavía
+            no tenemos otro candidato y tiene
+            apariencia de frase de contenido.
+            */
+
+            if (!tituloLeccion) {
+                tituloLeccion = texto;
+            }
+
+            continue;
+        }
+
+
+        /*
+        El primer texto lingüístico relevante
+        después de excluir encabezados
+        es nuestro candidato.
+        */
+
+        if (
+            /[a-zA-ZÀ-ÿ\u3400-\u9fff]/.test(texto)
+        ) {
+
+            tituloLeccion = texto;
+            break;
+        }
+    }
+
+
+    /*
+    ------------------------------------------------------------
+    SI EL CANDIDATO ES UNA INSTRUCCIÓN,
+    BUSCAMOS OTRO.
+    ------------------------------------------------------------
+    */
+
+    if (pareceInstruccion(tituloLeccion)) {
+
+        tituloLeccion = "";
+
+        for (const texto of textos) {
+
+            if (texto === nivel) continue;
+            if (texto === modulo) continue;
+            if (texto === tema) continue;
+            if (texto === objetivo) continue;
+
+            if (esElementoTecnico(texto)) continue;
+
+            if (texto.length < 4) continue;
+
+            if (pareceInstruccion(texto)) continue;
+
+            if (
+                /[a-zA-ZÀ-ÿ\u3400-\u9fff]/.test(texto)
+            ) {
+
+                tituloLeccion = texto;
+                break;
+            }
+        }
+    }
+
+
+    /*
+    ------------------------------------------------------------
+    PREGUNTA / ORACIÓN PRINCIPAL
+    ------------------------------------------------------------
+    */
+
+    let pregunta = "";
+
+    for (const texto of textos) {
+
+        if (texto === objetivo) continue;
+
+        if (parecePreguntaContenido(texto)) {
+
+            pregunta = texto;
+            break;
+        }
+    }
+
+
+    /*
+    ------------------------------------------------------------
+    SI HAY UNA FRASE CON ? DENTRO DE UN TEXTO LARGO
+    ------------------------------------------------------------
+    */
+
+    if (!pregunta) {
+
+        for (const texto of textos) {
+
+            const indice = texto.indexOf("?");
+
+            if (indice > 0) {
+
+                pregunta =
+                    texto.substring(
+                        0,
+                        indice + 1
+                    ).trim();
+
+                break;
+            }
+        }
+    }
+
+
+    return {
+
+        nivel,
+        modulo,
+        tema,
+        tituloLeccion,
+        objetivo,
+        pregunta,
+        textos
+
+    };
+}
+
+
+// ============================================================
+// MAPA DE SECCIONES
 // ============================================================
 
 function obtenerNombreSeccion(escena) {
@@ -707,521 +459,180 @@ function obtenerNombreSeccion(escena) {
 
     };
 
-
-    return mapaEscenas[
-        String(escena)
-    ] || "";
+    return mapaEscenas[String(escena)] || "";
 }
 
 
 // ============================================================
-// TEMA DE RESPALDO
-// ============================================================
-
-function obtenerTemaActual(
-    actual,
-    textosUtiles
-) {
-
-    /*
-    IMPORTANTE:
-
-    Ya NO usamos directamente
-    actual.titulo como tema.
-
-    Storyline puede llamar a una diapositiva:
-
-    "Escoger uno"
-
-    aunque ese NO sea el título
-    de la lección.
-    */
-
-
-    const tema =
-        obtenerTema(textosUtiles);
-
-
-    if (tema) {
-        return tema;
-    }
-
-
-    /*
-    Respaldo.
-    */
-
-    if (actual?.titulo) {
-
-        const titulo =
-            limpiarTexto(actual.titulo);
-
-
-        if (
-            titulo &&
-            !esElementoTecnico(titulo) &&
-            !esInstruccion(titulo)
-        ) {
-
-            return titulo;
-
-        }
-
-    }
-
-
-    return "";
-}
-
-
-// ============================================================
-// DETECTAR PREGUNTA / INSTRUCCIÓN
-// ============================================================
-
-function encontrarPregunta(textos) {
-
-    const utiles =
-        obtenerTextosUtiles(textos);
-
-
-    /*
-    Primero buscamos preguntas explícitas.
-    */
-
-    const preguntas =
-        utiles.filter(texto => {
-
-            return (
-                texto.includes("?") ||
-                texto.includes("？")
-            );
-
-        });
-
-
-    if (preguntas.length > 0) {
-
-        return preguntas[0];
-
-    }
-
-
-    /*
-    Después instrucciones.
-    */
-
-    for (const texto of utiles) {
-
-        if (esInstruccion(texto)) {
-
-            return texto;
-
-        }
-
-    }
-
-
-    return null;
-}
-
-
-// ============================================================
-// PREGUNTA DE UBICACIÓN
+// DETECTORES DE PREGUNTAS
 // ============================================================
 
 function esPreguntaUbicacion(pregunta) {
 
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
-
-        p.includes("en que escena") ||
-        p.includes("que escena") ||
-
-        p.includes("donde estoy") ||
-
         p.includes("en que seccion") ||
         p.includes("que seccion") ||
-
-        p.includes("en que parte estoy") ||
-
-        p.includes("en que lugar estoy")
-
+        p.includes("en que escena") ||
+        p.includes("que escena") ||
+        p.includes("donde estoy")
     );
 }
 
-
-// ============================================================
-// PREGUNTA POR TÍTULO
-// ============================================================
 
 function esPreguntaTitulo(pregunta) {
 
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
-
         p.includes("cual es el titulo") ||
-
         p.includes("titulo de la diapositiva") ||
-
-        p.includes("titulo de la leccion") ||
-
-        p.includes("nombre de la leccion") ||
-
-        p.includes("como se llama la leccion")
-
+        p.includes("cual es el nombre de la leccion") ||
+        p.includes("nombre de la leccion")
     );
 }
 
-
-// ============================================================
-// PREGUNTA POR MÓDULO
-// ============================================================
-
-function esPreguntaModulo(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("cual es el modulo") ||
-
-        p.includes("nombre del modulo") ||
-
-        p.includes("en que modulo estoy") ||
-
-        p.includes("que modulo es")
-
-    );
-}
-
-
-// ============================================================
-// PREGUNTA POR TEMA
-// ============================================================
-
-function esPreguntaTema(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("cual es el tema") ||
-
-        p.includes("nombre del tema") ||
-
-        p.includes("en que tema estoy") ||
-
-        p.includes("que tema estamos viendo")
-
-    );
-}
-
-
-// ============================================================
-// PREGUNTA POR NIVEL
-// ============================================================
-
-function esPreguntaNivel(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("que nivel") ||
-
-        p.includes("cual es el nivel") ||
-
-        p.includes("nivel del curso") ||
-
-        p.includes("nivel estamos")
-
-    );
-}
-
-
-// ============================================================
-// PREGUNTA POR OBJETIVO
-// ============================================================
-
-function esPreguntaObjetivo(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("cual es el objetivo") ||
-
-        p.includes("objetivo de la leccion") ||
-
-        p.includes("que debo hacer") ||
-
-        p.includes("que hay que hacer") ||
-
-        p.includes("que tengo que hacer")
-
-    );
-}
-
-
-// ============================================================
-// PREGUNTA POR TEXTOS
-// ============================================================
 
 function esPreguntaTextos(pregunta) {
 
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
-
-        p.includes("que textos") ||
-
-        p.includes("que texto") ||
-
+        p.includes("que textos ves") ||
+        p.includes("que textos hay") ||
+        p.includes("que textos aparecen") ||
+        p.includes("que texto ves") ||
+        p.includes("que texto hay") ||
         p.includes("que hay en pantalla") ||
-
         p.includes("que dice la pantalla") ||
-
-        p.includes("que aparece en pantalla") ||
-
-        p.includes("que ves en pantalla") ||
-
-        p.includes("que texto veo") ||
-
-        p.includes("que textos veo")
-
+        p.includes("que aparece en pantalla")
     );
 }
 
 
-// ============================================================
-// PREGUNTA DEL EJERCICIO
-// ============================================================
+function esPreguntaCualEsLaPregunta(pregunta) {
 
-function esPreguntaEjercicio(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
-
-        p.includes("pregunta del ejercicio") ||
-
-        p.includes("pregunta que esta en el ejercicio") ||
-
-        p.includes("pregunta de la diapositiva") ||
-
-        p.includes("pregunta que esta en pantalla") ||
-
-        p.includes("cual es la pregunta")
-
+        p === "cual es la pregunta" ||
+        p.includes("cual es la pregunta") ||
+        p.includes("cual es la oracion") ||
+        p.includes("cual es el ejercicio")
     );
 }
 
-
-// ============================================================
-// PREGUNTA DE LA LECCIÓN
-// ============================================================
-
-function esPreguntaLeccion(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("pregunta de la leccion") ||
-
-        p.includes("pregunta de la unidad") ||
-
-        p.includes("pregunta del tema")
-
-    );
-}
-
-
-// ============================================================
-// TRADUCCIÓN
-// ============================================================
-
-function esPreguntaTraduccion(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("traduceme") ||
-        p.includes("traduce") ||
-        p.includes("traduccion") ||
-        p.includes("como se dice") ||
-        p.includes("que significa en español") ||
-        p.includes("que significa en ingles") ||
-        p.includes("como se traduce")
-
-    );
-}
-
-
-// ============================================================
-// SIGNIFICADO DE PALABRA
-// ============================================================
-
-function esPreguntaSignificado(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
-
-    return (
-
-        p.includes("que significa") ||
-        p.includes("que quiere decir") ||
-        p.includes("significado de") ||
-        p.includes("que significa la palabra") ||
-        p.includes("que significa esta palabra")
-
-    );
-}
-
-
-// ============================================================
-// EXPLICACIÓN
-// ============================================================
 
 function esPreguntaExplicacion(pregunta) {
 
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
-
         p.includes("explicame") ||
         p.includes("explica") ||
-        p.includes("no entiendo este texto") ||
-        p.includes("no entiendo esta pregunta") ||
         p.includes("no entiendo") ||
-        p.includes("me puedes explicar") ||
-        p.includes("puedes explicarme")
-
+        p.includes("no comprendo") ||
+        p.includes("ayudame a entender") ||
+        p.includes("que significa esa leccion") ||
+        p.includes("que significa la leccion")
     );
 }
 
 
-// ============================================================
-// REFERENCIA
-// ============================================================
+function esPreguntaTraduccion(pregunta) {
 
-function esPreguntaReferencia(pregunta) {
-
-    const p =
-        normalizarTexto(pregunta);
-
+    const p = normalizar(pregunta);
 
     return (
+        p.includes("traduce") ||
+        p.includes("traduceme") ||
+        p.includes("traducir") ||
+        p.includes("traduccion") ||
+        p.includes("como se dice")
+    );
+}
 
-        p === "que significa eso" ||
-        p === "que quiere decir eso" ||
-        p === "que es eso" ||
-        p === "que significa esto" ||
-        p === "que quiere decir esto" ||
-        p === "que es esto"
 
+function esPreguntaSignificado(pregunta) {
+
+    const p = normalizar(pregunta);
+
+    return (
+        p.includes("que significa") ||
+        p.includes("que quiere decir") ||
+        p.includes("significado de")
     );
 }
 
 
 // ============================================================
-// EXTRAER PALABRA SOLICITADA
+// EXTRAER PALABRA / EXPRESIÓN DEL MENSAJE
 // ============================================================
 
-function extraerPalabra(pregunta) {
+function extraerExpresion(pregunta) {
 
-    const texto =
-        limpiarTexto(pregunta);
-
+    const original = limpiarTexto(pregunta);
 
     /*
-    Ejemplos:
-
-    ¿Qué significa moon?
-    ¿Qué significa "moon"?
-    ¿Qué significa la palabra moon?
-    Tradúceme moon al español.
+    Texto entre comillas
     */
 
-    let resultado;
-
-
-    resultado =
-        texto.match(
-            /(?:significa|significado de|traduce|traduceme|traducir|palabra)\s+["'“”¿¡]?([^"'“”?!.,]+)["'“”?!.,]?/i
+    const entreComillas =
+        original.match(
+            /["'“”‘’*]+([^"'“”‘’*]+)["'“”‘’*]+/
         );
 
-
-    if (resultado?.[1]) {
-
-        let palabra =
-            limpiarTexto(resultado[1]);
-
-
-        palabra =
-            palabra
-                .replace(
-                    /^(la|el|la palabra|el termino|el término)\s+/i,
-                    ""
-                )
-                .trim();
-
-
-        if (
-            palabra.length > 0 &&
-            palabra.length < 100
-        ) {
-
-            return palabra;
-
-        }
-
+    if (entreComillas) {
+        return limpiarTexto(entreComillas[1]);
     }
 
 
     /*
-    Segundo método:
-    tomar una palabra marcada entre comillas.
+    "qué significa moon"
+    */
+
+    let resultado =
+        original.match(
+            /(?:que significa|qué significa|significado de)\s+(.+)/i
+        );
+
+    if (resultado) {
+        return limpiarTexto(
+            resultado[1]
+                .replace(/[?¿.]+$/g, "")
+        );
+    }
+
+
+    /*
+    "tradúceme moon al español"
     */
 
     resultado =
-        texto.match(
-            /["'“”]([^"'“”]+)["'“”]/
+        original.match(
+            /(?:traduceme|traduce|traducir)\s+(.+?)\s+(?:al|a|en)\s+/i
         );
 
+    if (resultado) {
+        return limpiarTexto(resultado[1]);
+    }
 
-    if (resultado?.[1]) {
 
+    /*
+    "cómo se dice moon"
+    */
+
+    resultado =
+        original.match(
+            /como se dice\s+(.+)/i
+        );
+
+    if (resultado) {
         return limpiarTexto(
             resultado[1]
+                .replace(/[?¿.]+$/g, "")
         );
-
     }
 
 
@@ -1230,67 +641,107 @@ function extraerPalabra(pregunta) {
 
 
 // ============================================================
-// ENCONTRAR TEXTO RELEVANTE PARA UNA PALABRA
+// BUSCAR UNA PALABRA DENTRO DEL CONTENIDO
 // ============================================================
 
-function buscarTextoRelacionado(
-    palabra,
+function buscarExpresionEnContenido(
+    expresion,
     textos
 ) {
 
-    if (!palabra || !Array.isArray(textos)) {
-        return "";
-    }
-
+    if (!expresion) return "";
 
     const objetivo =
-        normalizarTexto(palabra);
+        normalizar(expresion);
 
+    if (!objetivo) return "";
+
+    /*
+    Coincidencia exacta o contenida.
+    */
 
     for (const texto of textos) {
 
-        const limpio =
-            limpiarTexto(texto);
-
+        const n =
+            normalizar(texto);
 
         if (
-            normalizarTexto(limpio)
-                .includes(objetivo)
+            n === objetivo ||
+            n.includes(objetivo)
         ) {
 
-            return limpio;
-
+            return texto;
         }
-
     }
-
 
     return "";
 }
 
 
 // ============================================================
-// DETECTAR SI ESTÁ RELACIONADA CON EL CURSO
+// CONTEXTO DE LA CONVERSACIÓN
+// ============================================================
+
+const memoriaConversaciones = new Map();
+
+
+function obtenerMemoria(req) {
+
+    /*
+    Usamos una identificación sencilla
+    por IP mientras no tengamos un ID
+    de estudiante.
+    */
+
+    return req.ip || "usuario";
+}
+
+
+function guardarMemoria(req, datos) {
+
+    const clave =
+        obtenerMemoria(req);
+
+    const anterior =
+        memoriaConversaciones.get(clave) || {};
+
+    memoriaConversaciones.set(
+        clave,
+        {
+            ...anterior,
+            ...datos
+        }
+    );
+}
+
+
+function obtenerMemoriaActual(req) {
+
+    return (
+        memoriaConversaciones.get(
+            obtenerMemoria(req)
+        ) || {}
+    );
+}
+
+
+// ============================================================
+// CONTROL DE TEMA
 // ============================================================
 
 function pareceRelacionadaConCurso(
     pregunta,
-    actual,
-    textosUtiles,
-    nombreSeccion,
-    tituloLeccion,
-    modulo,
-    temaActual
+    contexto
 ) {
 
     const p =
-        normalizarTexto(pregunta);
-
+        normalizar(pregunta);
 
     const palabrasCurso = [
 
         "curso",
         "leccion",
+        "lección",
         "unidad",
         "tema",
         "diapositiva",
@@ -1304,128 +755,71 @@ function pareceRelacionadaConCurso(
         "palabras",
         "vocabulario",
         "gramatica",
+        "gramática",
         "pronunciacion",
+        "pronunciación",
         "caracter",
-
+        "carácter",
         "significa",
         "significado",
-
         "traducir",
         "traduccion",
-
-        "pronuncia",
-        "pronunciar",
-
-        "como se dice",
-
-        "que significa",
-        "que quiere decir",
-
+        "traducción",
         "explica",
         "explicame",
-        "no entiendo",
-
-        "como se responde",
-        "como responder"
-
+        "explicación",
+        "explicacion",
+        "entiendo",
+        "entiendes",
+        "pregunta"
     ];
 
 
     for (const palabra of palabrasCurso) {
 
-        if (p.includes(palabra)) {
+        if (p.includes(normalizar(palabra))) {
             return true;
         }
-
     }
 
 
-    /*
-    Si la pregunta menciona literalmente
-    una palabra que aparece en pantalla,
-    también pertenece al curso.
-    */
-
-    for (const texto of textosUtiles) {
+    for (const texto of contexto.textos || []) {
 
         const limpio =
-            normalizarTexto(texto);
-
+            normalizar(texto);
 
         if (
-            limpio.length >= 3 &&
+            limpio.length >= 4 &&
             p.includes(limpio)
         ) {
 
             return true;
-
         }
-
     }
 
 
     /*
-    Preguntas relacionadas con la ubicación.
+    Preguntas cortas como:
+
+    "explícame"
+    "¿qué significa?"
+    "tradúceme eso"
+
+    dependen del contexto anterior.
     */
 
     if (
-        p.includes("estoy viendo") ||
-        p.includes("estoy estudiando") ||
-        p.includes("estamos estudiando") ||
-        p.includes("que estamos") ||
-        p.includes("donde estoy")
+        p.includes("eso") ||
+        p.includes("esa") ||
+        p.includes("este") ||
+        p.includes("esta") ||
+        p === "explicame" ||
+        p === "explica" ||
+        p === "traduceme" ||
+        p === "traduce"
     ) {
 
         return true;
-
-    }
-
-
-    if (
-        nombreSeccion &&
-        p.includes(
-            normalizarTexto(nombreSeccion)
-        )
-    ) {
-
-        return true;
-
-    }
-
-
-    if (
-        tituloLeccion &&
-        p.includes(
-            normalizarTexto(tituloLeccion)
-        )
-    ) {
-
-        return true;
-
-    }
-
-
-    if (
-        modulo &&
-        p.includes(
-            normalizarTexto(modulo)
-        )
-    ) {
-
-        return true;
-
-    }
-
-
-    if (
-        temaActual &&
-        p.includes(
-            normalizarTexto(temaActual)
-        )
-    ) {
-
-        return true;
-
     }
 
 
@@ -1438,32 +832,30 @@ function pareceRelacionadaConCurso(
 // ============================================================
 
 function respuestaFueraDeTema(
-    nombreSeccion,
-    tituloLeccion
+    contexto
 ) {
 
-    if (tituloLeccion) {
+    if (contexto.tituloLeccion) {
 
         return (
-            `En este momento estamos trabajando la lección "${tituloLeccion}". ` +
-            "Puedo ayudarte con el contenido de este curso."
+            `En este momento estamos trabajando ` +
+            `la lección "${contexto.tituloLeccion}". ` +
+            `Puedo ayudarte con el contenido de este curso.`
         );
-
     }
 
-
-    if (nombreSeccion) {
+    if (contexto.seccion) {
 
         return (
-            `En este momento estamos trabajando en "${nombreSeccion}". ` +
-            "Puedo ayudarte con el contenido de este curso."
+            `En este momento estamos trabajando ` +
+            `en ${contexto.seccion}. ` +
+            `Puedo ayudarte con el contenido de este curso.`
         );
-
     }
-
 
     return (
-        "Puedo ayudarte con el contenido del curso que estás realizando."
+        "Solo puedo ayudarte con el contenido " +
+        "del curso que estás realizando."
     );
 }
 
@@ -1482,16 +874,21 @@ app.post("/chat", async (req, res) => {
         } = req.body;
 
 
-        console.log("=================================");
-        console.log("PREGUNTA:", message);
+        const preguntaUsuario =
+            limpiarTexto(message);
+
+
+        console.log("\n=================================");
+        console.log("PREGUNTA:", preguntaUsuario);
         console.log("STORYLINE RECIBIDO:", storyline);
-        console.log("SLIDE ACTUAL:", storyline?.actual);
         console.log("=================================");
 
 
-        // ----------------------------------------------------
-        // INFORMACIÓN ACTUAL
-        // ----------------------------------------------------
+        /*
+        --------------------------------------------------------
+        INFORMACIÓN DE STORYLINE
+        --------------------------------------------------------
+        */
 
         const actual =
             storyline?.actual || {};
@@ -1503,47 +900,9 @@ app.post("/chat", async (req, res) => {
                 : [];
 
 
-        const textosUtiles =
-            obtenerTextosUtiles(textos);
+        const analisis =
+            analizarContexto(actual);
 
-
-        /*
-        --------------------------------------------------------
-        METADATOS AUTOMÁTICOS
-        --------------------------------------------------------
-        */
-
-        const nivel =
-            obtenerNivel(textos);
-
-
-        const modulo =
-            obtenerModulo(textos);
-
-
-        const temaActual =
-            obtenerTema(textos);
-
-
-        const tituloLeccion =
-            obtenerTituloLeccion(textos);
-
-
-        const objetivo =
-            obtenerObjetivo(textos);
-
-
-        const preguntaEjercicio =
-            encontrarPregunta(textos);
-
-
-        const preguntaUsuario =
-            limpiarTexto(message);
-
-
-        // ----------------------------------------------------
-        // SECCIÓN
-        // ----------------------------------------------------
 
         const nombreSeccion =
             obtenerNombreSeccion(
@@ -1551,60 +910,125 @@ app.post("/chat", async (req, res) => {
             );
 
 
-        // ----------------------------------------------------
-        // LOGS
-        // ----------------------------------------------------
+        const contexto = {
+
+            seccion:
+                nombreSeccion,
+
+            nivel:
+                analisis.nivel,
+
+            modulo:
+                analisis.modulo,
+
+            tema:
+                analisis.tema,
+
+            tituloLeccion:
+                analisis.tituloLeccion,
+
+            objetivo:
+                analisis.objetivo,
+
+            pregunta:
+                analisis.pregunta,
+
+            textos:
+                analisis.textos,
+
+            slideTitle:
+                actual.titulo || ""
+
+        };
+
+
+        /*
+        --------------------------------------------------------
+        MEMORIA
+        --------------------------------------------------------
+        */
+
+        const memoria =
+            obtenerMemoriaActual(req);
+
+
+        guardarMemoria(req, {
+
+            seccion:
+                contexto.seccion,
+
+            nivel:
+                contexto.nivel,
+
+            modulo:
+                contexto.modulo,
+
+            tema:
+                contexto.tema,
+
+            tituloLeccion:
+                contexto.tituloLeccion,
+
+            objetivo:
+                contexto.objetivo,
+
+            pregunta:
+                contexto.pregunta,
+
+            textos:
+                contexto.textos
+
+        });
+
+
+        const memoriaActual =
+            obtenerMemoriaActual(req);
+
 
         console.log(
             "SECCIÓN:",
-            nombreSeccion
+            contexto.seccion
         );
 
         console.log(
             "NIVEL:",
-            nivel
+            contexto.nivel
         );
 
         console.log(
             "MÓDULO:",
-            modulo
+            contexto.modulo
         );
 
         console.log(
             "TEMA:",
-            temaActual
+            contexto.tema
         );
 
         console.log(
-            "TÍTULO REAL DE LA LECCIÓN:",
-            tituloLeccion
+            "LECCIÓN:",
+            contexto.tituloLeccion
         );
 
         console.log(
             "OBJETIVO:",
-            objetivo
+            contexto.objetivo
         );
 
         console.log(
-            "TÍTULO INTERNO STORYLINE:",
-            actual.titulo || ""
+            "PREGUNTA:",
+            contexto.pregunta
         );
 
         console.log(
-            "TEXTOS ÚTILES:",
-            textosUtiles
+            "TEXTOS:",
+            contexto.textos
         );
 
 
         // ====================================================
-        // RESPUESTAS DIRECTAS
+        // UBICACIÓN
         // ====================================================
-
-        /*
-        --------------------------------------------------------
-        UBICACIÓN
-        --------------------------------------------------------
-        */
 
         if (
             esPreguntaUbicacion(
@@ -1615,19 +1039,16 @@ app.post("/chat", async (req, res) => {
             return res.json({
 
                 reply:
-                    nombreSeccion ||
+                    contexto.seccion ||
                     "No pude determinar la sección actual."
 
             });
-
         }
 
 
-        /*
-        --------------------------------------------------------
-        TÍTULO REAL DE LA LECCIÓN
-        --------------------------------------------------------
-        */
+        // ====================================================
+        // TÍTULO
+        // ====================================================
 
         if (
             esPreguntaTitulo(
@@ -1638,111 +1059,16 @@ app.post("/chat", async (req, res) => {
             return res.json({
 
                 reply:
-                    tituloLeccion ||
-                    "No pude determinar automáticamente el título de la lección."
+                    contexto.tituloLeccion ||
+                    "No pude determinar el título de la lección."
 
             });
-
         }
 
 
-        /*
-        --------------------------------------------------------
-        MÓDULO
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaModulo(
-                preguntaUsuario
-            )
-        ) {
-
-            return res.json({
-
-                reply:
-                    modulo ||
-                    "No pude determinar automáticamente el módulo."
-
-            });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        TEMA
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaTema(
-                preguntaUsuario
-            )
-        ) {
-
-            return res.json({
-
-                reply:
-                    temaActual ||
-                    "No pude determinar automáticamente el tema."
-
-            });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        NIVEL
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaNivel(
-                preguntaUsuario
-            )
-        ) {
-
-            return res.json({
-
-                reply:
-                    nivel ||
-                    "No pude determinar automáticamente el nivel."
-
-            });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        OBJETIVO
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaObjetivo(
-                preguntaUsuario
-            )
-        ) {
-
-            return res.json({
-
-                reply:
-                    objetivo ||
-                    "No pude encontrar claramente el objetivo de esta diapositiva."
-
-            });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        TEXTOS DE PANTALLA
-        --------------------------------------------------------
-        */
+        // ====================================================
+        // TEXTOS
+        // ====================================================
 
         if (
             esPreguntaTextos(
@@ -1751,14 +1077,15 @@ app.post("/chat", async (req, res) => {
         ) {
 
             if (
-                textosUtiles.length > 0
+                contexto.textos &&
+                contexto.textos.length > 0
             ) {
 
                 return res.json({
 
                     reply:
-                        "Estos son los textos detectados en la pantalla:\n\n" +
-                        textosUtiles
+                        "Estos son los textos que puedo identificar en la pantalla:\n\n" +
+                        contexto.textos
                             .map(
                                 texto =>
                                     "• " + texto
@@ -1766,244 +1093,296 @@ app.post("/chat", async (req, res) => {
                             .join("\n")
 
                 });
-
             }
-
 
             return res.json({
 
                 reply:
-                    "Todavía no tengo los textos internos de esta diapositiva."
+                    "No pude identificar textos visibles en esta diapositiva."
 
             });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        PREGUNTA DEL EJERCICIO
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaEjercicio(
-                preguntaUsuario
-            )
-        ) {
-
-            if (preguntaEjercicio) {
-
-                return res.json({
-
-                    reply:
-                        preguntaEjercicio
-
-                });
-
-            }
-
-
-            return res.json({
-
-                reply:
-                    "No encuentro una pregunta clara del ejercicio en esta diapositiva."
-
-            });
-
-        }
-
-
-        /*
-        --------------------------------------------------------
-        PREGUNTA DE LA LECCIÓN
-        --------------------------------------------------------
-        */
-
-        if (
-            esPreguntaLeccion(
-                preguntaUsuario
-            )
-        ) {
-
-            if (preguntaEjercicio) {
-
-                return res.json({
-
-                    reply:
-                        preguntaEjercicio
-
-                });
-
-            }
-
-
-            return res.json({
-
-                reply:
-                    "No encuentro una pregunta clara de la lección en esta actividad."
-
-            });
-
         }
 
 
         // ====================================================
-        // PALABRA / TRADUCCIÓN / SIGNIFICADO
+        // ¿CUÁL ES LA PREGUNTA?
         // ====================================================
 
-        const esTraduccion =
+        if (
+            esPreguntaCualEsLaPregunta(
+                preguntaUsuario
+            )
+        ) {
+
+            if (contexto.pregunta) {
+
+                guardarMemoria(req, {
+
+                    ultimoTexto:
+                        contexto.pregunta
+
+                });
+
+
+                return res.json({
+
+                    reply:
+                        `La pregunta es: ${contexto.pregunta}`
+
+                });
+            }
+
+
+            /*
+            Si no encontramos una pregunta
+            con ? buscamos el objetivo.
+            */
+
+            if (contexto.objetivo) {
+
+                guardarMemoria(req, {
+
+                    ultimoTexto:
+                        contexto.objetivo
+
+                });
+
+
+                return res.json({
+
+                    reply:
+                        `La instrucción de la actividad es: ${contexto.objetivo}`
+
+                });
+            }
+
+
+            return res.json({
+
+                reply:
+                    "No pude identificar claramente la pregunta de esta actividad."
+
+            });
+        }
+
+
+        // ====================================================
+        // TRADUCCIÓN
+        // ====================================================
+
+        if (
             esPreguntaTraduccion(
                 preguntaUsuario
-            );
-
-
-        const esSignificado =
-            esPreguntaSignificado(
-                preguntaUsuario
-            );
-
-
-        const palabraSolicitada =
-            extraerPalabra(
-                preguntaUsuario
-            );
-
-
-        const textoRelacionado =
-            buscarTextoRelacionado(
-                palabraSolicitada,
-                textos
-            );
-
-
-        /*
-        --------------------------------------------------------
-        TRADUCCIÓN
-        --------------------------------------------------------
-        */
-
-        if (
-            esTraduccion &&
-            palabraSolicitada
+            )
         ) {
 
-            const systemPrompt = `
+            let expresion =
+                extraerExpresion(
+                    preguntaUsuario
+                );
+
+
+            /*
+            Si el usuario dice:
+
+            "tradúceme a español"
+
+            no hay expresión explícita.
+            Entonces usamos el último texto relevante.
+            */
+
+            if (!expresion) {
+
+                expresion =
+                    memoriaActual.ultimoTexto ||
+                    contexto.pregunta ||
+                    contexto.tituloLeccion ||
+                    contexto.objetivo ||
+                    "";
+
+            }
+
+
+            if (!expresion) {
+
+                return res.json({
+
+                    reply:
+                        "Indícame qué palabra, frase o texto quieres traducir."
+
+                });
+            }
+
+
+            guardarMemoria(req, {
+
+                ultimoTexto:
+                    expresion
+
+            });
+
+
+            /*
+            La traducción la realiza Groq
+            utilizando el contexto actual.
+            */
+
+            const systemPromptTraduccion = `
 
 Eres un tutor de idiomas.
 
-El estudiante está trabajando actualmente
-con una lección educativa.
+El estudiante quiere traducir un texto
+que aparece en el curso.
 
-Responde SIEMPRE en español.
-
-PALABRA O EXPRESIÓN SOLICITADA:
-${palabraSolicitada}
-
-TEXTO DE LA PANTALLA DONDE APARECE:
-${textoRelacionado || "No aparece literalmente en los textos detectados."}
-
-TÍTULO DE LA LECCIÓN:
-${tituloLeccion || "No disponible"}
+CURSO:
+${contexto.modulo || "No disponible"}
 
 TEMA:
-${temaActual || "No disponible"}
+${contexto.tema || "No disponible"}
 
-MÓDULO:
-${modulo || "No disponible"}
+LECCIÓN:
+${contexto.tituloLeccion || "No disponible"}
 
-NIVEL:
-${nivel || "No disponible"}
+TEXTO A TRADUCIR:
+${expresion}
 
-TAREA:
+TEXTOS DE LA DIAPOSITIVA:
+${JSON.stringify(contexto.textos, null, 2)}
 
-Si el estudiante pide traducir una palabra
-o expresión, proporciona su traducción
-al idioma solicitado.
+Reglas:
 
-Si no especifica idioma,
-asume español.
+1. Responde en español.
 
-Sé breve.
+2. Traduce exactamente el texto solicitado.
 
-Si la palabra aparece en otro idioma,
-puedes traducirla.
+3. Si el texto está en chino, tradúcelo al español.
 
-No inventes información sobre el curso.
+4. Si contiene pinyin, puedes explicar su significado,
+pero no confundas el pinyin con una palabra diferente.
 
-No menciones datos técnicos de Storyline.
+5. No inventes información.
+
+6. Si el texto tiene contexto dentro de la diapositiva,
+utilízalo.
+
+7. Responde de manera breve.
 
 `;
 
 
             return await consultarGroq(
-                systemPrompt,
                 preguntaUsuario,
+                systemPromptTraduccion,
                 res
             );
-
         }
 
 
-        /*
-        --------------------------------------------------------
-        SIGNIFICADO
-        --------------------------------------------------------
-        */
+        // ====================================================
+        // SIGNIFICADO
+        // ====================================================
 
         if (
-            esSignificado &&
-            palabraSolicitada
+            esPreguntaSignificado(
+                preguntaUsuario
+            )
         ) {
 
-            const systemPrompt = `
+            let expresion =
+                extraerExpresion(
+                    preguntaUsuario
+                );
+
+
+            if (!expresion) {
+
+                expresion =
+                    memoriaActual.ultimoTexto ||
+                    contexto.pregunta ||
+                    contexto.tituloLeccion ||
+                    "";
+
+            }
+
+
+            if (!expresion) {
+
+                return res.json({
+
+                    reply:
+                        "Indícame qué palabra, expresión o texto quieres comprender."
+
+                });
+            }
+
+
+            const encontrado =
+                buscarExpresionEnContenido(
+                    expresion,
+                    contexto.textos
+                );
+
+
+            const textoReferencia =
+                encontrado ||
+                expresion;
+
+
+            guardarMemoria(req, {
+
+                ultimoTexto:
+                    textoReferencia
+
+            });
+
+
+            const systemPromptSignificado = `
 
 Eres un tutor de idiomas.
 
-Responde SIEMPRE en español.
+El estudiante quiere saber qué significa
+una palabra, expresión o frase relacionada
+con el contenido actual.
 
-El estudiante pregunta por el significado
-de una palabra o expresión.
-
-PALABRA:
-${palabraSolicitada}
-
-CONTEXTO DE LA PANTALLA:
-${textoRelacionado || "La palabra no aparece literalmente en los textos detectados."}
-
-TÍTULO DE LA LECCIÓN:
-${tituloLeccion || "No disponible"}
+LECCIÓN:
+${contexto.tituloLeccion || "No disponible"}
 
 TEMA:
-${temaActual || "No disponible"}
+${contexto.tema || "No disponible"}
 
-NIVEL:
-${nivel || "No disponible"}
+CONTENIDO ACTUAL:
+${JSON.stringify(contexto.textos, null, 2)}
 
-Explica:
+ELEMENTO CONSULTADO:
+${textoReferencia}
 
-1. Qué significa la palabra.
-2. Su traducción al español si corresponde.
-3. Cómo se entiende dentro del contexto actual.
+Reglas:
 
-Si la palabra no aparece en la pantalla,
-puedes explicar su significado general
-como tutor de idiomas, pero no inventes
-un significado relacionado con el curso.
+1. Responde en español.
 
-Sé breve y claro.
+2. Explica primero el significado.
 
-No menciones Storyline ni datos técnicos.
+3. Si es una palabra china, proporciona:
+   - significado en español
+   - pinyin si está disponible
+   - explicación breve dentro del contexto.
+
+4. Si es una frase, explica su sentido completo.
+
+5. Utiliza el contenido de la diapositiva como contexto.
+
+6. No inventes información.
+
+7. Sé breve y claro.
 
 `;
 
 
             return await consultarGroq(
-                systemPrompt,
                 preguntaUsuario,
+                systemPromptSignificado,
                 res
             );
-
         }
 
 
@@ -2017,129 +1396,103 @@ No menciones Storyline ni datos técnicos.
             )
         ) {
 
-            const systemPrompt = `
+            const referencia =
+                memoriaActual.ultimoTexto ||
+                contexto.pregunta ||
+                contexto.tituloLeccion ||
+                contexto.objetivo;
 
-Eres un tutor educativo.
 
-El estudiante indica que no entiende
-un texto, pregunta o contenido de la pantalla.
+            if (!referencia) {
 
-Responde SIEMPRE en español.
+                return res.json({
 
-CONTEXTO ACTUAL:
+                    reply:
+                        "No tengo suficiente contexto para saber qué quieres que explique."
+
+                });
+            }
+
+
+            guardarMemoria(req, {
+
+                ultimoTexto:
+                    referencia
+
+            });
+
+
+            const systemPromptExplicacion = `
+
+Eres un tutor virtual de idiomas.
+
+El estudiante no entiende el contenido
+que está viendo y necesita una explicación.
 
 SECCIÓN:
-${nombreSeccion || "No disponible"}
+${contexto.seccion || "No disponible"}
 
 NIVEL:
-${nivel || "No disponible"}
+${contexto.nivel || "No disponible"}
 
 MÓDULO:
-${modulo || "No disponible"}
+${contexto.modulo || "No disponible"}
 
 TEMA:
-${temaActual || "No disponible"}
+${contexto.tema || "No disponible"}
 
-TÍTULO DE LA LECCIÓN:
-${tituloLeccion || "No disponible"}
+LECCIÓN:
+${contexto.tituloLeccion || "No disponible"}
 
 OBJETIVO:
-${objetivo || "No disponible"}
+${contexto.objetivo || "No disponible"}
 
-TEXTOS DETECTADOS EN LA PANTALLA:
+PREGUNTA:
+${contexto.pregunta || "No disponible"}
 
-${JSON.stringify(textosUtiles, null, 2)}
+TEXTO QUE DEBE EXPLICARSE:
+${referencia}
 
-PREGUNTA DEL ESTUDIANTE:
+TODOS LOS TEXTOS ACTUALES:
+${JSON.stringify(contexto.textos, null, 2)}
 
-${preguntaUsuario}
+Reglas:
 
-Explica el contenido de manera sencilla,
-como un profesor.
+1. Responde en español.
 
-Si el estudiante dice
-"No entiendo esta pregunta",
-identifica primero la pregunta
-relevante de la pantalla.
+2. Explica de forma sencilla,
+como un profesor a un estudiante.
 
-Si dice
-"No entiendo este texto",
-utiliza el texto correspondiente.
+3. Explica qué significa el contenido.
 
-No inventes información.
+4. Si es una pregunta, explica qué está preguntando.
 
-No menciones códigos internos,
-IDs, JSON ni Storyline.
+5. Si es una instrucción, explica qué debe hacer el estudiante.
+
+6. Si contiene chino, utiliza el chino y su traducción
+cuando sea útil.
+
+7. No inventes información que no esté respaldada
+por el contenido.
+
+8. No menciones Storyline.
+
+9. No menciones programación.
+
+10. No menciones JSON.
+
+11. No menciones variables.
+
+12. Sé claro y relativamente breve.
 
 `;
 
 
             return await consultarGroq(
-                systemPrompt,
                 preguntaUsuario,
+                systemPromptExplicacion,
                 res
             );
-
-        }
-
-
-        // ====================================================
-        // REFERENCIA
-        // ====================================================
-
-        if (
-            esPreguntaReferencia(
-                preguntaUsuario
-            )
-        ) {
-
-            const systemPrompt = `
-
-Eres un tutor educativo.
-
-El estudiante utiliza expresiones como
-"¿qué significa eso?" o
-"¿qué quiere decir eso?".
-
-Debes interpretar "eso" utilizando
-el contenido más relevante de la pantalla actual.
-
-SECCIÓN:
-${nombreSeccion || "No disponible"}
-
-TÍTULO DE LA LECCIÓN:
-${tituloLeccion || "No disponible"}
-
-TEMA:
-${temaActual || "No disponible"}
-
-OBJETIVO:
-${objetivo || "No disponible"}
-
-TEXTOS ACTUALES:
-
-${JSON.stringify(textosUtiles, null, 2)}
-
-ÚLTIMA PREGUNTA DEL ESTUDIANTE:
-
-${preguntaUsuario}
-
-Explica el elemento más relevante
-del contexto actual.
-
-Responde en español.
-
-Sé claro y breve.
-
-`;
-
-
-            return await consultarGroq(
-                systemPrompt,
-                preguntaUsuario,
-                res
-            );
-
         }
 
 
@@ -2147,154 +1500,111 @@ Sé claro y breve.
         // CONTROL DE TEMA
         // ====================================================
 
-        const relacionadaConCurso =
+        const relacionada =
             pareceRelacionadaConCurso(
                 preguntaUsuario,
-                actual,
-                textosUtiles,
-                nombreSeccion,
-                tituloLeccion,
-                modulo,
-                temaActual
+                contexto
             );
 
 
-        if (!relacionadaConCurso) {
+        if (!relacionada) {
 
             return res.json({
 
                 reply:
                     respuestaFueraDeTema(
-                        nombreSeccion,
-                        tituloLeccion
+                        contexto
                     )
 
             });
-
         }
 
 
         // ====================================================
-        // PROMPT GENERAL
+        // CHAT GENERAL DEL CURSO
         // ====================================================
 
         const systemPrompt = `
 
-Eres un tutor virtual de un curso educativo.
+Eres un tutor virtual de un curso educativo
+de idiomas.
 
-Tu función es ayudar al estudiante
-a comprender el contenido que está realizando.
-
-Responde SIEMPRE en español.
-
-==================================================
-CONTEXTO DEL CURSO
-==================================================
+Ayudas al estudiante exclusivamente con
+el contenido que está realizando actualmente.
 
 SECCIÓN:
-${nombreSeccion || "No disponible"}
+${contexto.seccion || "No disponible"}
 
 NIVEL:
-${nivel || "No disponible"}
+${contexto.nivel || "No disponible"}
 
 MÓDULO:
-${modulo || "No disponible"}
+${contexto.modulo || "No disponible"}
 
 TEMA:
-${temaActual || "No disponible"}
+${contexto.tema || "No disponible"}
 
-TÍTULO REAL DE LA LECCIÓN:
-${tituloLeccion || "No disponible"}
+TÍTULO DE LA LECCIÓN:
+${contexto.tituloLeccion || "No disponible"}
 
-OBJETIVO DE LA DIAPOSITIVA:
-${objetivo || "No disponible"}
+OBJETIVO:
+${contexto.objetivo || "No disponible"}
 
-==================================================
-DIAPOSITIVA
-==================================================
+PREGUNTA:
+${contexto.pregunta || "No disponible"}
 
-NÚMERO:
-${actual.numero || "No disponible"}
+TEXTOS VISIBLES:
+${JSON.stringify(contexto.textos, null, 2)}
 
-TÍTULO INTERNO DE STORYLINE:
-${actual.titulo || "No disponible"}
+CONTEXTO ANTERIOR:
+${memoriaActual.ultimoTexto || "No disponible"}
 
-==================================================
-TEXTOS DETECTADOS
-==================================================
-
-${JSON.stringify(textosUtiles, null, 2)}
-
-==================================================
-PREGUNTA DEL ESTUDIANTE
-==================================================
-
-${preguntaUsuario}
-
-==================================================
-REGLAS
-==================================================
+REGLAS:
 
 1. Responde siempre en español.
 
-2. Ayuda al estudiante con el contenido
-   que está viendo.
+2. Utiliza primero el contenido proporcionado
+por la diapositiva.
 
-3. Puedes explicar textos.
+3. Puedes explicar vocabulario,
+gramática, preguntas e instrucciones.
 
-4. Puedes explicar preguntas.
+4. Si el estudiante pregunta por una palabra
+que aparece en pantalla, explica su significado.
 
-5. Puedes explicar palabras.
+5. Si pregunta por una frase, explica su sentido.
 
-6. Puedes explicar vocabulario.
+6. Si pregunta "eso", "esa", "este", "esta"
+o utiliza una referencia ambigua,
+utiliza el último contenido relevante
+de la conversación.
 
-7. Puedes explicar gramática.
+7. No inventes información.
 
-8. Puedes traducir palabras y expresiones.
+8. No utilices información externa al curso
+para completar una respuesta.
 
-9. Si el estudiante pregunta por una palabra
-   que aparece en la pantalla, utiliza ese contexto.
+9. No menciones IDs.
 
-10. Si el estudiante pregunta
-    "¿qué significa eso?",
-    interpreta "eso" utilizando el contexto
-    actual de la pantalla.
+10. No menciones lmsId.
 
-11. No inventes contenido del curso.
+11. No menciones JSON.
 
-12. No menciones IDs.
+12. No menciones variables internas.
 
-13. No menciones lmsId.
+13. No menciones Storyline.
 
-14. No menciones JSON.
+14. Responde de forma clara y natural.
 
-15. No menciones variables internas.
-
-16. No menciones detalles técnicos de Storyline.
-
-17. Si una información no está disponible,
-    dilo claramente.
-
-18. Responde de manera breve,
-    clara y natural.
-
-19. No cambies de tema.
-
-20. El nombre interno de una diapositiva
-    NO necesariamente es el título de la lección.
-
-==================================================
+15. Si el estudiante dice que no entiende,
+explícale el contenido actual de forma sencilla.
 
 `;
 
 
-        // ====================================================
-        // GROQ
-        // ====================================================
-
         return await consultarGroq(
-            systemPrompt,
             preguntaUsuario,
+            systemPrompt,
             res
         );
 
@@ -2306,26 +1616,23 @@ REGLAS
             error
         );
 
-
         return res.status(500).json({
 
             reply:
                 "Error interno del servidor."
 
         });
-
     }
-
 });
 
 
 // ============================================================
-// FUNCIÓN CENTRAL PARA GROQ
+// FUNCIÓN GROQ
 // ============================================================
 
 async function consultarGroq(
+    pregunta,
     systemPrompt,
-    preguntaUsuario,
     res
 ) {
 
@@ -2335,80 +1642,71 @@ async function consultarGroq(
             "ERROR: GROQ_API_KEY no está configurada."
         );
 
-
         return res.status(500).json({
 
             reply:
                 "La clave de Groq no está configurada en el servidor."
 
         });
-
     }
 
 
     try {
 
-        const response =
-            await fetch(
-                "https://api.groq.com/openai/v1/chat/completions",
-                {
+        const response = await fetch(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
 
-                    method: "POST",
+                method: "POST",
 
-                    headers: {
+                headers: {
 
-                        "Content-Type":
-                            "application/json",
+                    "Content-Type":
+                        "application/json",
 
-                        "Authorization":
-                            `Bearer ${process.env.GROQ_API_KEY}`
+                    "Authorization":
+                        `Bearer ${process.env.GROQ_API_KEY}`
 
-                    },
+                },
 
-                    body: JSON.stringify({
+                body: JSON.stringify({
 
-                        model:
-                            "openai/gpt-oss-20b",
+                    model:
+                        "openai/gpt-oss-20b",
 
-                        messages: [
+                    messages: [
 
-                            {
-                                role: "system",
-                                content: systemPrompt
-                            },
+                        {
+                            role: "system",
+                            content: systemPrompt
+                        },
 
-                            {
-                                role: "user",
-                                content: preguntaUsuario
-                            }
+                        {
+                            role: "user",
+                            content: pregunta
+                        }
 
-                        ],
+                    ],
 
-                        temperature: 0.1,
+                    temperature: 0.1,
 
-                        max_tokens: 180
+                    max_tokens: 250
 
-                    })
+                })
 
-                }
-            );
+            }
+        );
 
-
-        // ----------------------------------------------------
-        // ERROR GROQ
-        // ----------------------------------------------------
 
         if (!response.ok) {
 
             const errorText =
                 await response.text();
 
-
             console.error(
                 "ERROR GROQ:",
                 errorText
             );
-
 
             return res.status(500).json({
 
@@ -2416,13 +1714,8 @@ async function consultarGroq(
                     "Error al conectar con Groq."
 
             });
-
         }
 
-
-        // ----------------------------------------------------
-        // RESPUESTA
-        // ----------------------------------------------------
 
         const data =
             await response.json();
@@ -2453,16 +1746,13 @@ async function consultarGroq(
             error
         );
 
-
         return res.status(500).json({
 
             reply:
                 "Error al conectar con Groq."
 
         });
-
     }
-
 }
 
 
