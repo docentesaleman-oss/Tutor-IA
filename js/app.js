@@ -18,8 +18,7 @@ prompt.addEventListener("keydown", e => {
 
 
 /*
-    DATOS QUE POSTERIORMENTE RECIBIREMOS
-    DESDE STORYLINE
+    DATOS QUE RECIBIMOS DESDE STORYLINE
 */
 
 let storylineData = {
@@ -27,6 +26,7 @@ let storylineData = {
     escenas: [],
     actual: null
 };
+
 
 /*
     FUNCIÓN PARA RECIBIR INFORMACIÓN
@@ -39,17 +39,54 @@ window.recibirDatosStoryline = function(datos) {
 
     storylineData = {
 
-        tema: datos.tema || "",
-        modulo: datos.modulo || "",
-        seccion: datos.seccion || "",
-        diapositiva: datos.diapositiva || "",
-        contexto: datos.contexto || ""
+        ...storylineData,
+
+        ...datos
 
     };
 
-    console.log("Datos recibidos desde Storyline:", storylineData);
+    console.log(
+        "Datos recibidos desde Storyline:",
+        storylineData
+    );
 
 };
+
+
+/*
+    MOSTRAR MENSAJES EN EL CHAT
+*/
+
+function addMessage(text, sender) {
+
+    const messages =
+        document.getElementById("messages");
+
+    if (!messages) {
+
+        console.error(
+            "ERROR: No se encontró el elemento #messages"
+        );
+
+        return;
+    }
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        sender === "user"
+            ? "message user-message"
+            : "message bot-message";
+
+    message.textContent = text;
+
+    messages.appendChild(message);
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
 
 
 /*
@@ -58,57 +95,170 @@ window.recibirDatosStoryline = function(datos) {
 
 async function sendMessage() {
 
-    const text = prompt.value.trim();
+    const text =
+        prompt.value.trim();
 
     if (text === "") return;
 
-    addMessage(text, "user");
+
+    /*
+        Mostrar pregunta del estudiante
+    */
+
+    addMessage(
+        text,
+        "user"
+    );
+
+
+    /*
+        Limpiar campo
+    */
 
     prompt.value = "";
 
+
+    /*
+        Desactivar botón mientras responde
+    */
+
     send.disabled = true;
 
-    const response = await askGPT(text, storylineData);
 
-    addMessage(response, "bot");
+    try {
+
+        console.log(
+            "ENVIANDO PREGUNTA:",
+            text
+        );
+
+        console.log(
+            "ENVIANDO STORYLINE:",
+            storylineData
+        );
+
+
+        /*
+            Preguntar al servidor
+        */
+
+        const response =
+            await askGPT(
+                text,
+                storylineData
+            );
+
+
+        /*
+            Mostrar respuesta del tutor
+        */
+
+        addMessage(
+            response,
+            "bot"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR AL ENVIAR:",
+            error
+        );
+
+
+        addMessage(
+            "Error al conectar con el servidor.",
+            "bot"
+        );
+
+    }
+
+
+    /*
+        Reactivar botón
+    */
 
     send.disabled = false;
 
 }
 
-window.addEventListener("message", function(event) {
 
-    if (!event.data) return;
+/*
+    RECIBIR MENSAJES DESDE STORYLINE
+*/
 
-    if (event.data.type === "STORYLINE_CONTEXT") {
+window.addEventListener(
+    "message",
+    function(event) {
 
-        console.log("MENSAJE RECIBIDO EN TUTOR:", event.data);
+        if (!event.data) return;
 
-        storylineData = event.data.datos;
 
-        console.log("CONTEXTO DE STORYLINE:", storylineData);
+        /*
+            CONEXIÓN / CONTEXTO GENERAL
+        */
 
-        if (storylineData.escenas) {
+        if (
+            event.data.type ===
+            "STORYLINE_CONTEXT"
+        ) {
+
             console.log(
-                "TOTAL ESCENAS RECIBIDAS:",
-                storylineData.escenas.length
+                "MENSAJE RECIBIDO EN TUTOR:",
+                event.data
             );
+
+
+            storylineData =
+                event.data.datos || {};
+
+
+            console.log(
+                "CONTEXTO DE STORYLINE:",
+                storylineData
+            );
+
+
+            if (
+                storylineData.escenas
+            ) {
+
+                console.log(
+                    "TOTAL ESCENAS RECIBIDAS:",
+                    storylineData.escenas.length
+                );
+
+            }
+
         }
+
+
+        /*
+            DIAPOSITIVA ACTUAL
+        */
+
+        if (
+            event.data.type ===
+            "STORYLINE_CURRENT_SLIDE"
+        ) {
+
+            console.log(
+                "DIAPOSITIVA ACTUAL RECIBIDA EN TUTOR:",
+                event.data.datos
+            );
+
+
+            storylineData.actual =
+                event.data.datos;
+
+
+            console.log(
+                "ACTUALIZADO:",
+                storylineData.actual
+            );
+
+        }
+
     }
-
-    if (event.data.type === "STORYLINE_CURRENT_SLIDE") {
-
-        console.log(
-            "DIAPOSITIVA ACTUAL RECIBIDA EN TUTOR:",
-            event.data.datos
-        );
-
-        storylineData.actual = event.data.datos;
-
-        console.log(
-            "ACTUALIZADO:",
-            storylineData.actual
-        );
-    }
-
-});
+);
