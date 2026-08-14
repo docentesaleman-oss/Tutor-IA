@@ -12,7 +12,172 @@ MEMORIA LOCAL DEL CHAT
 const CHAT_STORAGE_KEY =
     "tutorIA_chatHistory";
 
+const STORYLINE_STORAGE_KEY =
+    "tutorIA_storylineContext";
+
+
 let chatHistory = [];
+
+
+/*
+============================================================
+CONTEXTO DE STORYLINE
+============================================================
+*/
+
+let storylineData = {
+
+    tipo: "contenido",
+
+    tema: "",
+    nivel: "",
+    modulo: "",
+    seccion: "",
+    diapositiva: "",
+    contexto: "",
+    texto: ""
+
+};
+
+
+/*
+============================================================
+RECUPERAR ÚLTIMO CONTEXTO VÁLIDO
+============================================================
+*/
+
+function cargarContextoStorylineGuardado() {
+
+    try {
+
+        const guardado =
+            sessionStorage.getItem(
+                STORYLINE_STORAGE_KEY
+            );
+
+        if (!guardado) {
+
+            console.log(
+                "No existe contexto Storyline guardado."
+            );
+
+            return;
+
+        }
+
+        const datos =
+            JSON.parse(guardado);
+
+        if (!datos || typeof datos !== "object") {
+
+            return;
+
+        }
+
+        /*
+        Recuperamos solamente valores válidos.
+        */
+
+        if (datos.tema) {
+            storylineData.tema = datos.tema;
+        }
+
+        if (datos.nivel) {
+            storylineData.nivel = datos.nivel;
+        }
+
+        if (datos.modulo) {
+            storylineData.modulo = datos.modulo;
+        }
+
+        if (datos.seccion) {
+            storylineData.seccion = datos.seccion;
+        }
+
+        if (datos.diapositiva) {
+            storylineData.diapositiva = datos.diapositiva;
+        }
+
+        if (datos.contexto) {
+            storylineData.contexto = datos.contexto;
+        }
+
+        if (datos.texto) {
+            storylineData.texto = datos.texto;
+        }
+
+        console.log(
+            "===== CONTEXTO STORYLINE RECUPERADO ====="
+        );
+
+        console.log(
+            storylineData
+        );
+
+    } catch (error) {
+
+        console.error(
+            "ERROR RECUPERANDO CONTEXTO STORYLINE:",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+============================================================
+GUARDAR CONTEXTO STORYLINE
+============================================================
+*/
+
+function guardarContextoStoryline() {
+
+    try {
+
+        sessionStorage.setItem(
+            STORYLINE_STORAGE_KEY,
+            JSON.stringify(storylineData)
+        );
+
+        console.log(
+            "===== CONTEXTO STORYLINE GUARDADO ====="
+        );
+
+    } catch (error) {
+
+        console.error(
+            "ERROR GUARDANDO CONTEXTO STORYLINE:",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+============================================================
+VERIFICAR SI TENEMOS CONTEXTO
+============================================================
+*/
+
+function tieneContextoStoryline() {
+
+    return Boolean(
+
+        storylineData.tema ||
+        storylineData.nivel ||
+        storylineData.modulo ||
+        storylineData.seccion ||
+        storylineData.diapositiva ||
+        storylineData.contexto ||
+        storylineData.texto
+
+    );
+
+}
 
 
 /*
@@ -22,6 +187,7 @@ BOTÓN ENVIAR
 */
 
 send.onclick = sendMessage;
+
 
 prompt.addEventListener("keydown", e => {
 
@@ -72,45 +238,7 @@ if (clearChat) {
 
 /*
 ============================================================
-CONTEXTO RECIBIDO DESDE STORYLINE
-
-FUENTE EXCLUSIVA:
-vTema
-vNivel
-vModulo
-vSeccion
-vDiapositiva
-vContexto
-vTexto
-============================================================
-*/
-
-let storylineData = {
-
-    tipo: "contenido",
-
-    tema: "",
-    nivel: "",
-    modulo: "",
-    seccion: "",
-    diapositiva: "",
-    contexto: "",
-    texto: ""
-
-};
-
-
-/*
-============================================================
 ACTUALIZAR CONTEXTO DE STORYLINE
-============================================================
-
-IMPORTANTE:
-
-Los campos vacíos NO borran los datos anteriores.
-
-Esto evita que una solicitud posterior de Storyline
-reemplace un contexto válido por "".
 ============================================================
 */
 
@@ -128,8 +256,8 @@ function actualizarStoryline(datos) {
 
 
     /*
-    Solo actualizamos un campo si realmente
-    recibimos información.
+    SOLO reemplazar cuando Storyline
+    realmente entrega un valor.
     */
 
     if (
@@ -216,12 +344,15 @@ function actualizarStoryline(datos) {
     }
 
 
-    /*
-    El tipo siempre debe permanecer contenido.
-    */
-
     storylineData.tipo =
         datos.tipo || "contenido";
+
+
+    /*
+    Guardar inmediatamente el contexto válido.
+    */
+
+    guardarContextoStoryline();
 
 
     console.log(
@@ -268,7 +399,7 @@ function actualizarStoryline(datos) {
 
 /*
 ============================================================
-COMPATIBILIDAD CON EL CÓDIGO ANTERIOR
+COMPATIBILIDAD CON CÓDIGO ANTERIOR
 ============================================================
 */
 
@@ -281,7 +412,7 @@ window.recibirDatosStoryline = function(datos) {
 
 /*
 ============================================================
-GUARDAR CHAT EN LOCALSTORAGE
+GUARDAR CHAT
 ============================================================
 */
 
@@ -314,7 +445,7 @@ function guardarChat() {
 
 /*
 ============================================================
-CARGAR CHAT DESDE LOCALSTORAGE
+CARGAR CHAT
 ============================================================
 */
 
@@ -327,26 +458,22 @@ function cargarChat() {
                 CHAT_STORAGE_KEY
             );
 
-
         if (!guardado) {
 
             return;
 
         }
 
-
         const historial =
             JSON.parse(
                 guardado
             );
-
 
         if (!Array.isArray(historial)) {
 
             return;
 
         }
-
 
         chatHistory =
             historial;
@@ -491,6 +618,64 @@ function addMessage(
 
 /*
 ============================================================
+SOLICITAR CONTEXTO A STORYLINE
+============================================================
+*/
+
+function solicitarContextoStoryline() {
+
+    console.log(
+        "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
+    );
+
+
+    window.parent.postMessage(
+        {
+            type:
+                "REQUEST_STORYLINE_CONTEXT"
+        },
+        "*"
+    );
+
+}
+
+
+/*
+============================================================
+ESPERAR CONTEXTO DE STORYLINE
+============================================================
+*/
+
+function esperarContextoStoryline(
+    tiempo = 500
+) {
+
+    return new Promise(resolve => {
+
+        if (tieneContextoStoryline()) {
+
+            resolve();
+
+            return;
+
+        }
+
+
+        solicitarContextoStoryline();
+
+
+        setTimeout(
+            resolve,
+            tiempo
+        );
+
+    });
+
+}
+
+
+/*
+============================================================
 ENVIAR PREGUNTA
 ============================================================
 */
@@ -505,7 +690,7 @@ async function sendMessage() {
 
 
     /*
-    Mostrar pregunta
+    Mostrar pregunta.
     */
 
     addMessage(
@@ -514,16 +699,8 @@ async function sendMessage() {
     );
 
 
-    /*
-    Limpiar entrada
-    */
-
     prompt.value = "";
 
-
-    /*
-    Desactivar botón
-    */
 
     send.disabled = true;
 
@@ -542,12 +719,25 @@ async function sendMessage() {
 
         /*
         ====================================================
-        IMPORTANTE
+        SI POR ALGUNA RAZÓN EL CONTEXTO SE PERDIÓ,
+        LO SOLICITAMOS NUEVAMENTE A STORYLINE.
+        ====================================================
+        */
 
-        Hacemos una COPIA del contexto actual.
+        if (!tieneContextoStoryline()) {
 
-        Así askGPT recibe exactamente el contexto que
-        existía cuando el usuario hizo la pregunta.
+            console.warn(
+                "CONTEXTO VACÍO → SOLICITANDO NUEVAMENTE A STORYLINE"
+            );
+
+            await esperarContextoStoryline(700);
+
+        }
+
+
+        /*
+        ====================================================
+        COPIA CONGELADA DEL CONTEXTO
         ====================================================
         */
 
@@ -590,7 +780,7 @@ async function sendMessage() {
 
 
         /*
-        Enviar la copia, NO el objeto original.
+        Enviar contexto al servidor.
         */
 
         const response =
@@ -599,10 +789,6 @@ async function sendMessage() {
                 contextoParaPregunta
             );
 
-
-        /*
-        Mostrar respuesta
-        */
 
         addMessage(
             response,
@@ -644,12 +830,6 @@ window.addEventListener(
         if (!event.data) return;
 
 
-        /*
-        ====================================================
-        CONTEXTO RECIBIDO
-        ====================================================
-        */
-
         if (
             event.data.type ===
             "STORYLINE_CONTEXT"
@@ -676,30 +856,6 @@ window.addEventListener(
 
 /*
 ============================================================
-SOLICITAR CONTEXTO A STORYLINE
-============================================================
-*/
-
-function solicitarContextoStoryline() {
-
-    console.log(
-        "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
-    );
-
-
-    window.parent.postMessage(
-        {
-            type:
-                "REQUEST_STORYLINE_CONTEXT"
-        },
-        "*"
-    );
-
-}
-
-
-/*
-============================================================
 INICIALIZAR APLICACIÓN
 ============================================================
 */
@@ -709,15 +865,21 @@ window.addEventListener(
     function() {
 
         /*
-        Primero recuperar el chat
+        Primero recuperar el último contexto válido.
+        */
+
+        cargarContextoStorylineGuardado();
+
+
+        /*
+        Recuperar chat.
         */
 
         cargarChat();
 
 
         /*
-        Después solicitar contexto
-        a Storyline
+        Solicitar contexto actual a Storyline.
         */
 
         setTimeout(
