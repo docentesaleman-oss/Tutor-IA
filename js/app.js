@@ -12,7 +12,6 @@ MEMORIA LOCAL DEL CHAT
 const CHAT_STORAGE_KEY =
     "tutorIA_chatHistory";
 
-
 let chatHistory = [];
 
 
@@ -23,7 +22,6 @@ BOTÓN ENVIAR
 */
 
 send.onclick = sendMessage;
-
 
 prompt.addEventListener("keydown", e => {
 
@@ -54,17 +52,14 @@ if (clearChat) {
             CHAT_STORAGE_KEY
         );
 
-
         const messages =
             document.getElementById("messages");
-
 
         if (messages) {
 
             messages.innerHTML = "";
 
         }
-
 
         console.log(
             "===== CHAT ELIMINADO ====="
@@ -109,39 +104,124 @@ let storylineData = {
 ============================================================
 ACTUALIZAR CONTEXTO DE STORYLINE
 ============================================================
+
+IMPORTANTE:
+
+Los campos vacíos NO borran los datos anteriores.
+
+Esto evita que una solicitud posterior de Storyline
+reemplace un contexto válido por "".
+============================================================
 */
 
 function actualizarStoryline(datos) {
 
-    if (!datos) return;
+    if (!datos) {
+
+        console.warn(
+            "STORYLINE → datos vacíos"
+        );
+
+        return;
+
+    }
 
 
-    storylineData = {
+    /*
+    Solo actualizamos un campo si realmente
+    recibimos información.
+    */
 
-        tipo: "contenido",
+    if (
+        datos.tema !== undefined &&
+        datos.tema !== null &&
+        String(datos.tema).trim() !== ""
+    ) {
 
-        tema:
-            datos.tema ?? "",
+        storylineData.tema =
+            datos.tema;
 
-        nivel:
-            datos.nivel ?? "",
+    }
 
-        modulo:
-            datos.modulo ?? "",
 
-        seccion:
-            datos.seccion ?? "",
+    if (
+        datos.nivel !== undefined &&
+        datos.nivel !== null &&
+        String(datos.nivel).trim() !== ""
+    ) {
 
-        diapositiva:
-            datos.diapositiva ?? "",
+        storylineData.nivel =
+            datos.nivel;
 
-        contexto:
-            datos.contexto ?? "",
+    }
 
-        texto:
-            datos.texto ?? ""
 
-    };
+    if (
+        datos.modulo !== undefined &&
+        datos.modulo !== null &&
+        String(datos.modulo).trim() !== ""
+    ) {
+
+        storylineData.modulo =
+            datos.modulo;
+
+    }
+
+
+    if (
+        datos.seccion !== undefined &&
+        datos.seccion !== null &&
+        String(datos.seccion).trim() !== ""
+    ) {
+
+        storylineData.seccion =
+            datos.seccion;
+
+    }
+
+
+    if (
+        datos.diapositiva !== undefined &&
+        datos.diapositiva !== null &&
+        String(datos.diapositiva).trim() !== ""
+    ) {
+
+        storylineData.diapositiva =
+            datos.diapositiva;
+
+    }
+
+
+    if (
+        datos.contexto !== undefined &&
+        datos.contexto !== null &&
+        String(datos.contexto).trim() !== ""
+    ) {
+
+        storylineData.contexto =
+            datos.contexto;
+
+    }
+
+
+    if (
+        datos.texto !== undefined &&
+        datos.texto !== null &&
+        String(datos.texto).trim() !== ""
+    ) {
+
+        storylineData.texto =
+            datos.texto;
+
+    }
+
+
+    /*
+    El tipo siempre debe permanecer contenido.
+    */
+
+    storylineData.tipo =
+        datos.tipo || "contenido";
 
 
     console.log(
@@ -214,13 +294,11 @@ function guardarChat() {
             JSON.stringify(chatHistory)
         );
 
-
         console.log(
             "CHAT GUARDADO:",
             chatHistory.length,
             "mensajes"
         );
-
 
     } catch (error) {
 
@@ -284,10 +362,6 @@ function cargarChat() {
         );
 
 
-        /*
-        Reconstruir visualmente
-        */
-
         const messages =
             document.getElementById("messages");
 
@@ -337,7 +411,6 @@ function cargarChat() {
             "ERROR CARGANDO MEMORIA DEL CHAT:",
             error
         );
-
 
         chatHistory = [];
 
@@ -395,10 +468,6 @@ function addMessage(
     messages.scrollTop =
         messages.scrollHeight;
 
-
-    /*
-    Guardar mensaje
-    */
 
     if (guardar) {
 
@@ -470,22 +539,69 @@ async function sendMessage() {
             text
         );
 
+
+        /*
+        ====================================================
+        IMPORTANTE
+
+        Hacemos una COPIA del contexto actual.
+
+        Así askGPT recibe exactamente el contexto que
+        existía cuando el usuario hizo la pregunta.
+        ====================================================
+        */
+
+        const contextoParaPregunta = {
+
+            tipo:
+                storylineData.tipo,
+
+            tema:
+                storylineData.tema,
+
+            nivel:
+                storylineData.nivel,
+
+            modulo:
+                storylineData.modulo,
+
+            seccion:
+                storylineData.seccion,
+
+            diapositiva:
+                storylineData.diapositiva,
+
+            contexto:
+                storylineData.contexto,
+
+            texto:
+                storylineData.texto
+
+        };
+
+
         console.log(
-            "Contexto enviado:",
-            storylineData
+            "===== CONTEXTO CONGELADO PARA LA PREGUNTA ====="
         );
 
+        console.log(
+            contextoParaPregunta
+        );
+
+
+        /*
+        Enviar la copia, NO el objeto original.
+        */
 
         const response =
             await askGPT(
                 text,
-                storylineData
+                contextoParaPregunta
             );
 
 
         /*
         Mostrar respuesta
-        y guardarla en memoria
         */
 
         addMessage(
@@ -529,7 +645,9 @@ window.addEventListener(
 
 
         /*
+        ====================================================
         CONTEXTO RECIBIDO
+        ====================================================
         */
 
         if (
