@@ -9,65 +9,9 @@ MEMORIA LOCAL DEL CHAT
 ============================================================
 */
 
-const CHAT_STORAGE_KEY =
-    "tutorIA_chatHistory";
+const CHAT_STORAGE_KEY = "tutorIA_chatHistory";
 
 let chatHistory = [];
-
-
-/*
-============================================================
-BOTÓN ENVIAR
-============================================================
-*/
-
-send.onclick = sendMessage;
-
-prompt.addEventListener("keydown", e => {
-
-    if (e.key === "Enter" && !e.shiftKey) {
-
-        e.preventDefault();
-
-        sendMessage();
-
-    }
-
-});
-
-
-/*
-============================================================
-BOTÓN ELIMINAR CHAT
-============================================================
-*/
-
-if (clearChat) {
-
-    clearChat.onclick = function () {
-
-        chatHistory = [];
-
-        localStorage.removeItem(
-            CHAT_STORAGE_KEY
-        );
-
-        const messages =
-            document.getElementById("messages");
-
-        if (messages) {
-
-            messages.innerHTML = "";
-
-        }
-
-        console.log(
-            "===== CHAT ELIMINADO ====="
-        );
-
-    };
-
-}
 
 
 /*
@@ -77,13 +21,11 @@ CONTEXTO ACTUAL DE STORYLINE
 
 IMPORTANTE:
 
-Este contexto NO se guarda en localStorage.
+Este objeto representa ÚNICAMENTE el contexto actual
+recibido desde Storyline.
 
-Storyline es la FUENTE OFICIAL.
-
-Cada vez que Storyline envía datos,
-se reemplaza completamente el contexto anterior.
-
+NO se guarda en localStorage.
+NO se recupera del historial del chat.
 ============================================================
 */
 
@@ -107,24 +49,23 @@ let storylineData = {
 ACTUALIZAR CONTEXTO DE STORYLINE
 ============================================================
 
-IMPORTANTE:
+Regla:
 
-NO conservar datos anteriores.
+- Si Storyline manda un valor válido → se actualiza.
+- Si manda "" → NO borra el valor anterior.
 
-Si Storyline envía un campo vacío,
-el campo queda vacío.
-
-Esto evita mezclar información de
-una diapositiva anterior con la actual.
+Esto es necesario porque Storyline puede ejecutar el código
+antes de que algunas variables estén actualizadas.
 ============================================================
 */
 
 function actualizarStoryline(datos) {
 
-    if (!datos) {
+    if (!datos || typeof datos !== "object") {
 
         console.warn(
-            "STORYLINE → datos vacíos"
+            "STORYLINE → datos inválidos:",
+            datos
         );
 
         return;
@@ -132,46 +73,40 @@ function actualizarStoryline(datos) {
     }
 
 
-    /*
-    ========================================================
-    REEMPLAZAR COMPLETAMENTE EL CONTEXTO
-    ========================================================
-    */
+    const actualizarCampo = function(nombre) {
 
-    storylineData = {
+        if (
+            datos[nombre] !== undefined &&
+            datos[nombre] !== null
+        ) {
 
-        tipo:
-            datos.tipo || "contenido",
+            const valor =
+                String(datos[nombre]).trim();
 
-        tema:
-            datos.tema ?? "",
+            if (valor !== "") {
 
-        nivel:
-            datos.nivel ?? "",
+                storylineData[nombre] =
+                    valor;
 
-        modulo:
-            datos.modulo ?? "",
+            }
 
-        seccion:
-            datos.seccion ?? "",
-
-        diapositiva:
-            datos.diapositiva ?? "",
-
-        contexto:
-            datos.contexto ?? "",
-
-        texto:
-            datos.texto ?? ""
+        }
 
     };
 
 
-    /*
-    ========================================================
-    MOSTRAR CONTEXTO ACTUAL
-    ========================================================
-    */
+    actualizarCampo("tema");
+    actualizarCampo("nivel");
+    actualizarCampo("modulo");
+    actualizarCampo("seccion");
+    actualizarCampo("diapositiva");
+    actualizarCampo("contexto");
+    actualizarCampo("texto");
+
+
+    storylineData.tipo =
+        datos.tipo || "contenido";
+
 
     console.log(
         "===== CONTEXTO STORYLINE ACTUALIZADO ====="
@@ -230,7 +165,7 @@ window.recibirDatosStoryline = function(datos) {
 
 /*
 ============================================================
-GUARDAR CHAT EN LOCALSTORAGE
+GUARDAR CHAT
 ============================================================
 */
 
@@ -263,7 +198,14 @@ function guardarChat() {
 
 /*
 ============================================================
-CARGAR CHAT DESDE LOCALSTORAGE
+CARGAR CHAT
+============================================================
+
+IMPORTANTE:
+
+Aquí solamente recuperamos mensajes.
+
+NO recuperamos contexto de Storyline.
 ============================================================
 */
 
@@ -370,7 +312,44 @@ function cargarChat() {
 
 /*
 ============================================================
-MOSTRAR MENSAJES
+ELIMINAR CHAT
+============================================================
+*/
+
+if (clearChat) {
+
+    clearChat.onclick = function() {
+
+        chatHistory = [];
+
+        localStorage.removeItem(
+            CHAT_STORAGE_KEY
+        );
+
+
+        const messages =
+            document.getElementById("messages");
+
+
+        if (messages) {
+
+            messages.innerHTML = "";
+
+        }
+
+
+        console.log(
+            "===== CHAT ELIMINADO ====="
+        );
+
+    };
+
+}
+
+
+/*
+============================================================
+MOSTRAR MENSAJE
 ============================================================
 */
 
@@ -440,6 +419,74 @@ function addMessage(
 
 /*
 ============================================================
+RECIBIR CONTEXTO DESDE STORYLINE
+============================================================
+*/
+
+window.addEventListener(
+    "message",
+    function(event) {
+
+        if (!event.data) {
+
+            return;
+
+        }
+
+
+        if (
+            event.data.type ===
+            "STORYLINE_CONTEXT"
+        ) {
+
+            console.log(
+                "===== MENSAJE RECIBIDO DE STORYLINE ====="
+            );
+
+            console.log(
+                event.data
+            );
+
+
+            actualizarStoryline(
+                event.data.datos
+            );
+
+        }
+
+    }
+);
+
+
+/*
+============================================================
+SOLICITAR CONTEXTO A STORYLINE
+============================================================
+*/
+
+function solicitarContextoStoryline() {
+
+    console.log(
+        "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
+    );
+
+
+    window.parent.postMessage(
+
+        {
+            type:
+                "REQUEST_STORYLINE_CONTEXT"
+        },
+
+        "*"
+
+    );
+
+}
+
+
+/*
+============================================================
 ENVIAR PREGUNTA
 ============================================================
 */
@@ -450,7 +497,11 @@ async function sendMessage() {
         prompt.value.trim();
 
 
-    if (!text) return;
+    if (!text) {
+
+        return;
+
+    }
 
 
     /*
@@ -491,7 +542,7 @@ async function sendMessage() {
 
         /*
         ====================================================
-        CONGELAR EL CONTEXTO ACTUAL
+        COPIA EXACTA DEL CONTEXTO ACTUAL
         ====================================================
         */
 
@@ -579,66 +630,42 @@ async function sendMessage() {
 
 /*
 ============================================================
-RECIBIR MENSAJES DESDE STORYLINE
+BOTÓN ENVIAR
 ============================================================
 */
 
-window.addEventListener(
-    "message",
-    function(event) {
+if (send) {
 
-        if (!event.data) return;
+    send.onclick =
+        sendMessage;
 
-
-        /*
-        ====================================================
-        CONTEXTO RECIBIDO DESDE STORYLINE
-        ====================================================
-        */
-
-        if (
-            event.data.type ===
-            "STORYLINE_CONTEXT"
-        ) {
-
-            console.log(
-                "===== MENSAJE RECIBIDO DE STORYLINE ====="
-            );
-
-            console.log(
-                event.data
-            );
-
-
-            actualizarStoryline(
-                event.data.datos
-            );
-
-        }
-
-    }
-);
+}
 
 
 /*
 ============================================================
-SOLICITAR CONTEXTO A STORYLINE
+ENTER PARA ENVIAR
 ============================================================
 */
 
-function solicitarContextoStoryline() {
+if (prompt) {
 
-    console.log(
-        "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
-    );
+    prompt.addEventListener(
+        "keydown",
+        function(e) {
 
+            if (
+                e.key === "Enter" &&
+                !e.shiftKey
+            ) {
 
-    window.parent.postMessage(
-        {
-            type:
-                "REQUEST_STORYLINE_CONTEXT"
-        },
-        "*"
+                e.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
     );
 
 }
@@ -646,7 +673,7 @@ function solicitarContextoStoryline() {
 
 /*
 ============================================================
-INICIALIZAR APLICACIÓN
+INICIALIZACIÓN
 ============================================================
 */
 
@@ -655,16 +682,14 @@ window.addEventListener(
     function() {
 
         /*
-        Primero cargar solamente
-        el historial del chat.
+        Recuperar SOLO el chat
         */
 
         cargarChat();
 
 
         /*
-        NO recuperar contexto de localStorage.
-        Storyline es la fuente oficial.
+        Pedir a Storyline el contexto actual
         */
 
         setTimeout(
