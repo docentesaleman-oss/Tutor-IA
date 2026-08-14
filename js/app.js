@@ -1,7 +1,29 @@
 const prompt = document.getElementById("prompt");
 const send = document.getElementById("send");
+const clearChat = document.getElementById("clearChat");
+
+
+/*
+============================================================
+MEMORIA LOCAL DEL CHAT
+============================================================
+*/
+
+const CHAT_STORAGE_KEY =
+    "tutorIA_chatHistory";
+
+
+let chatHistory = [];
+
+
+/*
+============================================================
+BOTÓN ENVIAR
+============================================================
+*/
 
 send.onclick = sendMessage;
+
 
 prompt.addEventListener("keydown", e => {
 
@@ -14,6 +36,43 @@ prompt.addEventListener("keydown", e => {
     }
 
 });
+
+
+/*
+============================================================
+BOTÓN ELIMINAR CHAT
+============================================================
+*/
+
+if (clearChat) {
+
+    clearChat.onclick = function () {
+
+        chatHistory = [];
+
+        localStorage.removeItem(
+            CHAT_STORAGE_KEY
+        );
+
+
+        const messages =
+            document.getElementById("messages");
+
+
+        if (messages) {
+
+            messages.innerHTML = "";
+
+        }
+
+
+        console.log(
+            "===== CHAT ELIMINADO ====="
+        );
+
+    };
+
+}
 
 
 /*
@@ -142,14 +201,166 @@ window.recibirDatosStoryline = function(datos) {
 
 /*
 ============================================================
+GUARDAR CHAT EN LOCALSTORAGE
+============================================================
+*/
+
+function guardarChat() {
+
+    try {
+
+        localStorage.setItem(
+            CHAT_STORAGE_KEY,
+            JSON.stringify(chatHistory)
+        );
+
+
+        console.log(
+            "CHAT GUARDADO:",
+            chatHistory.length,
+            "mensajes"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR GUARDANDO CHAT:",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+============================================================
+CARGAR CHAT DESDE LOCALSTORAGE
+============================================================
+*/
+
+function cargarChat() {
+
+    try {
+
+        const guardado =
+            localStorage.getItem(
+                CHAT_STORAGE_KEY
+            );
+
+
+        if (!guardado) {
+
+            return;
+
+        }
+
+
+        const historial =
+            JSON.parse(
+                guardado
+            );
+
+
+        if (!Array.isArray(historial)) {
+
+            return;
+
+        }
+
+
+        chatHistory =
+            historial;
+
+
+        console.log(
+            "===== MEMORIA DEL CHAT CARGADA ====="
+        );
+
+        console.log(
+            "Mensajes:",
+            chatHistory.length
+        );
+
+
+        /*
+        Reconstruir visualmente
+        */
+
+        const messages =
+            document.getElementById("messages");
+
+
+        if (!messages) {
+
+            return;
+
+        }
+
+
+        messages.innerHTML = "";
+
+
+        for (
+            const mensaje of chatHistory
+        ) {
+
+            const message =
+                document.createElement("div");
+
+
+            message.className =
+                mensaje.sender === "user"
+                    ? "message user-message"
+                    : "message bot-message";
+
+
+            message.textContent =
+                mensaje.text;
+
+
+            messages.appendChild(
+                message
+            );
+
+        }
+
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR CARGANDO MEMORIA DEL CHAT:",
+            error
+        );
+
+
+        chatHistory = [];
+
+    }
+
+}
+
+
+/*
+============================================================
 MOSTRAR MENSAJES
 ============================================================
 */
 
-function addMessage(text, sender) {
+function addMessage(
+    text,
+    sender,
+    guardar = true
+) {
 
     const messages =
         document.getElementById("messages");
+
 
     if (!messages) {
 
@@ -158,6 +369,7 @@ function addMessage(text, sender) {
         );
 
         return;
+
     }
 
 
@@ -171,14 +383,39 @@ function addMessage(text, sender) {
             : "message bot-message";
 
 
-    message.textContent = text;
+    message.textContent =
+        text;
 
 
-    messages.appendChild(message);
+    messages.appendChild(
+        message
+    );
 
 
     messages.scrollTop =
         messages.scrollHeight;
+
+
+    /*
+    Guardar mensaje
+    */
+
+    if (guardar) {
+
+        chatHistory.push({
+
+            sender:
+                sender,
+
+            text:
+                text
+
+        });
+
+
+        guardarChat();
+
+    }
 
 }
 
@@ -209,7 +446,7 @@ async function sendMessage() {
 
 
     /*
-    Limpiar campo
+    Limpiar entrada
     */
 
     prompt.value = "";
@@ -245,6 +482,11 @@ async function sendMessage() {
                 storylineData
             );
 
+
+        /*
+        Mostrar respuesta
+        y guardarla en memoria
+        */
 
         addMessage(
             response,
@@ -287,7 +529,7 @@ window.addEventListener(
 
 
         /*
-        CONTEXTO SOLICITADO / RECIBIDO
+        CONTEXTO RECIBIDO
         */
 
         if (
@@ -317,9 +559,6 @@ window.addEventListener(
 /*
 ============================================================
 SOLICITAR CONTEXTO A STORYLINE
-
-El tutor pide las variables cuando termina
-de cargar.
 ============================================================
 */
 
@@ -343,13 +582,25 @@ function solicitarContextoStoryline() {
 
 /*
 ============================================================
-ESPERAR A QUE EL TUTOR ESTÉ CARGADO
+INICIALIZAR APLICACIÓN
 ============================================================
 */
 
 window.addEventListener(
     "load",
     function() {
+
+        /*
+        Primero recuperar el chat
+        */
+
+        cargarChat();
+
+
+        /*
+        Después solicitar contexto
+        a Storyline
+        */
 
         setTimeout(
             solicitarContextoStoryline,

@@ -77,7 +77,15 @@ function limpiarCampo(valor) {
 ============================================================
 OBTENER CONTEXTO OFICIAL DE STORYLINE
 
-ESTE ES EL ÚNICO ORIGEN DEL CONTEXTO.
+FUENTE EXCLUSIVA:
+
+vTema
+vNivel
+vModulo
+vSeccion
+vDiapositiva
+vContexto
+vTexto
 ============================================================
 */
 
@@ -189,7 +197,7 @@ function mostrarContexto(contexto) {
 
 /*
 ============================================================
-DETECTAR PREGUNTAS DE UBICACIÓN
+NORMALIZAR TEXTO
 ============================================================
 */
 
@@ -207,24 +215,24 @@ function normalizar(texto) {
 }
 
 
+/*
+============================================================
+PREGUNTAS DE UBICACIÓN
+============================================================
+*/
+
 function esPreguntaDeModulo(texto) {
 
     const pregunta =
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "en que modulo"
-        ) ||
-        pregunta.includes(
-            "en cual modulo"
-        ) ||
-        pregunta.includes(
-            "que modulo"
-        ) ||
-        pregunta.includes(
-            "cual es el modulo"
-        )
+        pregunta.includes("en que modulo") ||
+        pregunta.includes("en cual modulo") ||
+        pregunta.includes("que modulo") ||
+        pregunta.includes("cual es el modulo") ||
+        pregunta.includes("nombre del modulo") ||
+        pregunta.includes("nombre de modulo")
     );
 
 }
@@ -236,15 +244,9 @@ function esPreguntaDeNivel(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "en que nivel"
-        ) ||
-        pregunta.includes(
-            "que nivel"
-        ) ||
-        pregunta.includes(
-            "cual es el nivel"
-        )
+        pregunta.includes("en que nivel") ||
+        pregunta.includes("que nivel") ||
+        pregunta.includes("cual es el nivel")
     );
 
 }
@@ -256,18 +258,10 @@ function esPreguntaDeTema(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "cual es el tema"
-        ) ||
-        pregunta.includes(
-            "que tema"
-        ) ||
-        pregunta.includes(
-            "sobre que tema"
-        ) ||
-        pregunta.includes(
-            "de que trata"
-        )
+        pregunta.includes("cual es el tema") ||
+        pregunta.includes("que tema") ||
+        pregunta.includes("sobre que tema") ||
+        pregunta.includes("de que trata")
     );
 
 }
@@ -279,15 +273,9 @@ function esPreguntaDeSeccion(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "en que seccion"
-        ) ||
-        pregunta.includes(
-            "que seccion"
-        ) ||
-        pregunta.includes(
-            "cual es la seccion"
-        )
+        pregunta.includes("en que seccion") ||
+        pregunta.includes("que seccion") ||
+        pregunta.includes("cual es la seccion")
     );
 
 }
@@ -299,21 +287,11 @@ function esPreguntaDeDiapositiva(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "en que diapositiva"
-        ) ||
-        pregunta.includes(
-            "que diapositiva"
-        ) ||
-        pregunta.includes(
-            "cual es la diapositiva"
-        ) ||
-        pregunta.includes(
-            "en que pagina"
-        ) ||
-        pregunta.includes(
-            "que pagina"
-        )
+        pregunta.includes("en que diapositiva") ||
+        pregunta.includes("que diapositiva") ||
+        pregunta.includes("cual es la diapositiva") ||
+        pregunta.includes("en que pagina") ||
+        pregunta.includes("que pagina")
     );
 
 }
@@ -325,18 +303,10 @@ function esPreguntaDeContexto(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "que estoy viendo"
-        ) ||
-        pregunta.includes(
-            "que estoy haciendo"
-        ) ||
-        pregunta.includes(
-            "que estamos viendo"
-        ) ||
-        pregunta.includes(
-            "donde estoy"
-        )
+        pregunta.includes("que estoy viendo") ||
+        pregunta.includes("que estoy haciendo") ||
+        pregunta.includes("que estamos viendo") ||
+        pregunta.includes("donde estoy")
     );
 
 }
@@ -348,24 +318,12 @@ function esPreguntaDeTexto(texto) {
         normalizar(texto);
 
     return (
-        pregunta.includes(
-            "que dice la pantalla"
-        ) ||
-        pregunta.includes(
-            "que hay en pantalla"
-        ) ||
-        pregunta.includes(
-            "que aparece en pantalla"
-        ) ||
-        pregunta.includes(
-            "que dice"
-        ) ||
-        pregunta.includes(
-            "cual es el texto"
-        ) ||
-        pregunta.includes(
-            "que texto aparece"
-        )
+        pregunta.includes("que dice la pantalla") ||
+        pregunta.includes("que hay en pantalla") ||
+        pregunta.includes("que aparece en pantalla") ||
+        pregunta.includes("que dice") ||
+        pregunta.includes("cual es el texto") ||
+        pregunta.includes("que texto aparece")
     );
 
 }
@@ -373,7 +331,7 @@ function esPreguntaDeTexto(texto) {
 
 /*
 ============================================================
-CONSTRUIR CONTEXTO PARA LA IA
+CONSTRUIR PROMPT DE CONTEXTO
 ============================================================
 */
 
@@ -436,27 +394,119 @@ REGLAS DEL TUTOR:
    explica el contenido de Texto utilizando
    Contexto como apoyo.
 
-9. No inventes información que contradiga
-   los datos recibidos.
+9. Mantén coherencia con la conversación anterior.
 
-10. Si el texto de la diapositiva contiene
+10. Si el estudiante hace referencia a algo
+    que acaba de preguntar, utiliza el historial
+    de conversación.
+
+11. No inventes información que contradiga
+    los datos recibidos.
+
+12. Si el texto de la diapositiva contiene
     ejemplos, vocabulario, gramática,
     preguntas o instrucciones, puedes
     explicarlos.
 
-11. No menciones variables internas.
+13. No menciones variables internas.
 
-12. No menciones JSON.
+14. No menciones JSON.
 
-13. No menciones programación.
+15. No menciones programación.
 
-14. No menciones Storyline como parte
+16. No menciones Storyline como parte
     de la respuesta al estudiante.
 
-15. Responde de forma clara y apropiada
+17. Responde de forma clara y apropiada
     para el nivel indicado.
 
 `;
+
+}
+
+
+/*
+============================================================
+PREPARAR HISTORIAL PARA LA IA
+============================================================
+*/
+
+function prepararHistorial(history, preguntaActual) {
+
+    if (!Array.isArray(history)) {
+
+        return [];
+
+    }
+
+
+    /*
+    Limitamos la cantidad de mensajes para evitar
+    enviar una conversación indefinidamente grande.
+    */
+
+    let historial =
+        history
+            .slice(-20)
+            .map(mensaje => {
+
+                const sender =
+                    mensaje?.sender === "user"
+                        ? "user"
+                        : "assistant";
+
+
+                const content =
+                    limpiarCampo(
+                        mensaje?.text
+                    );
+
+
+                return {
+
+                    role:
+                        sender,
+
+                    content:
+                        content
+
+                };
+
+            })
+            .filter(mensaje =>
+                mensaje.content !== ""
+            );
+
+
+    /*
+    app.js guarda la pregunta actual antes de llamar
+    a api.js. Por eso probablemente la última entrada
+    ya sea la pregunta actual.
+
+    La quitamos para evitar enviarla dos veces.
+    */
+
+    const ultimo =
+        historial[historial.length - 1];
+
+
+    if (
+        ultimo &&
+        ultimo.role === "user" &&
+        normalizar(ultimo.content) ===
+            normalizar(preguntaActual)
+    ) {
+
+        historial =
+            historial.slice(
+                0,
+                -1
+            );
+
+    }
+
+
+    return historial;
 
 }
 
@@ -469,7 +519,8 @@ LLAMAR A GROQ
 
 async function consultarGroq(
     pregunta,
-    systemPrompt
+    systemPrompt,
+    history = []
 ) {
 
     if (!process.env.GROQ_API_KEY) {
@@ -481,12 +532,88 @@ async function consultarGroq(
     }
 
 
+    /*
+    ========================================================
+    CONSTRUIR MENSAJES
+    ========================================================
+    */
+
+    const mensajes = [
+
+        {
+            role:
+                "system",
+
+            content:
+                systemPrompt
+
+        }
+
+    ];
+
+
+    /*
+    Agregar conversación anterior
+    */
+
+    if (
+        Array.isArray(history) &&
+        history.length > 0
+    ) {
+
+        mensajes.push(
+            ...history
+        );
+
+    }
+
+
+    /*
+    Agregar pregunta actual
+    */
+
+    mensajes.push({
+
+        role:
+            "user",
+
+        content:
+            pregunta
+
+    });
+
+
+    console.log(
+        "===== HISTORIAL ENVIADO A GROQ ====="
+    );
+
+    console.log(
+        history
+    );
+
+
+    console.log(
+        "===== TOTAL DE MENSAJES A GROQ ====="
+    );
+
+    console.log(
+        mensajes.length
+    );
+
+
+    /*
+    ========================================================
+    PETICIÓN A GROQ
+    ========================================================
+    */
+
     const response =
         await fetch(
             "https://api.groq.com/openai/v1/chat/completions",
             {
 
-                method: "POST",
+                method:
+                    "POST",
 
                 headers: {
 
@@ -498,40 +625,32 @@ async function consultarGroq(
 
                 },
 
-                body: JSON.stringify({
+                body:
+                    JSON.stringify({
 
-                    model:
-                        "openai/gpt-oss-20b",
+                        model:
+                            "openai/gpt-oss-20b",
 
-                    messages: [
+                        messages:
+                            mensajes,
 
-                        {
-                            role: "system",
+                        temperature:
+                            0.1,
 
-                            content:
-                                systemPrompt
+                        max_tokens:
+                            500
 
-                        },
-
-                        {
-                            role: "user",
-
-                            content:
-                                pregunta
-
-                        }
-
-                    ],
-
-                    temperature: 0.1,
-
-                    max_tokens: 500
-
-                })
+                    })
 
             }
         );
 
+
+    /*
+    ========================================================
+    COMPROBAR RESPUESTA
+    ========================================================
+    */
 
     if (!response.ok) {
 
@@ -570,6 +689,12 @@ async function consultarGroq(
     }
 
 
+    console.log(
+        "RESPUESTA GROQ:",
+        reply
+    );
+
+
     return reply;
 
 }
@@ -595,6 +720,14 @@ app.post(
 
             const storyline =
                 req.body?.storyline || {};
+
+
+            const history =
+                Array.isArray(
+                    req.body?.history
+                )
+                    ? req.body.history
+                    : [];
 
 
             if (!message) {
@@ -623,12 +756,33 @@ app.post(
 
             /*
             ----------------------------------------------------
-            MOSTRAR EN CONSOLA DEL SERVIDOR
+            PREPARAR MEMORIA
+            ----------------------------------------------------
+            */
+
+            const historialIA =
+                prepararHistorial(
+                    history,
+                    message
+                );
+
+
+            /*
+            ----------------------------------------------------
+            MOSTRAR INFORMACIÓN EN CONSOLA
             ----------------------------------------------------
             */
 
             console.log(
-                "\n\n===== NUEVA PREGUNTA ====="
+                "\n\n========================================"
+            );
+
+            console.log(
+                "NUEVA PREGUNTA"
+            );
+
+            console.log(
+                "========================================"
             );
 
             console.log(
@@ -642,10 +796,24 @@ app.post(
             );
 
 
+            console.log(
+                "HISTORIAL RECIBIDO:",
+                history.length,
+                "mensajes"
+            );
+
+
+            console.log(
+                "HISTORIAL UTILIZABLE:",
+                historialIA.length,
+                "mensajes"
+            );
+
+
             /*
-            ----------------------------------------------------
+            ====================================================
             RESPUESTAS DIRECTAS DE UBICACIÓN
-            ----------------------------------------------------
+            ====================================================
             */
 
             if (
@@ -739,9 +907,9 @@ app.post(
 
 
             /*
-            ----------------------------------------------------
+            ====================================================
             PREGUNTAS SOBRE LO QUE ESTÁ EN PANTALLA
-            ----------------------------------------------------
+            ====================================================
             */
 
             if (
@@ -768,7 +936,10 @@ app.post(
                 if (respuesta) {
 
                     return res.json({
-                        reply: respuesta
+
+                        reply:
+                            respuesta
+
                     });
 
                 }
@@ -777,9 +948,9 @@ app.post(
 
 
             /*
-            ----------------------------------------------------
+            ====================================================
             TEXTO DE LA DIAPOSITIVA
-            ----------------------------------------------------
+            ====================================================
             */
 
             if (
@@ -813,9 +984,9 @@ app.post(
 
 
             /*
-            ----------------------------------------------------
-            TODAS LAS DEMÁS PREGUNTAS
-            ----------------------------------------------------
+            ====================================================
+            PREGUNTA GENERAL → GROQ + MEMORIA
+            ====================================================
             */
 
             const systemPrompt =
@@ -827,14 +998,9 @@ app.post(
             const reply =
                 await consultarGroq(
                     message,
-                    systemPrompt
+                    systemPrompt,
+                    historialIA
                 );
-
-
-            console.log(
-                "RESPUESTA:",
-                reply
-            );
 
 
             return res.json({
@@ -904,6 +1070,11 @@ app.listen(
         console.log(
             "Contexto:",
             "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto"
+        );
+
+        console.log(
+            "Memoria:",
+            "historial enviado desde localStorage"
         );
 
         console.log(

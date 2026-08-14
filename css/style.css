@@ -14,6 +14,7 @@ overflow:hidden;
 
 }
 
+
 #chat{
 
 display:flex;
@@ -23,6 +24,7 @@ flex-direction:column;
 height:100%;
 
 }
+
 
 #header{
 
@@ -42,6 +44,7 @@ padding:0 20px;
 
 }
 
+
 .title{
 
 font-size:20px;
@@ -50,6 +53,7 @@ font-weight:bold;
 
 }
 
+
 .status{
 
 font-size:13px;
@@ -57,6 +61,7 @@ font-size:13px;
 opacity:.8;
 
 }
+
 
 #messages{
 
@@ -68,41 +73,71 @@ padding:20px;
 
 background:#F7F7F8;
 
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
 }
+
+
+/*
+============================================================
+CAJAS DE MENSAJES
+============================================================
+*/
 
 .message{
 
 max-width:75%;
 
-padding:12px;
-
-margin-bottom:15px;
+padding:12px 15px;
 
 border-radius:12px;
 
 word-wrap:break-word;
 
+white-space:pre-wrap;
+
+line-height:1.5;
+
 }
 
-.user{
 
-margin-left:auto;
+.user-message{
+
+align-self:flex-end;
 
 background:#10A37F;
 
 color:white;
 
+border-radius:12px 12px 4px 12px;
+
 }
 
-.bot{
 
-margin-right:auto;
+.bot-message{
+
+align-self:flex-start;
 
 background:white;
 
+color:#222;
+
 border:1px solid #ddd;
 
+border-radius:12px 12px 12px 4px;
+
 }
+
+
+/*
+============================================================
+ÁREA DE ENTRADA
+============================================================
+*/
 
 #inputArea{
 
@@ -118,6 +153,7 @@ border-top:1px solid #ddd;
 
 }
 
+
 textarea{
 
 flex:1;
@@ -130,7 +166,27 @@ font-size:15px;
 
 border-radius:8px;
 
+border:1px solid #ccc;
+
+outline:none;
+
+font-family:Arial;
+
 }
+
+
+textarea:focus{
+
+border-color:#10A37F;
+
+}
+
+
+/*
+============================================================
+BOTONES
+============================================================
+*/
 
 button{
 
@@ -145,5 +201,45 @@ border:none;
 border-radius:8px;
 
 cursor:pointer;
+
+padding:10px;
+
+font-size:14px;
+
+}
+
+
+button:hover{
+
+opacity:.9;
+
+}
+
+
+button:disabled{
+
+opacity:.6;
+
+cursor:not-allowed;
+
+}
+
+
+/*
+============================================================
+BOTÓN ELIMINAR CHAT
+============================================================
+*/
+
+#clearChat{
+
+background:#666;
+
+}
+
+
+#clearChat:hover{
+
+background:#555;
 
 }

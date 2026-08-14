@@ -17,6 +17,46 @@ async function askGPT(text, storylineData) {
         );
 
 
+        /*
+        ========================================================
+        RECUPERAR HISTORIAL DEL CHAT
+        ========================================================
+        */
+
+        let history = [];
+
+        try {
+
+            history = JSON.parse(
+                localStorage.getItem(
+                    "tutorIA_chatHistory"
+                ) || "[]"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "ERROR LEYENDO HISTORIAL:",
+                error
+            );
+
+            history = [];
+
+        }
+
+
+        console.log(
+            "Historial enviado:",
+            history
+        );
+
+
+        /*
+        ========================================================
+        ENVIAR PREGUNTA + STORYLINE + HISTORIAL
+        ========================================================
+        */
+
         const response =
             await fetch(
                 "/chat",
@@ -56,13 +96,22 @@ async function askGPT(text, storylineData) {
                             texto:
                                 storylineData.texto || ""
 
-                        }
+                        },
+
+                        history:
+                            history
 
                     })
 
                 }
             );
 
+
+        /*
+        ========================================================
+        COMPROBAR RESPUESTA
+        ========================================================
+        */
 
         if (!response.ok) {
 
@@ -80,6 +129,12 @@ async function askGPT(text, storylineData) {
         }
 
 
+        /*
+        ========================================================
+        CONVERTIR RESPUESTA
+        ========================================================
+        */
+
         const data =
             await response.json();
 
@@ -92,6 +147,12 @@ async function askGPT(text, storylineData) {
             data
         );
 
+
+        /*
+        ========================================================
+        DEVOLVER RESPUESTA
+        ========================================================
+        */
 
         return (
             data.reply ||
