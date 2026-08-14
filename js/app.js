@@ -18,10 +18,16 @@ prompt.addEventListener("keydown", e => {
 
 /*
 ============================================================
-DATOS RECIBIDOS DESDE STORYLINE
+CONTEXTO RECIBIDO DESDE STORYLINE
 
-ESTAS SON LAS ÚNICAS VARIABLES DE CONTEXTO
-QUE UTILIZA EL TUTOR
+FUENTE EXCLUSIVA:
+vTema
+vNivel
+vModulo
+vSeccion
+vDiapositiva
+vContexto
+vTexto
 ============================================================
 */
 
@@ -42,7 +48,7 @@ let storylineData = {
 
 /*
 ============================================================
-RECIBIR CONTEXTO DESDE STORYLINE
+ACTUALIZAR CONTEXTO DE STORYLINE
 ============================================================
 */
 
@@ -55,13 +61,26 @@ function actualizarStoryline(datos) {
 
         tipo: "contenido",
 
-        tema: datos.tema || "",
-        nivel: datos.nivel || "",
-        modulo: datos.modulo || "",
-        seccion: datos.seccion || "",
-        diapositiva: datos.diapositiva || "",
-        contexto: datos.contexto || "",
-        texto: datos.texto || ""
+        tema:
+            datos.tema ?? "",
+
+        nivel:
+            datos.nivel ?? "",
+
+        modulo:
+            datos.modulo ?? "",
+
+        seccion:
+            datos.seccion ?? "",
+
+        diapositiva:
+            datos.diapositiva ?? "",
+
+        contexto:
+            datos.contexto ?? "",
+
+        texto:
+            datos.texto ?? ""
 
     };
 
@@ -110,7 +129,7 @@ function actualizarStoryline(datos) {
 
 /*
 ============================================================
-FUNCIÓN COMPATIBLE CON EL CÓDIGO ANTERIOR
+COMPATIBILIDAD CON EL CÓDIGO ANTERIOR
 ============================================================
 */
 
@@ -190,7 +209,7 @@ async function sendMessage() {
 
 
     /*
-    Limpiar entrada
+    Limpiar campo
     */
 
     prompt.value = "";
@@ -213,7 +232,6 @@ async function sendMessage() {
             "Pregunta:",
             text
         );
-
 
         console.log(
             "Contexto enviado:",
@@ -268,6 +286,10 @@ window.addEventListener(
         if (!event.data) return;
 
 
+        /*
+        CONTEXTO SOLICITADO / RECIBIDO
+        */
+
         if (
             event.data.type ===
             "STORYLINE_CONTEXT"
@@ -287,6 +309,52 @@ window.addEventListener(
             );
 
         }
+
+    }
+);
+
+
+/*
+============================================================
+SOLICITAR CONTEXTO A STORYLINE
+
+El tutor pide las variables cuando termina
+de cargar.
+============================================================
+*/
+
+function solicitarContextoStoryline() {
+
+    console.log(
+        "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
+    );
+
+
+    window.parent.postMessage(
+        {
+            type:
+                "REQUEST_STORYLINE_CONTEXT"
+        },
+        "*"
+    );
+
+}
+
+
+/*
+============================================================
+ESPERAR A QUE EL TUTOR ESTÉ CARGADO
+============================================================
+*/
+
+window.addEventListener(
+    "load",
+    function() {
+
+        setTimeout(
+            solicitarContextoStoryline,
+            1000
+        );
 
     }
 );
