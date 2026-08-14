@@ -3,43 +3,74 @@ async function askGPT(text, storylineData) {
     try {
 
         console.log(
-            "ENVIANDO STORYLINE AL SERVIDOR:",
+            "===== ENVIANDO AL SERVIDOR ====="
+        );
+
+        console.log(
+            "Pregunta:",
+            text
+        );
+
+        console.log(
+            "Storyline:",
             storylineData
         );
 
 
-        const response = await fetch(
-            "https://tutor-ia-cfxk.onrender.com/chat",
-            {
+        const response =
+            await fetch(
+                "/chat",
+                {
 
-                method: "POST",
+                    method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
+                    body: JSON.stringify({
 
-                    message: text,
+                        message: text,
 
-                    storyline: storylineData
+                        storyline: {
 
-                })
+                            tema:
+                                storylineData.tema || "",
 
-            }
-        );
+                            nivel:
+                                storylineData.nivel || "",
 
+                            modulo:
+                                storylineData.modulo || "",
 
-        /*
-            COMPROBAR RESPUESTA DEL SERVIDOR
-        */
+                            seccion:
+                                storylineData.seccion || "",
+
+                            diapositiva:
+                                storylineData.diapositiva || "",
+
+                            contexto:
+                                storylineData.contexto || "",
+
+                            texto:
+                                storylineData.texto || ""
+
+                        }
+
+                    })
+
+                }
+            );
+
 
         if (!response.ok) {
 
             console.error(
-                "ERROR HTTP DEL SERVIDOR:",
+                "ERROR HTTP:",
                 response.status
             );
+
 
             return (
                 "Error del servidor: " +
@@ -49,23 +80,18 @@ async function askGPT(text, storylineData) {
         }
 
 
-        /*
-            CONVERTIR RESPUESTA A JSON
-        */
-
         const data =
             await response.json();
 
 
         console.log(
-            "RESPUESTA RECIBIDA DEL SERVIDOR:",
+            "===== RESPUESTA DEL SERVIDOR ====="
+        );
+
+        console.log(
             data
         );
 
-
-        /*
-            DEVOLVER RESPUESTA DEL TUTOR
-        */
 
         return (
             data.reply ||
@@ -76,7 +102,7 @@ async function askGPT(text, storylineData) {
     } catch (error) {
 
         console.error(
-            "ERROR AL CONECTAR CON RENDER:",
+            "ERROR AL CONECTAR CON EL SERVIDOR:",
             error
         );
 
