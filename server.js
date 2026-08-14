@@ -41,7 +41,7 @@ function limpiarTexto(texto) {
 
 function esElementoTecnico(texto) {
 
-    const t = texto.toLowerCase().trim();
+    const t = limpiarTexto(texto).toLowerCase();
 
     if (!t) return true;
 
@@ -128,6 +128,15 @@ function obtenerNombreSeccion(escena) {
 
     const mapaEscenas = {
 
+        "Scene1": "Portada",
+        "Scene2": "Pretest",
+        "Scene3": "Conversación multimedia",
+        "Scene4": "Vocabulario",
+        "Scene5": "Gramática",
+        "Scene6": "Pronunciación y caracteres",
+        "Scene7": "Test de lección",
+
+        // Compatibilidad con números
         "1": "Portada",
         "2": "Pretest",
         "3": "Conversación multimedia",
@@ -149,10 +158,6 @@ function obtenerNombreSeccion(escena) {
 function obtenerTemaActual(actual, textosUtiles) {
 
     const textos = textosUtiles || [];
-
-    if (textos.length === 0) {
-        return "";
-    }
 
     if (actual?.titulo) {
 
@@ -186,7 +191,7 @@ function obtenerTemaActual(actual, textosUtiles) {
             minuscula.startsWith("complete") ||
             minuscula.startsWith("relaciona") ||
             minuscula.startsWith("relacione") ||
-            minuscula.startsWith("arrasta") ||
+            minuscula.startsWith("arrastra") ||
             minuscula.startsWith("arrastre")
         ) {
             continue;
@@ -568,7 +573,7 @@ function respuestaFueraDeTema(
 
 
 // ============================================================
-// CHAT CON GROQ
+// CHAT
 // ============================================================
 
 app.post("/chat", async (req, res) => {
@@ -582,6 +587,7 @@ app.post("/chat", async (req, res) => {
 
         console.log("=================================");
         console.log("PREGUNTA:", message);
+        console.log("STORYLINE RECIBIDO:", storyline);
         console.log("SLIDE ACTUAL:", storyline?.actual);
         console.log("=================================");
 
@@ -592,6 +598,21 @@ app.post("/chat", async (req, res) => {
 
         const actual =
             storyline?.actual || {};
+
+        /*
+        IMPORTANTE:
+
+        Actualmente Storyline nos está enviando:
+
+        escena
+        id
+        titulo
+        numero
+        lmsId
+
+        Si en el futuro llegan textos, también
+        serán utilizados automáticamente.
+        */
 
         const textos =
             Array.isArray(actual.textos)
@@ -619,7 +640,7 @@ app.post("/chat", async (req, res) => {
 
 
         // ----------------------------------------------------
-        // TEMA DINÁMICO
+        // TEMA
         // ----------------------------------------------------
 
         const temaActual =
@@ -627,6 +648,7 @@ app.post("/chat", async (req, res) => {
                 actual,
                 textosUtiles
             );
+
 
         console.log(
             "SECCIÓN ACTUAL:",
@@ -636,6 +658,21 @@ app.post("/chat", async (req, res) => {
         console.log(
             "TEMA ACTUAL:",
             temaActual
+        );
+
+        console.log(
+            "TÍTULO ACTUAL:",
+            actual.titulo || ""
+        );
+
+        console.log(
+            "NÚMERO DE DIAPOSITIVA:",
+            actual.numero || ""
+        );
+
+        console.log(
+            "LMS ID:",
+            actual.lmsId || ""
         );
 
 
@@ -653,7 +690,7 @@ app.post("/chat", async (req, res) => {
 
                 reply:
                     nombreSeccion ||
-                    "No tengo información sobre la sección actual."
+                    `Estás en la diapositiva "${actual.titulo || "actual"}".`
 
             });
         }
@@ -748,7 +785,7 @@ app.post("/chat", async (req, res) => {
             return res.json({
 
                 reply:
-                    "No encuentro textos disponibles en esta diapositiva."
+                    "Todavía no tengo los textos internos de esta diapositiva."
 
             });
         }
@@ -789,17 +826,20 @@ app.post("/chat", async (req, res) => {
 
 Eres un tutor virtual de un curso educativo.
 
-Ayudas al estudiante exclusivamente con el
-contenido que está realizando actualmente.
+Ayudas al estudiante exclusivamente con
+el contenido que está realizando actualmente.
 
 SECCIÓN ACTUAL:
 ${nombreSeccion || "No disponible"}
 
-TEMA ACTUAL:
-${temaActual || "No disponible"}
+DIAPOSITIVA ACTUAL:
+${actual.numero || "No disponible"}
 
 TÍTULO DE LA DIAPOSITIVA:
 ${actual.titulo || "No disponible"}
+
+TEMA ACTUAL:
+${temaActual || "No disponible"}
 
 TEXTOS DISPONIBLES EN LA DIAPOSITIVA:
 
@@ -878,7 +918,8 @@ una respuesta.
 
                 headers: {
 
-                    "Content-Type": "application/json",
+                    "Content-Type":
+                        "application/json",
 
                     "Authorization":
                         `Bearer ${process.env.GROQ_API_KEY}`
@@ -909,6 +950,7 @@ una respuesta.
                     max_tokens: 120
 
                 })
+
             }
         );
 
@@ -943,7 +985,6 @@ una respuesta.
         const data =
             await response.json();
 
-
         const reply =
             data?.choices?.[0]?.message?.content?.trim() ||
             "No encontré información suficiente en el contenido del curso.";
@@ -975,6 +1016,7 @@ una respuesta.
                 "Error al conectar con Groq."
 
         });
+
     }
 
 });
