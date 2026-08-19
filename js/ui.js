@@ -5,9 +5,9 @@ function limpiarFormato(text) {
 
     // ========================================================
     // ELIMINAR ENCABEZADOS MARKDOWN
-    // ### Texto
-    // ## Texto
     // # Texto
+    // ## Texto
+    // ### Texto
     // ========================================================
 
     texto = texto.replace(
@@ -39,7 +39,69 @@ function limpiarFormato(text) {
 
 
     // ========================================================
+    // ELIMINAR GUIONES BAJOS DE FORMATO
+    // __texto__ → texto
+    // _texto_ → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /__(.*?)__/gs,
+        "$1"
+    );
+
+    texto = texto.replace(
+        /(?<!_)_([^_\n]+)_(?!_)/g,
+        "$1"
+    );
+
+
+    // ========================================================
+    // ELIMINAR CÓDIGO MARKDOWN
+    // `texto` → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /`([^`]+)`/g,
+        "$1"
+    );
+
+
+    // ========================================================
+    // ELIMINAR BLOQUES DE CÓDIGO
+    // ```texto```
+    // ========================================================
+
+    texto = texto.replace(
+        /```[\s\S]*?```/g,
+        function(bloque) {
+
+            return bloque
+                .replace(/^```[a-zA-Z0-9_-]*\s*/i, "")
+                .replace(/```\s*$/i, "");
+
+        }
+    );
+
+
+    // ========================================================
+    // ELIMINAR CITAS MARKDOWN
+    // > texto → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /^\s*>\s?/gm,
+        ""
+    );
+
+
+    // ========================================================
     // LIMPIAR TABLAS MARKDOWN
+    //
+    // | A | B | C |
+    // |---|---|---|
+    // | 1 | 2 | 3 |
+    //
+    // Se conservan los contenidos y se eliminan los |
     // ========================================================
 
     texto = texto.replace(
@@ -56,13 +118,107 @@ function limpiarFormato(text) {
 
 
     // ========================================================
-    // ELIMINAR LÍNEAS SEPARADORAS DE TABLAS
-    // |-----|-----|
+    // LIMPIAR TABLAS SIN | AL FINAL
+    //
+    // A | B | C
     // ========================================================
 
     texto = texto.replace(
-        /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/gm,
+        /^(.+\|.+)$/gm,
+        function(linea) {
+
+            return linea.replace(/\|/g, " ");
+
+        }
+    );
+
+
+    // ========================================================
+    // ELIMINAR SEPARADORES DE TABLAS
+    //
+    // |-----|-----|
+    // :----:|:----:
+    // -----|-----
+    // ========================================================
+
+    texto = texto.replace(
+        /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/gm,
         ""
+    );
+
+
+    // ========================================================
+    // ELIMINAR LÍNEAS DE SOLO GUIONES
+    // ========================================================
+
+    texto = texto.replace(
+        /^\s*-{3,}\s*$/gm,
+        ""
+    );
+
+
+    // ========================================================
+    // LIMPIAR LISTAS MARKDOWN
+    //
+    // No eliminamos el contenido.
+    // Solo quitamos el marcador.
+    //
+    // - texto → texto
+    // * texto → texto
+    // + texto → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /^\s*[-+*]\s+/gm,
+        ""
+    );
+
+
+    // ========================================================
+    // LIMPIAR LISTAS NUMERADAS
+    //
+    // 1. Texto → 1. Texto
+    //
+    // Se conserva el número porque es información útil.
+    // ========================================================
+
+    texto = texto.replace(
+        /^(\s*)(\d+)\.\s+/gm,
+        "$1$2. "
+    );
+
+
+    // ========================================================
+    // ELIMINAR ENLACES MARKDOWN
+    //
+    // [texto](url) → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /\[([^\]]+)\]\([^)]+\)/g,
+        "$1"
+    );
+
+
+    // ========================================================
+    // ELIMINAR REFERENCIAS DE IMAGEN MARKDOWN
+    //
+    // ![texto](url) → texto
+    // ========================================================
+
+    texto = texto.replace(
+        /!\[([^\]]*)\]\([^)]+\)/g,
+        "$1"
+    );
+
+
+    // ========================================================
+    // LIMPIAR ESPACIOS ANTES DE SALTOS DE LÍNEA
+    // ========================================================
+
+    texto = texto.replace(
+        /[ \t]+\n/g,
+        "\n"
     );
 
 
