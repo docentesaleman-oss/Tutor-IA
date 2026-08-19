@@ -30,7 +30,7 @@ height:100%;
 
 height:60px;
 
-background:#10A37F;
+background:#3493CF;
 
 color:white;
 
@@ -109,7 +109,7 @@ line-height:1.5;
 
 align-self:flex-end;
 
-background:#10A37F;
+background:#3493CF;
 
 color:white;
 
@@ -185,7 +185,7 @@ font-family:Arial;
 
 textarea:focus{
 
-border-color:#10A37F;
+border-color:#3493CF;
 
 }
 
@@ -204,7 +204,7 @@ height:40px;
 
 flex-shrink:0;
 
-background:#10A37F;
+background:#3493CF;
 
 color:white;
 
