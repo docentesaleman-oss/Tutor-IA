@@ -1,79 +1,92 @@
-function escapeHTML(text) {
+function limpiarFormato(text) {
 
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-function convertirMarkdown(text) {
-
-    let html = escapeHTML(text);
+    let texto = String(text);
 
 
     // ========================================================
-    // NEGRITA
+    // ELIMINAR ENCABEZADOS MARKDOWN
+    // ### Texto
+    // ## Texto
+    // # Texto
+    // ========================================================
+
+    texto = texto.replace(
+        /^\s*#{1,6}\s*/gm,
+        ""
+    );
+
+
+    // ========================================================
+    // ELIMINAR NEGRILLA
     // **texto** → texto
     // ========================================================
 
-    html = html.replace(
-        /\*\*(.+?)\*\*/g,
-        "<strong>$1</strong>"
+    texto = texto.replace(
+        /\*\*(.*?)\*\*/gs,
+        "$1"
     );
 
 
     // ========================================================
-    // CURSIVA
+    // ELIMINAR CURSIVA
     // *texto* → texto
     // ========================================================
 
-    html = html.replace(
-        /(^|[^\*])\*([^\*\n]+)\*(?!\*)/g,
-        "$1<em>$2</em>"
+    texto = texto.replace(
+        /(?<!\*)\*([^*\n]+)\*(?!\*)/g,
+        "$1"
     );
 
 
     // ========================================================
-    // LISTAS
-    // - texto
-    // • texto
+    // LIMPIAR TABLAS MARKDOWN
     // ========================================================
 
-    html = html.replace(
-        /(^|\n)[-•]\s+(.+?)(?=\n|$)/g,
-        "$1<li>$2</li>"
-    );
+    texto = texto.replace(
+        /^\s*\|.*\|\s*$/gm,
+        function(linea) {
 
-
-    // ========================================================
-    // AGRUPAR ELEMENTOS DE LISTA
-    // ========================================================
-
-    html = html.replace(
-        /(<li>.*?<\/li>)(?:\s*<li>.*?<\/li>)*/gs,
-        function(lista) {
-
-            return "<ul>" + lista + "</ul>";
+            return linea
+                .replace(/^\s*\|/, "")
+                .replace(/\|\s*$/, "")
+                .replace(/\|/g, " ");
 
         }
     );
 
 
     // ========================================================
-    // SALTOS DE LÍNEA
+    // ELIMINAR LÍNEAS SEPARADORAS DE TABLAS
+    // |-----|-----|
     // ========================================================
 
-    html = html.replace(
-        /\n/g,
-        "<br>"
+    texto = texto.replace(
+        /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/gm,
+        ""
     );
 
 
-    return html;
+    // ========================================================
+    // LIMPIAR ESPACIOS EXCESIVOS
+    // ========================================================
+
+    texto = texto.replace(
+        /[ \t]+/g,
+        " "
+    );
+
+
+    // ========================================================
+    // LIMPIAR LÍNEAS VACÍAS EXCESIVAS
+    // ========================================================
+
+    texto = texto.replace(
+        /\n{3,}/g,
+        "\n\n"
+    );
+
+
+    return texto.trim();
 
 }
 
@@ -84,7 +97,7 @@ function addMessage(text,type){
 
     div.className="message "+type;
 
-    div.innerHTML=convertirMarkdown(text);
+    div.textContent=limpiarFormato(text);
 
     document
         .getElementById("messages")
