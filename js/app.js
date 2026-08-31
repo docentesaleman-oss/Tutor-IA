@@ -24,8 +24,16 @@ IMPORTANTE:
 Este objeto representa ÚNICAMENTE el contexto actual
 recibido desde Storyline.
 
-NO se guarda en localStorage.
-NO se recupera del historial del chat.
+Vcorrect y Vincorrect contienen:
+
+Vcorrect:
+Las respuestas que Storyline considera correctas.
+
+Vincorrect:
+Las respuestas que Storyline considera incorrectas.
+
+El tutor NO sabe cuáles seleccionó realmente
+el estudiante.
 ============================================================
 */
 
@@ -39,7 +47,10 @@ let storylineData = {
     seccion: "",
     diapositiva: "",
     contexto: "",
-    texto: ""
+    texto: "",
+
+    Vcorrect: "",
+    Vincorrect: ""
 
 };
 
@@ -47,15 +58,6 @@ let storylineData = {
 /*
 ============================================================
 ACTUALIZAR CONTEXTO DE STORYLINE
-============================================================
-
-Regla:
-
-- Si Storyline manda un valor válido → se actualiza.
-- Si manda "" → NO borra el valor anterior.
-
-Esto es necesario porque Storyline puede ejecutar el código
-antes de que algunas variables estén actualizadas.
 ============================================================
 */
 
@@ -103,6 +105,15 @@ function actualizarStoryline(datos) {
     actualizarCampo("contexto");
     actualizarCampo("texto");
 
+    /*
+    ========================================================
+    RESPUESTAS DEL EJERCICIO
+    ========================================================
+    */
+
+    actualizarCampo("Vcorrect");
+    actualizarCampo("Vincorrect");
+
 
     storylineData.tipo =
         datos.tipo || "contenido";
@@ -145,6 +156,16 @@ function actualizarStoryline(datos) {
     console.log(
         "vTexto:",
         storylineData.texto
+    );
+
+    console.log(
+        "Vcorrect:",
+        storylineData.Vcorrect
+    );
+
+    console.log(
+        "Vincorrect:",
+        storylineData.Vincorrect
     );
 
 }
@@ -199,13 +220,6 @@ function guardarChat() {
 /*
 ============================================================
 CARGAR CHAT
-============================================================
-
-IMPORTANTE:
-
-Aquí solamente recuperamos mensajes.
-
-NO recuperamos contexto de Storyline.
 ============================================================
 */
 
@@ -570,7 +584,19 @@ async function sendMessage() {
                 storylineData.contexto,
 
             texto:
-                storylineData.texto
+                storylineData.texto,
+
+            /*
+            ==================================================
+            RESPUESTAS DEL EJERCICIO
+            ==================================================
+            */
+
+            Vcorrect:
+                storylineData.Vcorrect,
+
+            Vincorrect:
+                storylineData.Vincorrect
 
         };
 

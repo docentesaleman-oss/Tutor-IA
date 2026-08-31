@@ -75,28 +75,37 @@ async function askGPT(text, storylineData) {
 
                         storyline: {
 
-                            tema:
-                                storylineData.tema || "",
+    tema:
+        storylineData.tema || "",
 
-                            nivel:
-                                storylineData.nivel || "",
+    nivel:
+        storylineData.nivel || "",
 
-                            modulo:
-                                storylineData.modulo || "",
+    modulo:
+        storylineData.modulo || "",
 
-                            seccion:
-                                storylineData.seccion || "",
+    seccion:
+        storylineData.seccion || "",
 
-                            diapositiva:
-                                storylineData.diapositiva || "",
+    diapositiva:
+        storylineData.diapositiva || "",
 
-                            contexto:
-                                storylineData.contexto || "",
+    contexto:
+        storylineData.contexto || "",
 
-                            texto:
-                                storylineData.texto || ""
+    texto:
+        storylineData.texto || "",
 
-                        },
+    Vcorrect:
+        storylineData.Vcorrect || "",
+
+    Vincorrect:
+        storylineData.Vincorrect || "",
+
+    tipo:
+        storylineData.tipo || ""
+
+},
 
                         history:
                             history
