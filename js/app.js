@@ -19,18 +19,13 @@ let chatHistory = [];
 CONTEXTO ACTUAL DE STORYLINE
 ============================================================
 
-Vcorrect:
-Las respuestas que Storyline considera correctas.
+IMPORTANTE:
 
-Vincorrect:
-Las respuestas que Storyline considera incorrectas.
+Este objeto representa ÚNICAMENTE el contexto actual
+recibido desde Storyline.
 
-Vvideo:
-Contenido o referencia del video asociado
-a la diapositiva actual.
-
-El tutor recibe Vvideo junto con el resto
-del contexto actual de Storyline.
+NO se guarda en localStorage.
+NO se recupera del historial del chat.
 ============================================================
 */
 
@@ -44,12 +39,7 @@ let storylineData = {
     seccion: "",
     diapositiva: "",
     contexto: "",
-    texto: "",
-
-    Vcorrect: "",
-    Vincorrect: "",
-
-    Vvideo: ""
+    texto: ""
 
 };
 
@@ -57,6 +47,15 @@ let storylineData = {
 /*
 ============================================================
 ACTUALIZAR CONTEXTO DE STORYLINE
+============================================================
+
+Regla:
+
+- Si Storyline manda un valor válido → se actualiza.
+- Si manda "" → NO borra el valor anterior.
+
+Esto es necesario porque Storyline puede ejecutar el código
+antes de que algunas variables estén actualizadas.
 ============================================================
 */
 
@@ -96,12 +95,6 @@ function actualizarStoryline(datos) {
     };
 
 
-    /*
-    ========================================================
-    CONTEXTO GENERAL
-    ========================================================
-    */
-
     actualizarCampo("tema");
     actualizarCampo("nivel");
     actualizarCampo("modulo");
@@ -111,53 +104,9 @@ function actualizarStoryline(datos) {
     actualizarCampo("texto");
 
 
-    /*
-    ========================================================
-    RESPUESTAS DEL EJERCICIO
-    ========================================================
-    */
-
-    actualizarCampo("Vcorrect");
-    actualizarCampo("Vincorrect");
-
-
-    /*
-    ========================================================
-    VIDEO
-    ========================================================
-
-    Vvideo puede contener:
-
-    - URL del video
-    - referencia del video
-    - texto asociado al video
-    - contenido extraído del video
-    - cualquier información que Storyline
-      envíe en Vvideo
-
-    Se conserva como texto para enviarlo
-    al servidor.
-    ========================================================
-    */
-
-    actualizarCampo("Vvideo");
-
-
-    /*
-    ========================================================
-    TIPO
-    ========================================================
-    */
-
     storylineData.tipo =
         datos.tipo || "contenido";
 
-
-    /*
-    ========================================================
-    DEBUG
-    ========================================================
-    */
 
     console.log(
         "===== CONTEXTO STORYLINE ACTUALIZADO ====="
@@ -196,21 +145,6 @@ function actualizarStoryline(datos) {
     console.log(
         "vTexto:",
         storylineData.texto
-    );
-
-    console.log(
-        "Vcorrect:",
-        storylineData.Vcorrect
-    );
-
-    console.log(
-        "Vincorrect:",
-        storylineData.Vincorrect
-    );
-
-    console.log(
-        "Vvideo:",
-        storylineData.Vvideo
     );
 
 }
@@ -265,6 +199,13 @@ function guardarChat() {
 /*
 ============================================================
 CARGAR CHAT
+============================================================
+
+IMPORTANTE:
+
+Aquí solamente recuperamos mensajes.
+
+NO recuperamos contexto de Storyline.
 ============================================================
 */
 
@@ -564,9 +505,7 @@ async function sendMessage() {
 
 
     /*
-    ========================================================
-    MOSTRAR PREGUNTA
-    ========================================================
+    Mostrar pregunta
     */
 
     addMessage(
@@ -576,18 +515,14 @@ async function sendMessage() {
 
 
     /*
-    ========================================================
-    LIMPIAR ENTRADA
-    ========================================================
+    Limpiar entrada
     */
 
     prompt.value = "";
 
 
     /*
-    ========================================================
-    DESACTIVAR BOTÓN
-    ========================================================
+    Desactivar botón
     */
 
     send.disabled = true;
@@ -635,30 +570,7 @@ async function sendMessage() {
                 storylineData.contexto,
 
             texto:
-                storylineData.texto,
-
-
-            /*
-            ==================================================
-            RESPUESTAS DEL EJERCICIO
-            ==================================================
-            */
-
-            Vcorrect:
-                storylineData.Vcorrect,
-
-            Vincorrect:
-                storylineData.Vincorrect,
-
-
-            /*
-            ==================================================
-            VIDEO
-            ==================================================
-            */
-
-            Vvideo:
-                storylineData.Vvideo
+                storylineData.texto
 
         };
 
@@ -686,9 +598,7 @@ async function sendMessage() {
 
 
         /*
-        ====================================================
-        MOSTRAR RESPUESTA
-        ====================================================
+        Mostrar respuesta
         */
 
         addMessage(

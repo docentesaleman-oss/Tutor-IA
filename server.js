@@ -1,13 +1,18 @@
-import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename =
+    fileURLToPath(import.meta.url);
 
-const app = express();
+const __dirname =
+    path.dirname(__filename);
+
+
+const app =
+    express();
+
 
 /*
 ============================================================
@@ -23,7 +28,9 @@ app.use(
     })
 );
 
-app.use(express.static(__dirname));
+app.use(
+    express.static(__dirname)
+);
 
 
 /*
@@ -68,117 +75,67 @@ function limpiarCampo(valor) {
 
 /*
 ============================================================
-OBTENER CONTEXTO DE STORYLINE
+OBTENER CONTEXTO OFICIAL DE STORYLINE
+
+FUENTE EXCLUSIVA:
+
+vTema
+vNivel
+vModulo
+vSeccion
+vDiapositiva
+vContexto
+vTexto
 ============================================================
 */
 
 function obtenerContextoStoryline(storyline) {
 
-    const datos =
-        storyline &&
-        typeof storyline === "object"
-            ? storyline
-            : {};
+    return {
 
-    const contexto = {};
-
-    /*
-    ========================================================
-    CAMPOS GENERALES
-    ========================================================
-    */
-
-    const campos = [
-        "tipo",
-        "tema",
-        "nivel",
-        "modulo",
-        "seccion",
-        "diapositiva",
-        "contexto",
-        "texto"
-    ];
-
-    for (const nombre of campos) {
-
-        const valor =
+        tema:
             limpiarCampo(
-                datos[nombre]
-            );
+                storyline?.tema
+            ),
 
-        if (valor !== "") {
+        nivel:
+            limpiarCampo(
+                storyline?.nivel
+            ),
 
-            contexto[nombre] =
-                valor;
+        modulo:
+            limpiarCampo(
+                storyline?.modulo
+            ),
 
-        }
+        seccion:
+            limpiarCampo(
+                storyline?.seccion
+            ),
 
-    }
+        diapositiva:
+            limpiarCampo(
+                storyline?.diapositiva
+            ),
 
+        contexto:
+            limpiarCampo(
+                storyline?.contexto
+            ),
 
-    /*
-    ========================================================
-    VARIABLES DE STORYLINE
-    ========================================================
-    */
+        texto:
+            limpiarCampo(
+                storyline?.texto
+            )
 
-    const Vcorrect =
-        datos.Vcorrect ??
-        datos.vCorrect ??
-        datos.vcorrect ??
-        "";
-
-    const Vincorrect =
-        datos.Vincorrect ??
-        datos.vIncorrect ??
-        datos.vincorrect ??
-        "";
-
-    const Vvideo =
-        datos.Vvideo ??
-        datos.vVideo ??
-        datos.vvideo ??
-        "";
-
-
-    if (
-        limpiarCampo(Vcorrect) !== ""
-    ) {
-
-        contexto.Vcorrect =
-            limpiarCampo(Vcorrect);
-
-    }
-
-
-    if (
-        limpiarCampo(Vincorrect) !== ""
-    ) {
-
-        contexto.Vincorrect =
-            limpiarCampo(Vincorrect);
-
-    }
-
-
-    if (
-        limpiarCampo(Vvideo) !== ""
-    ) {
-
-        contexto.Vvideo =
-            limpiarCampo(Vvideo);
-
-    }
-
-
-    return contexto;
+    };
 
 }
 
 
 /*
 ============================================================
-MOSTRAR CONTEXTO
+MOSTRAR CONTEXTO EN CONSOLA
 ============================================================
 */
 
@@ -197,58 +154,38 @@ function mostrarContexto(contexto) {
     );
 
     console.log(
-        "CONTEXTO COMPLETO:",
-        contexto
-    );
-
-    console.log(
         "vTema:",
-        contexto.tema || ""
+        contexto.tema
     );
 
     console.log(
         "vNivel:",
-        contexto.nivel || ""
+        contexto.nivel
     );
 
     console.log(
         "vModulo:",
-        contexto.modulo || ""
+        contexto.modulo
     );
 
     console.log(
         "vSeccion:",
-        contexto.seccion || ""
+        contexto.seccion
     );
 
     console.log(
         "vDiapositiva:",
-        contexto.diapositiva || ""
+        contexto.diapositiva
     );
 
     console.log(
         "vContexto:",
-        contexto.contexto || ""
+        contexto.contexto
     );
 
     console.log(
         "vTexto:",
-        contexto.texto || ""
-    );
-
-    console.log(
-        "Vcorrect:",
-        contexto.Vcorrect || ""
-    );
-
-    console.log(
-        "Vincorrect:",
-        contexto.Vincorrect || ""
-    );
-
-    console.log(
-        "Vvideo:",
-        contexto.Vvideo || ""
+        contexto.texto
     );
 
     console.log(
@@ -323,7 +260,8 @@ function esPreguntaDeTema(texto) {
     return (
         pregunta.includes("cual es el tema") ||
         pregunta.includes("que tema") ||
-        pregunta.includes("sobre que tema")
+        pregunta.includes("sobre que tema") ||
+        pregunta.includes("de que trata")
     );
 
 }
@@ -368,46 +306,24 @@ function esPreguntaDeContexto(texto) {
         pregunta.includes("que estoy viendo") ||
         pregunta.includes("que estoy haciendo") ||
         pregunta.includes("que estamos viendo") ||
-        pregunta.includes("donde estoy") ||
-        pregunta.includes("cual es el contexto") ||
-        pregunta.includes("cual es el contexto actual")
+        pregunta.includes("donde estoy")
     );
 
 }
 
 
-/*
-============================================================
-PREGUNTA SOBRE ERROR DEL EJERCICIO
-============================================================
-*/
-
-function esPreguntaSobreErrorEjercicio(texto) {
+function esPreguntaDeTexto(texto) {
 
     const pregunta =
         normalizar(texto);
 
     return (
-
-        pregunta.includes("porque me quedo mal") ||
-        pregunta.includes("por que me quedo mal") ||
-        pregunta.includes("porque me quedo") ||
-        pregunta.includes("por que me quedo") ||
-        pregunta.includes("porque esta mal") ||
-        pregunta.includes("por que esta mal") ||
-        pregunta.includes("porque esta incorrecta") ||
-        pregunta.includes("por que esta incorrecta") ||
-        pregunta.includes("porque es incorrecta") ||
-        pregunta.includes("por que es incorrecta") ||
-        pregunta.includes("por que esta mal mi respuesta") ||
-        pregunta.includes("porque esta mal mi respuesta") ||
-        pregunta.includes("explicame el error") ||
-        pregunta.includes("explicame por que") ||
-        pregunta.includes("explica por que") ||
-        pregunta.includes("que hice mal") ||
-        pregunta.includes("que esta mal") ||
-        pregunta.includes("cual fue el error")
-
+        pregunta.includes("que dice la pantalla") ||
+        pregunta.includes("que hay en pantalla") ||
+        pregunta.includes("que aparece en pantalla") ||
+        pregunta.includes("que dice") ||
+        pregunta.includes("cual es el texto") ||
+        pregunta.includes("que texto aparece")
     );
 
 }
@@ -415,76 +331,20 @@ function esPreguntaSobreErrorEjercicio(texto) {
 
 /*
 ============================================================
-PREGUNTA POR TEXTO COMPLETO DEL VIDEO
-============================================================
-*/
-
-function esPreguntaSobreTextoVideo(texto) {
-
-    const pregunta =
-        normalizar(texto);
-
-    return (
-
-        pregunta.includes("cual es el texto del video") ||
-        pregunta.includes("que dice el video") ||
-        pregunta.includes("que dice el video completo") ||
-        pregunta.includes("dame el texto del video") ||
-        pregunta.includes("dame el texto completo del video") ||
-        pregunta.includes("muestrame el texto del video") ||
-        pregunta.includes("muestrame el texto completo del video") ||
-        pregunta.includes("texto completo del video") ||
-        pregunta.includes("transcripcion del video")
-
-    );
-
-}
-
-
-/*
-============================================================
-PREGUNTA SOBRE CONTENIDO DEL VIDEO
-============================================================
-*/
-
-function esPreguntaSobreContenidoVideo(texto) {
-
-    const pregunta =
-        normalizar(texto);
-
-    return (
-
-        pregunta.includes("de que trata el video") ||
-        pregunta.includes("de que habla el video") ||
-        pregunta.includes("que explica el video") ||
-        pregunta.includes("explicame el video") ||
-        pregunta.includes("explica el video") ||
-        pregunta.includes("cual es el tema del video") ||
-        pregunta.includes("que se habla en el video") ||
-        pregunta.includes("cual es el contenido del video") ||
-        pregunta.includes("sobre que trata el video")
-
-    );
-
-}
-
-
-/*
-============================================================
-CONSTRUIR PROMPT GENERAL
+CONSTRUIR PROMPT DE CONTEXTO
 ============================================================
 */
 
 function construirPrompt(contexto) {
 
-    return `Eres un tutor virtual de un curso educativo.
+    return `
 
-El contexto recibido proviene directamente
-del contenido actual del curso.
+Eres un tutor virtual de un curso educativo.
 
-============================================================
-DATOS ACTUALES DEL CURSO
-============================================================
+El contexto que recibes proviene DIRECTAMENTE
+de las variables de Storyline del estudiante.
+
+DATOS ACTUALES:
 
 Tema:
 ${contexto.tema || "No disponible"}
@@ -507,80 +367,83 @@ ${contexto.contexto || "No disponible"}
 Texto:
 ${contexto.texto || "No disponible"}
 
-============================================================
-CONTENIDO DEL VIDEO
-============================================================
 
-Si Vvideo está disponible, contiene el contenido
-del video actual.
-
-Utilízalo como fuente principal para responder
-preguntas relacionadas con el video.
-
-Vvideo:
-
-${contexto.Vvideo || "No disponible"}
-
-============================================================
-DATOS DEL EJERCICIO
-============================================================
-
-Vcorrect:
-
-${contexto.Vcorrect || "No disponible"}
-
-Vincorrect:
-
-${contexto.Vincorrect || "No disponible"}
-
-============================================================
-REGLAS GENERALES
-============================================================
+REGLAS DEL TUTOR:
 
 1. Responde siempre en español.
 
-2. Utiliza primero el contenido recibido.
+2. Utiliza estos datos como fuente principal
+   para responder sobre el curso.
 
-3. No inventes información.
+3. Si el estudiante pregunta en qué módulo está,
+   utiliza exactamente el valor de Módulo.
 
-4. Mantente relacionado con la lección actual.
+4. Si pregunta cuál es el tema,
+   utiliza exactamente el valor de Tema.
 
-5. Si el estudiante pregunta sobre el video,
-utiliza Vvideo.
+5. Si pregunta en qué sección está,
+   utiliza exactamente el valor de Sección.
 
-6. Si el estudiante pregunta por un ejercicio,
-utiliza los datos del ejercicio.
+6. Si pregunta qué diapositiva está viendo,
+   utiliza exactamente el valor de Diapositiva.
 
-7. Nunca inventes qué opción seleccionó
-el estudiante.
+7. Si pregunta qué está viendo,
+   utiliza Contexto y Texto.
 
-8. No menciones variables internas,
-JSON, programación ni funcionamiento
-interno del sistema.
+8. Si pide que le expliques el contenido,
+   explica el contenido de Texto utilizando
+   Contexto como apoyo.
 
-9. Mantén coherencia con el historial.
+9. Mantén coherencia con la conversación anterior.
 
-10. Explica de forma clara y pedagógica.
+10. Si el estudiante hace referencia a algo
+    que acaba de preguntar, utiliza el historial
+    de conversación.
+
+11. No inventes información que contradiga
+    los datos recibidos.
+
+12. Si el texto de la diapositiva contiene
+    ejemplos, vocabulario, gramática,
+    preguntas o instrucciones, puedes
+    explicarlos.
+
+13. No menciones variables internas.
+
+14. No menciones JSON.
+
+15. No menciones programación.
+
+16. No menciones Storyline como parte
+    de la respuesta al estudiante.
+
+17. Responde de forma clara y apropiada
+    para el nivel indicado.
+
 `;
+
 }
 
 
 /*
 ============================================================
-PREPARAR HISTORIAL
+PREPARAR HISTORIAL PARA LA IA
 ============================================================
 */
 
-function prepararHistorial(
-    history,
-    preguntaActual
-) {
+function prepararHistorial(history, preguntaActual) {
 
     if (!Array.isArray(history)) {
 
         return [];
 
     }
+
+
+    /*
+    Limitamos la cantidad de mensajes para evitar
+    enviar una conversación indefinidamente grande.
+    */
 
     let historial =
         history
@@ -592,29 +455,40 @@ function prepararHistorial(
                         ? "user"
                         : "assistant";
 
+
                 const content =
                     limpiarCampo(
                         mensaje?.text
                     );
 
+
                 return {
+
                     role:
                         sender,
 
                     content:
                         content
+
                 };
 
             })
-            .filter(
-                mensaje =>
-                    mensaje.content !== ""
+            .filter(mensaje =>
+                mensaje.content !== ""
             );
 
+
+    /*
+    app.js guarda la pregunta actual antes de llamar
+    a api.js. Por eso probablemente la última entrada
+    ya sea la pregunta actual.
+
+    La quitamos para evitar enviarla dos veces.
+    */
+
     const ultimo =
-        historial[
-            historial.length - 1
-        ];
+        historial[historial.length - 1];
+
 
     if (
         ultimo &&
@@ -630,6 +504,7 @@ function prepararHistorial(
             );
 
     }
+
 
     return historial;
 
@@ -656,6 +531,13 @@ async function consultarGroq(
 
     }
 
+
+    /*
+    ========================================================
+    CONSTRUIR MENSAJES
+    ========================================================
+    */
+
     const mensajes = [
 
         {
@@ -669,6 +551,11 @@ async function consultarGroq(
 
     ];
 
+
+    /*
+    Agregar conversación anterior
+    */
+
     if (
         Array.isArray(history) &&
         history.length > 0
@@ -680,6 +567,11 @@ async function consultarGroq(
 
     }
 
+
+    /*
+    Agregar pregunta actual
+    */
+
     mensajes.push({
 
         role:
@@ -690,6 +582,7 @@ async function consultarGroq(
 
     });
 
+
     console.log(
         "===== HISTORIAL ENVIADO A GROQ ====="
     );
@@ -697,6 +590,22 @@ async function consultarGroq(
     console.log(
         history
     );
+
+
+    console.log(
+        "===== TOTAL DE MENSAJES A GROQ ====="
+    );
+
+    console.log(
+        mensajes.length
+    );
+
+
+    /*
+    ========================================================
+    PETICIÓN A GROQ
+    ========================================================
+    */
 
     const response =
         await fetch(
@@ -729,22 +638,31 @@ async function consultarGroq(
                             0.1,
 
                         max_tokens:
-                            1000
+                            500
 
                     })
 
             }
         );
 
+
+    /*
+    ========================================================
+    COMPROBAR RESPUESTA
+    ========================================================
+    */
+
     if (!response.ok) {
 
         const error =
             await response.text();
 
+
         console.error(
             "ERROR GROQ:",
             error
         );
+
 
         throw new Error(
             "Groq respondió con HTTP " +
@@ -753,22 +671,14 @@ async function consultarGroq(
 
     }
 
+
     const data =
         await response.json();
 
-    console.log(
-        "===== RESPUESTA COMPLETA DE GROQ ====="
-    );
-
-    console.dir(
-        data,
-        {
-            depth: null
-        }
-    );
 
     const reply =
         data?.choices?.[0]?.message?.content?.trim();
+
 
     if (!reply) {
 
@@ -778,10 +688,12 @@ async function consultarGroq(
 
     }
 
+
     console.log(
         "RESPUESTA GROQ:",
         reply
     );
+
 
     return reply;
 
@@ -805,8 +717,10 @@ app.post(
                     req.body?.message
                 );
 
+
             const storyline =
                 req.body?.storyline || {};
+
 
             const history =
                 Array.isArray(
@@ -814,6 +728,7 @@ app.post(
                 )
                     ? req.body.history
                     : [];
+
 
             if (!message) {
 
@@ -828,9 +743,9 @@ app.post(
 
 
             /*
-            ====================================================
-            CONTEXTO
-            ====================================================
+            ----------------------------------------------------
+            OBTENER LAS SIETE VARIABLES
+            ----------------------------------------------------
             */
 
             const contexto =
@@ -840,9 +755,9 @@ app.post(
 
 
             /*
-            ====================================================
-            HISTORIAL
-            ====================================================
+            ----------------------------------------------------
+            PREPARAR MEMORIA
+            ----------------------------------------------------
             */
 
             const historialIA =
@@ -853,9 +768,9 @@ app.post(
 
 
             /*
-            ====================================================
-            LOG
-            ====================================================
+            ----------------------------------------------------
+            MOSTRAR INFORMACIÓN EN CONSOLA
+            ----------------------------------------------------
             */
 
             console.log(
@@ -875,14 +790,29 @@ app.post(
                 message
             );
 
+
             mostrarContexto(
                 contexto
             );
 
 
+            console.log(
+                "HISTORIAL RECIBIDO:",
+                history.length,
+                "mensajes"
+            );
+
+
+            console.log(
+                "HISTORIAL UTILIZABLE:",
+                historialIA.length,
+                "mensajes"
+            );
+
+
             /*
             ====================================================
-            MÓDULO
+            RESPUESTAS DIRECTAS DE UBICACIÓN
             ====================================================
             */
 
@@ -904,12 +834,6 @@ app.post(
             }
 
 
-            /*
-            ====================================================
-            NIVEL
-            ====================================================
-            */
-
             if (
                 esPreguntaDeNivel(
                     message
@@ -927,12 +851,6 @@ app.post(
 
             }
 
-
-            /*
-            ====================================================
-            TEMA
-            ====================================================
-            */
 
             if (
                 esPreguntaDeTema(
@@ -952,12 +870,6 @@ app.post(
             }
 
 
-            /*
-            ====================================================
-            SECCIÓN
-            ====================================================
-            */
-
             if (
                 esPreguntaDeSeccion(
                     message
@@ -975,12 +887,6 @@ app.post(
 
             }
 
-
-            /*
-            ====================================================
-            DIAPOSITIVA
-            ====================================================
-            */
 
             if (
                 esPreguntaDeDiapositiva(
@@ -1002,7 +908,7 @@ app.post(
 
             /*
             ====================================================
-            CONTEXTO
+            PREGUNTAS SOBRE LO QUE ESTÁ EN PANTALLA
             ====================================================
             */
 
@@ -1012,283 +918,65 @@ app.post(
                 )
             ) {
 
-                const partes = [];
+                const respuesta = [
 
-                if (contexto.contexto) {
+                    contexto.contexto
+                        ? `Contexto: ${contexto.contexto}`
+                        : "",
 
-                    partes.push(
-                        `Contexto: ${contexto.contexto}`
-                    );
+                    contexto.texto
+                        ? `\nContenido: ${contexto.texto}`
+                        : ""
 
-                }
+                ]
+                .filter(Boolean)
+                .join("\n");
 
-                if (contexto.texto) {
 
-                    partes.push(
-                        `Contenido: ${contexto.texto}`
-                    );
-
-                }
-
-                if (contexto.Vvideo) {
-
-                    partes.push(
-                        `El contenido corresponde a un video sobre: ${contexto.Vvideo}`
-                    );
-
-                }
-
-                if (partes.length > 0) {
+                if (respuesta) {
 
                     return res.json({
 
                         reply:
-                            partes.join(
-                                "\n\n"
-                            )
+                            respuesta
 
                     });
 
                 }
-
-                return res.json({
-
-                    reply:
-                        "No tengo disponible el contexto actual."
-
-                });
 
             }
 
 
             /*
             ====================================================
-            TEXTO DEL VIDEO
+            TEXTO DE LA DIAPOSITIVA
             ====================================================
             */
 
             if (
-                esPreguntaSobreTextoVideo(
+                esPreguntaDeTexto(
                     message
                 )
             ) {
-
-                if (contexto.Vvideo) {
-
-                    return res.json({
-
-                        reply:
-                            contexto.Vvideo
-
-                    });
-
-                }
-
-                return res.json({
-
-                    reply:
-                        "No tengo disponible el texto del video actual."
-
-                });
-
-            }
-
-
-            /*
-            ====================================================
-            CONTENIDO DEL VIDEO
-            ====================================================
-            */
-
-            if (
-                esPreguntaSobreContenidoVideo(
-                    message
-                )
-            ) {
-
-                console.log(
-                    "===== PREGUNTA SOBRE CONTENIDO DEL VIDEO ====="
-                );
-
-                console.log(
-                    "Vvideo recibido:",
-                    contexto.Vvideo || "[VACÍO]"
-                );
-
-                if (!contexto.Vvideo) {
-
-                    return res.json({
-
-                        reply:
-                            "No tengo disponible el contenido del video actual."
-
-                    });
-
-                }
-
-                const promptVideo = `Eres un tutor virtual de un curso educativo.
-
-El estudiante está viendo un video del curso.
-
-============================================================
-CONTENIDO REAL DEL VIDEO
-============================================================
-
-${contexto.Vvideo}
-
-============================================================
-PREGUNTA DEL ESTUDIANTE
-============================================================
-
-${message}
-
-============================================================
-INSTRUCCIONES
-============================================================
-
-Responde utilizando EXCLUSIVAMENTE la información
-contenida en el texto del video.
-
-Si pregunta "¿de qué trata el video?",
-explica brevemente:
-
-- cuál es el tema principal;
-- cuáles son las ideas principales;
-- qué conceptos o reglas explica;
-- los ejemplos importantes que aparecen.
-
-No inventes información.
-
-No agregues conocimientos externos como si estuvieran
-en el video.
-
-Si el video explica una regla gramatical,
-puedes explicarla de manera sencilla basándote
-en lo que dice el video.
-
-Responde en español.
-
-No menciones variables, JSON, programación,
-Storyline ni el funcionamiento interno del sistema.
-
-Sé claro, directo y pedagógico.
-`;
-
-                const reply =
-                    await consultarGroq(
-                        message,
-                        promptVideo,
-                        historialIA
-                    );
-
-                return res.json({
-
-                    reply:
-                        reply
-
-                });
-
-            }
-
-
-            /*
-            ====================================================
-            ERROR DEL EJERCICIO
-            ====================================================
-            */
-
-            if (
-                esPreguntaSobreErrorEjercicio(
-                    message
-                )
-            ) {
-
-                console.log(
-                    "===== PREGUNTA SOBRE ERROR DEL EJERCICIO ====="
-                );
-
-                console.log(
-                    "Vcorrect:",
-                    contexto.Vcorrect || "[VACÍO]"
-                );
-
-                console.log(
-                    "Vincorrect:",
-                    contexto.Vincorrect || "[VACÍO]"
-                );
 
                 if (
-                    !contexto.Vincorrect
+                    contexto.texto
                 ) {
 
                     return res.json({
 
                         reply:
-                            "No tengo disponibles las respuestas incorrectas de este ejercicio."
+                            contexto.texto
 
                     });
 
                 }
 
-                const promptErrorEjercicio = `Eres un tutor de inglés.
-
-El estudiante está realizando un ejercicio de gramática.
-
-============================================================
-RESPUESTAS CORRECTAS
-============================================================
-
-${contexto.Vcorrect || "No disponible"}
-
-============================================================
-RESPUESTAS INCORRECTAS
-============================================================
-
-${contexto.Vincorrect}
-
-============================================================
-TAREA
-============================================================
-
-Explica por qué las frases consideradas incorrectas
-son incorrectas.
-
-Analiza directamente las frases recibidas.
-
-Identifica la palabra, estructura o regla gramatical
-que causa el error.
-
-Cuando sea útil, compara con las respuestas correctas.
-
-Si existen varias frases incorrectas, analízalas
-una por una.
-
-No inventes información.
-
-No afirmes cuál opción seleccionó el estudiante.
-
-No pidas al estudiante que vuelva a proporcionar
-las frases.
-
-Responde en español.
-
-Sé claro, breve y pedagógico.
-
-No menciones variables, JSON, programación
-ni el funcionamiento interno del sistema.
-`;
-
-                const reply =
-                    await consultarGroq(
-                        message,
-                        promptErrorEjercicio,
-                        []
-                    );
 
                 return res.json({
 
                     reply:
-                        reply
+                        "No tengo texto disponible para la diapositiva actual."
 
                 });
 
@@ -1297,7 +985,7 @@ ni el funcionamiento interno del sistema.
 
             /*
             ====================================================
-            PREGUNTA GENERAL
+            PREGUNTA GENERAL → GROQ + MEMORIA
             ====================================================
             */
 
@@ -1306,6 +994,7 @@ ni el funcionamiento interno del sistema.
                     contexto
                 );
 
+
             const reply =
                 await consultarGroq(
                     message,
@@ -1313,12 +1002,14 @@ ni el funcionamiento interno del sistema.
                     historialIA
                 );
 
+
             return res.json({
 
                 reply:
                     reply
 
             });
+
 
         } catch (error) {
 
@@ -1329,6 +1020,7 @@ ni el funcionamiento interno del sistema.
             console.error(
                 error
             );
+
 
             return res.status(500).json({
 
@@ -1352,9 +1044,9 @@ INICIAR SERVIDOR
 const PORT =
     process.env.PORT || 3000;
 
+
 app.listen(
     PORT,
-    "0.0.0.0",
     () => {
 
         console.log(
@@ -1377,12 +1069,7 @@ app.listen(
 
         console.log(
             "Contexto:",
-            "tema, nivel, modulo, seccion, diapositiva, contexto, texto, Vvideo"
-        );
-
-        console.log(
-            "Ejercicio:",
-            "Vcorrect, Vincorrect"
+            "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto"
         );
 
         console.log(
