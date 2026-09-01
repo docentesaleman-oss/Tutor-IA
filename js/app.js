@@ -32,9 +32,6 @@ Las respuestas que Storyline considera correctas.
 Vincorrect:
 Las respuestas que Storyline considera incorrectas.
 
-Vvideo:
-Contiene el texto asociado al video actual.
-
 El tutor NO sabe cuáles seleccionó realmente
 el estudiante.
 ============================================================
@@ -53,8 +50,7 @@ let storylineData = {
     texto: "",
 
     Vcorrect: "",
-    Vincorrect: "",
-    Vvideo: ""
+    Vincorrect: ""
 
 };
 
@@ -118,14 +114,6 @@ function actualizarStoryline(datos) {
     actualizarCampo("Vcorrect");
     actualizarCampo("Vincorrect");
 
-    /*
-    ========================================================
-    CONTENIDO DEL VIDEO
-    ========================================================
-    */
-
-    actualizarCampo("Vvideo");
-
 
     storylineData.tipo =
         datos.tipo || "contenido";
@@ -178,11 +166,6 @@ function actualizarStoryline(datos) {
     console.log(
         "Vincorrect:",
         storylineData.Vincorrect
-    );
-
-    console.log(
-        "Vvideo:",
-        storylineData.Vvideo
     );
 
 }
@@ -459,51 +442,35 @@ window.addEventListener(
     function(event) {
 
         if (!event.data) {
+
             return;
+
         }
 
-        console.log(
-            "===== MENSAJE RECIBIDO DE STORYLINE ====="
-        );
-
-        console.log(
-            event.data
-        );
-
-        /*
-        ====================================================
-        STORYLINE PUEDE ENVIAR LOS DATOS DE DOS FORMAS:
-        
-        1. event.data.datos
-        2. event.data directamente
-        ====================================================
-        */
-
-        let datos = null;
 
         if (
-            event.data.type === "STORYLINE_CONTEXT" &&
-            event.data.datos
+            event.data.type ===
+            "STORYLINE_CONTEXT"
         ) {
 
-            datos = event.data.datos;
+            console.log(
+                "===== MENSAJE RECIBIDO DE STORYLINE ====="
+            );
 
-        } else if (
-            event.data.type === "STORYLINE_CONTEXT"
-        ) {
+            console.log(
+                event.data
+            );
 
-            datos = event.data;
 
-        }
-
-        if (datos) {
-
-            actualizarStoryline(datos);
+            actualizarStoryline(
+                event.data.datos
+            );
 
         }
 
     }
 );
+
 
 /*
 ============================================================
@@ -517,72 +484,20 @@ function solicitarContextoStoryline() {
         "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
     );
 
-    const mensaje = {
-        type: "REQUEST_STORYLINE_CONTEXT"
-    };
 
+    window.parent.postMessage(
 
-    /*
-    ========================================================
-    ENVIAR A LA VENTANA PADRE
-    ========================================================
-    */
+        {
+            type:
+                "REQUEST_STORYLINE_CONTEXT"
+        },
 
-    try {
+        "*"
 
-        window.parent.postMessage(
-            mensaje,
-            "*"
-        );
-
-        console.log(
-            "TUTOR → STORYLINE: solicitud enviada a parent"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "ERROR enviando a parent:",
-            error
-        );
-
-    }
-
-
-    /*
-    ========================================================
-    ENVIAR TAMBIÉN A LA VENTANA SUPERIOR
-    ========================================================
-    */
-
-    try {
-
-        if (
-            window.top &&
-            window.top !== window.parent
-        ) {
-
-            window.top.postMessage(
-                mensaje,
-                "*"
-            );
-
-            console.log(
-                "TUTOR → STORYLINE: solicitud enviada a top"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "No fue posible enviar a top:",
-            error
-        );
-
-    }
+    );
 
 }
+
 
 /*
 ============================================================
@@ -681,16 +596,7 @@ async function sendMessage() {
                 storylineData.Vcorrect,
 
             Vincorrect:
-                storylineData.Vincorrect,
-
-            /*
-            ==================================================
-            CONTENIDO DEL VIDEO
-            ==================================================
-            */
-
-            Vvideo:
-                storylineData.Vvideo
+                storylineData.Vincorrect
 
         };
 
