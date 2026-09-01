@@ -1,3 +1,4 @@
+```javascript
 async function askGPT(text, storylineData) {
 
     try {
@@ -58,6 +59,58 @@ async function askGPT(text, storylineData) {
 
         /*
         ========================================================
+        LIMPIAR CONTEXTO
+        ========================================================
+
+        Solo se envían propiedades que realmente existen
+        y contienen información.
+
+        No se crean Vvideo, Vcorrect o Vincorrect
+        artificialmente.
+        ========================================================
+        */
+
+        const contextoLimpio = {};
+
+
+        if (
+            storylineData &&
+            typeof storylineData === "object"
+        ) {
+
+            for (
+                const [nombre, valor]
+                of Object.entries(storylineData)
+            ) {
+
+                if (
+                    valor !== undefined &&
+                    valor !== null &&
+                    String(valor).trim() !== ""
+                ) {
+
+                    contextoLimpio[nombre] =
+                        String(valor).trim();
+
+                }
+
+            }
+
+        }
+
+
+        console.log(
+            "===== CONTEXTO REAL ENVIADO ====="
+        );
+
+
+        console.log(
+            contextoLimpio
+        );
+
+
+        /*
+        ========================================================
         ENVIAR PREGUNTA + STORYLINE + HISTORIAL
         ========================================================
         */
@@ -80,48 +133,12 @@ async function askGPT(text, storylineData) {
 
                     body: JSON.stringify({
 
-                        message: text,
+                        message:
+                            text,
 
 
-                        storyline: {
-
-                            tema:
-                                storylineData.tema || "",
-
-                            nivel:
-                                storylineData.nivel || "",
-
-                            modulo:
-                                storylineData.modulo || "",
-
-                            seccion:
-                                storylineData.seccion || "",
-
-                            diapositiva:
-                                storylineData.diapositiva || "",
-
-                            contexto:
-                                storylineData.contexto || "",
-
-                            texto:
-                                storylineData.texto || "",
-
-
-                            Vcorrect:
-                                storylineData.Vcorrect || "",
-
-                            Vincorrect:
-                                storylineData.Vincorrect || "",
-
-
-                            Vvideo:
-                                storylineData.Vvideo || "",
-
-
-                            tipo:
-                                storylineData.tipo || ""
-
-                        },
+                        storyline:
+                            contextoLimpio,
 
 
                         history:
@@ -203,3 +220,4 @@ async function askGPT(text, storylineData) {
     }
 
 }
+```
