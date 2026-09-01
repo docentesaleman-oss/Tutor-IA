@@ -459,35 +459,51 @@ window.addEventListener(
     function(event) {
 
         if (!event.data) {
-
             return;
+        }
+
+        console.log(
+            "===== MENSAJE RECIBIDO DE STORYLINE ====="
+        );
+
+        console.log(
+            event.data
+        );
+
+        /*
+        ====================================================
+        STORYLINE PUEDE ENVIAR LOS DATOS DE DOS FORMAS:
+        
+        1. event.data.datos
+        2. event.data directamente
+        ====================================================
+        */
+
+        let datos = null;
+
+        if (
+            event.data.type === "STORYLINE_CONTEXT" &&
+            event.data.datos
+        ) {
+
+            datos = event.data.datos;
+
+        } else if (
+            event.data.type === "STORYLINE_CONTEXT"
+        ) {
+
+            datos = event.data;
 
         }
 
+        if (datos) {
 
-        if (
-            event.data.type ===
-            "STORYLINE_CONTEXT"
-        ) {
-
-            console.log(
-                "===== MENSAJE RECIBIDO DE STORYLINE ====="
-            );
-
-            console.log(
-                event.data
-            );
-
-
-            actualizarStoryline(
-                event.data.datos
-            );
+            actualizarStoryline(datos);
 
         }
 
     }
 );
-
 
 /*
 ============================================================
