@@ -25,6 +25,7 @@ app.use(
 
 app.use(express.static(__dirname));
 
+
 /*
 ============================================================
 PÁGINA PRINCIPAL
@@ -32,10 +33,16 @@ PÁGINA PRINCIPAL
 */
 
 app.get("/", (req, res) => {
+
     res.sendFile(
-        path.join(__dirname, "index.html")
+        path.join(
+            __dirname,
+            "index.html"
+        )
     );
+
 });
+
 
 /*
 ============================================================
@@ -44,15 +51,20 @@ LIMPIAR DATOS
 */
 
 function limpiarCampo(valor) {
+
     if (
         valor === undefined ||
         valor === null
     ) {
+
         return "";
+
     }
 
     return String(valor).trim();
+
 }
+
 
 /*
 ============================================================
@@ -95,13 +107,18 @@ function obtenerContextoStoryline(storyline) {
             );
 
         if (valor !== "") {
-            contexto[nombre] = valor;
+
+            contexto[nombre] =
+                valor;
+
         }
+
     }
+
 
     /*
     ========================================================
-    VARIABLES ESPECIALES
+    VARIABLES DE STORYLINE
     ========================================================
     */
 
@@ -123,23 +140,41 @@ function obtenerContextoStoryline(storyline) {
         datos.vvideo ??
         "";
 
-    if (limpiarCampo(Vcorrect) !== "") {
+
+    if (
+        limpiarCampo(Vcorrect) !== ""
+    ) {
+
         contexto.Vcorrect =
             limpiarCampo(Vcorrect);
+
     }
 
-    if (limpiarCampo(Vincorrect) !== "") {
+
+    if (
+        limpiarCampo(Vincorrect) !== ""
+    ) {
+
         contexto.Vincorrect =
             limpiarCampo(Vincorrect);
+
     }
 
-    if (limpiarCampo(Vvideo) !== "") {
+
+    if (
+        limpiarCampo(Vvideo) !== ""
+    ) {
+
         contexto.Vvideo =
             limpiarCampo(Vvideo);
+
     }
 
+
     return contexto;
+
 }
+
 
 /*
 ============================================================
@@ -219,7 +254,9 @@ function mostrarContexto(contexto) {
     console.log(
         "========================================\n"
     );
+
 }
+
 
 /*
 ============================================================
@@ -237,7 +274,9 @@ function normalizar(texto) {
             ""
         )
         .trim();
+
 }
+
 
 /*
 ============================================================
@@ -258,7 +297,9 @@ function esPreguntaDeModulo(texto) {
         pregunta.includes("nombre del modulo") ||
         pregunta.includes("nombre de modulo")
     );
+
 }
+
 
 function esPreguntaDeNivel(texto) {
 
@@ -270,7 +311,9 @@ function esPreguntaDeNivel(texto) {
         pregunta.includes("que nivel") ||
         pregunta.includes("cual es el nivel")
     );
+
 }
+
 
 function esPreguntaDeTema(texto) {
 
@@ -282,7 +325,9 @@ function esPreguntaDeTema(texto) {
         pregunta.includes("que tema") ||
         pregunta.includes("sobre que tema")
     );
+
 }
+
 
 function esPreguntaDeSeccion(texto) {
 
@@ -294,7 +339,9 @@ function esPreguntaDeSeccion(texto) {
         pregunta.includes("que seccion") ||
         pregunta.includes("cual es la seccion")
     );
+
 }
+
 
 function esPreguntaDeDiapositiva(texto) {
 
@@ -308,7 +355,9 @@ function esPreguntaDeDiapositiva(texto) {
         pregunta.includes("en que pagina") ||
         pregunta.includes("que pagina")
     );
+
 }
+
 
 function esPreguntaDeContexto(texto) {
 
@@ -323,7 +372,9 @@ function esPreguntaDeContexto(texto) {
         pregunta.includes("cual es el contexto") ||
         pregunta.includes("cual es el contexto actual")
     );
+
 }
+
 
 /*
 ============================================================
@@ -337,6 +388,7 @@ function esPreguntaSobreErrorEjercicio(texto) {
         normalizar(texto);
 
     return (
+
         pregunta.includes("porque me quedo mal") ||
         pregunta.includes("por que me quedo mal") ||
         pregunta.includes("porque me quedo") ||
@@ -355,12 +407,15 @@ function esPreguntaSobreErrorEjercicio(texto) {
         pregunta.includes("que hice mal") ||
         pregunta.includes("que esta mal") ||
         pregunta.includes("cual fue el error")
+
     );
+
 }
+
 
 /*
 ============================================================
-PREGUNTA POR TEXTO DEL VIDEO
+PREGUNTA POR TEXTO COMPLETO DEL VIDEO
 ============================================================
 */
 
@@ -370,6 +425,7 @@ function esPreguntaSobreTextoVideo(texto) {
         normalizar(texto);
 
     return (
+
         pregunta.includes("cual es el texto del video") ||
         pregunta.includes("que dice el video") ||
         pregunta.includes("que dice el video completo") ||
@@ -379,8 +435,11 @@ function esPreguntaSobreTextoVideo(texto) {
         pregunta.includes("muestrame el texto completo del video") ||
         pregunta.includes("texto completo del video") ||
         pregunta.includes("transcripcion del video")
+
     );
+
 }
+
 
 /*
 ============================================================
@@ -394,6 +453,7 @@ function esPreguntaSobreContenidoVideo(texto) {
         normalizar(texto);
 
     return (
+
         pregunta.includes("de que trata el video") ||
         pregunta.includes("de que habla el video") ||
         pregunta.includes("que explica el video") ||
@@ -403,20 +463,21 @@ function esPreguntaSobreContenidoVideo(texto) {
         pregunta.includes("que se habla en el video") ||
         pregunta.includes("cual es el contenido del video") ||
         pregunta.includes("sobre que trata el video")
+
     );
+
 }
+
 
 /*
 ============================================================
-PROMPT GENERAL
+CONSTRUIR PROMPT GENERAL
 ============================================================
 */
 
 function construirPrompt(contexto) {
 
-    return `
-
-Eres un tutor virtual de un curso educativo.
+    return `Eres un tutor virtual de un curso educativo.
 
 El contexto recibido proviene directamente
 del contenido actual del curso.
@@ -485,24 +546,24 @@ REGLAS GENERALES
 4. Mantente relacionado con la lección actual.
 
 5. Si el estudiante pregunta sobre el video,
-   utiliza Vvideo.
+utiliza Vvideo.
 
 6. Si el estudiante pregunta por un ejercicio,
-   utiliza los datos del ejercicio.
+utiliza los datos del ejercicio.
 
 7. Nunca inventes qué opción seleccionó
-   el estudiante.
+el estudiante.
 
 8. No menciones variables internas,
-   JSON, programación ni funcionamiento
-   interno del sistema.
+JSON, programación ni funcionamiento
+interno del sistema.
 
 9. Mantén coherencia con el historial.
 
 10. Explica de forma clara y pedagógica.
-
 `;
 }
+
 
 /*
 ============================================================
@@ -516,7 +577,9 @@ function prepararHistorial(
 ) {
 
     if (!Array.isArray(history)) {
+
         return [];
+
     }
 
     let historial =
@@ -535,9 +598,13 @@ function prepararHistorial(
                     );
 
                 return {
-                    role: sender,
-                    content: content
+                    role:
+                        sender,
+
+                    content:
+                        content
                 };
+
             })
             .filter(
                 mensaje =>
@@ -555,12 +622,19 @@ function prepararHistorial(
         normalizar(ultimo.content) ===
             normalizar(preguntaActual)
     ) {
+
         historial =
-            historial.slice(0, -1);
+            historial.slice(
+                0,
+                -1
+            );
+
     }
 
     return historial;
+
 }
+
 
 /*
 ============================================================
@@ -579,66 +653,86 @@ async function consultarGroq(
         throw new Error(
             "GROQ_API_KEY no está configurada."
         );
+
     }
 
     const mensajes = [
+
         {
-            role: "system",
-            content: systemPrompt
+            role:
+                "system",
+
+            content:
+                systemPrompt
+
         }
+
     ];
 
     if (
         Array.isArray(history) &&
         history.length > 0
     ) {
-        mensajes.push(...history);
+
+        mensajes.push(
+            ...history
+        );
+
     }
 
     mensajes.push({
-        role: "user",
-        content: pregunta
+
+        role:
+            "user",
+
+        content:
+            pregunta
+
     });
 
     console.log(
         "===== HISTORIAL ENVIADO A GROQ ====="
     );
 
-    console.log(history);
-
     console.log(
-        "===== TOTAL DE MENSAJES A GROQ ====="
+        history
     );
-
-    console.log(mensajes.length);
 
     const response =
         await fetch(
             "https://api.groq.com/openai/v1/chat/completions",
             {
-                method: "POST",
+
+                method:
+                    "POST",
 
                 headers: {
+
                     "Content-Type":
                         "application/json",
 
                     "Authorization":
                         `Bearer ${process.env.GROQ_API_KEY}`
+
                 },
 
-                body: JSON.stringify({
-                    model:
-                        "openai/gpt-oss-20b",
+                body:
+                    JSON.stringify({
 
-                    messages:
-                        mensajes,
+                        model:
+                            "openai/gpt-oss-20b",
 
-                    temperature:
-                        0.1,
+                        messages:
+                            mensajes,
 
-                    max_tokens:
-                        1000
-                })
+                        temperature:
+                            0.1,
+
+                        max_tokens:
+                            1000
+
+                    })
+
             }
         );
 
@@ -656,6 +750,7 @@ async function consultarGroq(
             "Groq respondió con HTTP " +
             response.status
         );
+
     }
 
     const data =
@@ -680,6 +775,7 @@ async function consultarGroq(
         throw new Error(
             "Groq no devolvió contenido."
         );
+
     }
 
     console.log(
@@ -688,7 +784,9 @@ async function consultarGroq(
     );
 
     return reply;
+
 }
+
 
 /*
 ============================================================
@@ -720,14 +818,18 @@ app.post(
             if (!message) {
 
                 return res.status(400).json({
+
                     reply:
                         "No recibí ninguna pregunta."
+
                 });
+
             }
+
 
             /*
             ====================================================
-            OBTENER CONTEXTO
+            CONTEXTO
             ====================================================
             */
 
@@ -735,6 +837,7 @@ app.post(
                 obtenerContextoStoryline(
                     storyline
                 );
+
 
             /*
             ====================================================
@@ -747,6 +850,7 @@ app.post(
                     history,
                     message
                 );
+
 
             /*
             ====================================================
@@ -775,6 +879,7 @@ app.post(
                 contexto
             );
 
+
             /*
             ====================================================
             MÓDULO
@@ -795,7 +900,9 @@ app.post(
                             : "No tengo disponible el módulo actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -817,7 +924,9 @@ app.post(
                             : "No tengo disponible el nivel actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -839,7 +948,9 @@ app.post(
                             : "No tengo disponible el tema actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -861,7 +972,9 @@ app.post(
                             : "No tengo disponible la sección actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -883,7 +996,9 @@ app.post(
                             : "No tengo disponible la diapositiva actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -904,6 +1019,7 @@ app.post(
                     partes.push(
                         `Contexto: ${contexto.contexto}`
                     );
+
                 }
 
                 if (contexto.texto) {
@@ -911,6 +1027,7 @@ app.post(
                     partes.push(
                         `Contenido: ${contexto.texto}`
                     );
+
                 }
 
                 if (contexto.Vvideo) {
@@ -918,6 +1035,7 @@ app.post(
                     partes.push(
                         `El contenido corresponde a un video sobre: ${contexto.Vvideo}`
                     );
+
                 }
 
                 if (partes.length > 0) {
@@ -930,6 +1048,7 @@ app.post(
                             )
 
                     });
+
                 }
 
                 return res.json({
@@ -938,11 +1057,13 @@ app.post(
                         "No tengo disponible el contexto actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
-            TEXTO COMPLETO DEL VIDEO
+            TEXTO DEL VIDEO
             ====================================================
             */
 
@@ -960,6 +1081,7 @@ app.post(
                             contexto.Vvideo
 
                     });
+
                 }
 
                 return res.json({
@@ -968,7 +1090,9 @@ app.post(
                         "No tengo disponible el texto del video actual."
 
                 });
+
             }
+
 
             /*
             ====================================================
@@ -999,11 +1123,10 @@ app.post(
                             "No tengo disponible el contenido del video actual."
 
                     });
+
                 }
 
-                const promptVideo = `
-
-Eres un tutor virtual de un curso educativo.
+                const promptVideo = `Eres un tutor virtual de un curso educativo.
 
 El estudiante está viendo un video del curso.
 
@@ -1049,7 +1172,6 @@ No menciones variables, JSON, programación,
 Storyline ni el funcionamiento interno del sistema.
 
 Sé claro, directo y pedagógico.
-
 `;
 
                 const reply =
@@ -1060,9 +1182,14 @@ Sé claro, directo y pedagógico.
                     );
 
                 return res.json({
-                    reply: reply
+
+                    reply:
+                        reply
+
                 });
+
             }
+
 
             /*
             ====================================================
@@ -1100,11 +1227,10 @@ Sé claro, directo y pedagógico.
                             "No tengo disponibles las respuestas incorrectas de este ejercicio."
 
                     });
+
                 }
 
-                const promptErrorEjercicio = `
-
-Eres un tutor de inglés.
+                const promptErrorEjercicio = `Eres un tutor de inglés.
 
 El estudiante está realizando un ejercicio de gramática.
 
@@ -1150,7 +1276,6 @@ Sé claro, breve y pedagógico.
 
 No menciones variables, JSON, programación
 ni el funcionamiento interno del sistema.
-
 `;
 
                 const reply =
@@ -1161,9 +1286,14 @@ ni el funcionamiento interno del sistema.
                     );
 
                 return res.json({
-                    reply: reply
+
+                    reply:
+                        reply
+
                 });
+
             }
+
 
             /*
             ====================================================
@@ -1184,7 +1314,10 @@ ni el funcionamiento interno del sistema.
                 );
 
             return res.json({
-                reply: reply
+
+                reply:
+                    reply
+
             });
 
         } catch (error) {
@@ -1193,7 +1326,9 @@ ni el funcionamiento interno del sistema.
                 "===== ERROR /chat ====="
             );
 
-            console.error(error);
+            console.error(
+                error
+            );
 
             return res.status(500).json({
 
@@ -1201,27 +1336,12 @@ ni el funcionamiento interno del sistema.
                     "Ocurrió un error al procesar la pregunta."
 
             });
+
         }
-    }
-);
-
-/*
-============================================================
-HEALTH CHECK
-============================================================
-*/
-
-app.get(
-    "/api/health",
-    (req, res) => {
-
-        res.json({
-            status: "ok",
-            service: "tutor-storyline"
-        });
 
     }
 );
+
 
 /*
 ============================================================
@@ -1248,11 +1368,6 @@ app.listen(
         console.log(
             "Puerto:",
             PORT
-        );
-
-        console.log(
-            "Host:",
-            "0.0.0.0"
         );
 
         console.log(
