@@ -1,223 +1,1892 @@
-```javascript
-async function askGPT(text, storylineData) {
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
-    try {
+const __filename =
+    fileURLToPath(import.meta.url);
 
-        console.log(
-            "===== ENVIANDO AL SERVIDOR ====="
-        );
-
-
-        console.log(
-            "Pregunta:",
-            text
-        );
+const __dirname =
+    path.dirname(__filename);
 
 
-        console.log(
-            "Storyline:",
-            storylineData
-        );
+const app =
+    express();
 
+
+/*
+============================================================
+CONFIGURACIÓN
+============================================================
+*/
+
+app.use(cors());
+
+app.use(
+    express.json({
+        limit: "2mb"
+    })
+);
+
+app.use(
+    express.static(__dirname)
+);
+
+
+/*
+============================================================
+PÁGINA PRINCIPAL
+============================================================
+*/
+
+app.get("/", (req, res) => {
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            "index.html"
+        )
+    );
+
+});
+
+
+/*
+============================================================
+LIMPIAR DATOS
+============================================================
+*/
+
+function limpiarCampo(valor) {
+
+    if (
+        valor === undefined ||
+        valor === null
+    ) {
+
+        return "";
+
+    }
+
+    return String(valor).trim();
+
+}
+
+
+/*
+============================================================
+OBTENER CONTEXTO OFICIAL DE STORYLINE
+
+FUENTE:
+
+vTema
+vNivel
+vModulo
+vSeccion
+vDiapositiva
+vContexto
+vTexto
+Vcorrect
+Vincorrect
+============================================================
+*/
+
+function obtenerContextoStoryline(storyline) {
+
+    /*
+    ========================================================
+    IMPORTANTE
+
+    Aceptamos tanto:
+
+    Vcorrect
+    Vincorrect
+
+    como:
+
+    vCorrect
+    vIncorrect
+
+    Esto evita problemas si algún punto del envío cambia
+    únicamente la mayúscula/minúscula del nombre.
+    ========================================================
+    */
+
+    const Vcorrect =
+        storyline?.Vcorrect ??
+        storyline?.vCorrect ??
+        storyline?.vcorrect ??
+        "";
+
+    const Vincorrect =
+        storyline?.Vincorrect ??
+        storyline?.vIncorrect ??
+        storyline?.vincorrect ??
+        "";
+
+const Vvideo =
+    storyline?.Vvideo ??
+    storyline?.vVideo ??
+    storyline?.vvideo ??
+    "";
+
+    return {
+
+        tema:
+            limpiarCampo(
+                storyline?.tema
+            ),
+
+        nivel:
+            limpiarCampo(
+                storyline?.nivel
+            ),
+
+        modulo:
+            limpiarCampo(
+                storyline?.modulo
+            ),
+
+        seccion:
+            limpiarCampo(
+                storyline?.seccion
+            ),
+
+        diapositiva:
+            limpiarCampo(
+                storyline?.diapositiva
+            ),
+
+        contexto:
+            limpiarCampo(
+                storyline?.contexto
+            ),
+
+        texto:
+            limpiarCampo(
+                storyline?.texto
+            ),
 
         /*
-        ========================================================
-        RECUPERAR HISTORIAL DEL CHAT
-        ========================================================
+        ====================================================
+        RESPUESTAS DEL EJERCICIO
+        ====================================================
         */
 
-        let history = [];
+        Vcorrect:
+            limpiarCampo(
+                Vcorrect
+            ),
+
+        Vincorrect:
+    limpiarCampo(
+        Vincorrect
+    ),
+
+Vvideo:
+    limpiarCampo(
+        Vvideo
+    )
+
+    };
+
+}
 
 
-        try {
+/*
+============================================================
+MOSTRAR CONTEXTO EN CONSOLA
+============================================================
+*/
 
-            history = JSON.parse(
-                localStorage.getItem(
-                    "tutorIA_chatHistory"
-                ) || "[]"
+function mostrarContexto(contexto) {
+
+    console.log(
+        "\n========================================"
+    );
+
+    console.log(
+        "CONTEXTO RECIBIDO DESDE STORYLINE"
+    );
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        "vTema:",
+        contexto.tema
+    );
+
+    console.log(
+        "vNivel:",
+        contexto.nivel
+    );
+
+    console.log(
+        "vModulo:",
+        contexto.modulo
+    );
+
+    console.log(
+        "vSeccion:",
+        contexto.seccion
+    );
+
+    console.log(
+        "vDiapositiva:",
+        contexto.diapositiva
+    );
+
+    console.log(
+        "vContexto:",
+        contexto.contexto
+    );
+
+    console.log(
+        "vTexto:",
+        contexto.texto
+    );
+
+    console.log(
+        "Vcorrect:",
+        contexto.Vcorrect
+    );
+
+    console.log(
+        "Vincorrect:",
+        contexto.Vincorrect
+    );
+
+console.log(
+    "Vvideo:",
+    contexto.Vvideo
+);
+
+    console.log(
+        "========================================\n"
+    );
+
+}
+
+
+/*
+============================================================
+NORMALIZAR TEXTO
+============================================================
+*/
+
+function normalizar(texto) {
+
+    return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .trim();
+
+}
+
+
+/*
+============================================================
+PREGUNTAS DE UBICACIÓN
+============================================================
+*/
+
+function esPreguntaDeModulo(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("en que modulo") ||
+        pregunta.includes("en cual modulo") ||
+        pregunta.includes("que modulo") ||
+        pregunta.includes("cual es el modulo") ||
+        pregunta.includes("nombre del modulo") ||
+        pregunta.includes("nombre de modulo")
+    );
+
+}
+
+
+function esPreguntaDeNivel(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("en que nivel") ||
+        pregunta.includes("que nivel") ||
+        pregunta.includes("cual es el nivel")
+    );
+
+}
+
+
+function esPreguntaDeTema(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("cual es el tema") ||
+        pregunta.includes("que tema") ||
+        pregunta.includes("sobre que tema") ||
+        pregunta === "de que trata"
+    );
+
+}
+
+
+function esPreguntaDeSeccion(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("en que seccion") ||
+        pregunta.includes("que seccion") ||
+        pregunta.includes("cual es la seccion")
+    );
+
+}
+
+
+function esPreguntaDeDiapositiva(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("en que diapositiva") ||
+        pregunta.includes("que diapositiva") ||
+        pregunta.includes("cual es la diapositiva") ||
+        pregunta.includes("en que pagina") ||
+        pregunta.includes("que pagina")
+    );
+
+}
+
+
+function esPreguntaDeContexto(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("que estoy viendo") ||
+        pregunta.includes("que estoy haciendo") ||
+        pregunta.includes("que estamos viendo") ||
+        pregunta.includes("donde estoy")
+    );
+
+}
+
+
+function esPreguntaDeTexto(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("que dice la pantalla") ||
+        pregunta.includes("que hay en pantalla") ||
+        pregunta.includes("que aparece en pantalla") ||
+        pregunta.includes("que dice") ||
+        pregunta.includes("cual es el texto") ||
+        pregunta.includes("que texto aparece")
+    );
+
+}
+
+
+/*
+============================================================
+DETECTAR PREGUNTAS SOBRE EL ERROR DEL EJERCICIO
+============================================================
+*/
+
+function esPreguntaSobreErrorEjercicio(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("porque me quedo mal") ||
+
+        pregunta.includes("por que me quedo mal") ||
+
+        pregunta.includes("porque me quedo") ||
+
+        pregunta.includes("por que me quedo") ||
+
+        pregunta.includes("porque esta mal") ||
+
+        pregunta.includes("por que esta mal") ||
+
+        pregunta.includes("porque esta incorrecta") ||
+
+        pregunta.includes("por que esta incorrecta") ||
+
+        pregunta.includes("porque es incorrecta") ||
+
+        pregunta.includes("por que es incorrecta") ||
+
+        pregunta.includes("por que esta mal mi respuesta") ||
+
+        pregunta.includes("porque esta mal mi respuesta") ||
+
+        pregunta.includes("explicame el error") ||
+
+        pregunta.includes("explicame por que") ||
+
+        pregunta.includes("explica por que") ||
+
+        pregunta.includes("que hice mal") ||
+
+        pregunta.includes("que esta mal") ||
+
+        pregunta.includes("cual fue el error")
+
+    );
+
+}
+
+/*
+============================================================
+PREGUNTA POR EL TEXTO COMPLETO DEL VIDEO
+============================================================
+*/
+
+function esPreguntaSobreTextoVideo(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("cual es el texto del video") ||
+
+        pregunta.includes("que dice el video") ||
+
+        pregunta.includes("que dice el video completo") ||
+
+        pregunta.includes("dame el texto del video") ||
+
+        pregunta.includes("dame el texto completo del video") ||
+
+        pregunta.includes("muestrame el texto del video") ||
+
+        pregunta.includes("muestrame el texto completo del video") ||
+
+        pregunta.includes("texto completo del video") ||
+
+        pregunta.includes("transcripcion del video")
+
+    );
+
+}
+
+
+/*
+============================================================
+PREGUNTA SOBRE EL CONTENIDO DEL VIDEO
+============================================================
+*/
+
+function esPreguntaSobreContenidoVideo(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("de que trata el video") ||
+
+        pregunta.includes("de que habla el video") ||
+
+        pregunta.includes("que explica el video") ||
+
+        pregunta.includes("explicame el video") ||
+
+        pregunta.includes("explica el video") ||
+
+        pregunta.includes("cual es el tema del video") ||
+
+        pregunta.includes("que se habla en el video")
+
+    );
+
+}
+
+/*
+============================================================
+CONSTRUIR PROMPT DE CONTEXTO
+============================================================
+*/
+
+function construirPrompt(contexto) {
+
+    return `
+
+Eres un tutor virtual de un curso educativo.
+
+El contexto que recibes proviene DIRECTAMENTE
+de las variables de Storyline del estudiante.
+
+
+============================================================
+DATOS ACTUALES DEL CURSO
+============================================================
+
+Tema:
+${contexto.tema || "No disponible"}
+
+Nivel:
+${contexto.nivel || "No disponible"}
+
+Módulo:
+${contexto.modulo || "No disponible"}
+
+Sección:
+${contexto.seccion || "No disponible"}
+
+Diapositiva:
+${contexto.diapositiva || "No disponible"}
+
+Contexto:
+${contexto.contexto || "No disponible"}
+
+Texto:
+${contexto.texto || "No disponible"}
+
+
+============================================================
+CONTENIDO DEL VIDEO
+============================================================
+
+Vvideo contiene el texto asociado al video
+que está viendo el estudiante.
+
+Utiliza este contenido como fuente para
+responder preguntas relacionadas con el video.
+
+Vvideo:
+
+${contexto.Vvideo || "No disponible"}
+
+============================================================
+DATOS DEL EJERCICIO
+============================================================
+
+Vcorrect contiene las respuestas que Storyline
+considera CORRECTAS:
+
+${contexto.Vcorrect || "No disponible"}
+
+
+Vincorrect contiene las respuestas que Storyline
+considera INCORRECTAS:
+
+${contexto.Vincorrect || "No disponible"}
+
+
+============================================================
+REGLA ESPECIAL PARA "¿POR QUÉ ME QUEDÓ MAL?"
+============================================================
+
+Cuando el estudiante pregunte:
+
+"¿Por qué me quedó mal?"
+
+"¿Por qué me quedó mal la respuesta?"
+
+"¿Qué hice mal?"
+
+"¿Por qué está mal?"
+
+o haga una pregunta equivalente sobre el error
+del ejercicio:
+
+DEBES ANALIZAR DIRECTAMENTE EL CONTENIDO DE
+Vincorrect.
+
+Vincorrect es la fuente PRINCIPAL para explicar
+el error.
+
+NO necesitas saber qué opción seleccionó
+el estudiante.
+
+NO debes pedirle al estudiante que comparta
+las frases nuevamente.
+
+NO debes responder:
+
+"No tengo disponibles las frases incorrectas."
+
+si Vincorrect contiene información.
+
+NO debes decir:
+
+"necesito saber qué seleccionaste"
+
+"necesito saber qué marcaste"
+
+"compárteme las opciones"
+
+"no puedo saber qué respuesta elegiste"
+
+En cambio:
+
+1. Lee todas las frases de Vincorrect.
+
+2. Analiza cada frase incorrecta.
+
+3. Identifica exactamente qué parte está mal.
+
+4. Explica la regla gramatical, lingüística
+   o de vocabulario correspondiente.
+
+5. Utiliza Vcorrect como referencia para entender
+   la estructura correcta del ejercicio.
+
+6. Si es necesario, muestra la corrección.
+
+7. Si hay varias frases en Vincorrect,
+   analízalas una por una.
+
+8. No inventes respuestas que no estén
+   en los datos recibidos.
+
+9. No afirmes que el estudiante seleccionó
+   una frase específica.
+
+10. No necesitas conocer la selección real
+    del estudiante para explicar por qué
+    las frases de Vincorrect son incorrectas.
+
+
+============================================================
+EJEMPLO DEL TIPO DE ANÁLISIS
+============================================================
+
+Si Vincorrect contiene:
+
+"The woman who daughter goes..."
+
+debes explicar que "who daughter" no expresa
+posesión correctamente y que "whose daughter"
+es la estructura adecuada.
+
+Si Vincorrect contiene:
+
+"The car who is parked..."
+
+debes explicar que "who" se utiliza para personas
+y que para un objeto como "car" corresponde
+normalmente "which" o "that".
+
+Estos ejemplos sirven solamente para mostrar
+el tipo de análisis esperado.
+
+Siempre debes analizar primero los datos reales
+de Vincorrect.
+
+
+============================================================
+REGLAS GENERALES DEL TUTOR
+============================================================
+
+1. Responde siempre en español.
+
+2. Utiliza los datos recibidos como fuente principal
+   para responder sobre el curso.
+
+3. Si el estudiante pregunta en qué módulo está,
+   utiliza exactamente el valor de Módulo.
+
+4. Si pregunta cuál es el tema,
+   utiliza exactamente el valor de Tema.
+
+5. Si pregunta en qué sección está,
+   utiliza exactamente el valor de Sección.
+
+6. Si pregunta qué diapositiva está viendo,
+   utiliza exactamente el valor de Diapositiva.
+
+7. Si pregunta qué está viendo,
+   utiliza Contexto y Texto.
+
+8. Si pide que expliques el contenido,
+   explica el contenido de Texto utilizando
+   Contexto como apoyo.
+
+9. Si pregunta por qué le quedó mal un ejercicio,
+   analiza Vincorrect.
+
+10. Utiliza Vcorrect como referencia para
+    comprender la estructura correcta.
+
+11. Nunca afirmes cuáles respuestas seleccionó
+    el estudiante.
+
+12. Nunca inventes selecciones del estudiante.
+
+13. Mantén coherencia con la conversación anterior.
+
+14. Si el estudiante hace referencia a algo
+    que acaba de preguntar, utiliza el historial
+    de conversación.
+
+15. No inventes información que contradiga
+    los datos recibidos.
+
+16. Si el texto de la diapositiva contiene
+    ejemplos, vocabulario, gramática,
+    preguntas o instrucciones, puedes explicarlos.
+
+17. No menciones variables internas.
+
+18. No menciones JSON.
+
+19. No menciones programación.
+
+20. No menciones Storyline como parte
+    de la respuesta al estudiante.
+
+21. Responde de forma clara y apropiada
+    para el nivel indicado.
+
+22. Prioriza la explicación pedagógica
+    sobre simplemente dar la respuesta.
+
+23. Si Vincorrect contiene varias frases,
+    puedes analizarlas una por una.
+
+24. Si Vcorrect contiene varias frases,
+    utilízalas conjuntamente como referencia
+    para identificar la regla del ejercicio.
+
+25. Cuando Vincorrect tenga contenido,
+    úsalo directamente para explicar
+    el error del ejercicio.
+
+26. Si el estudiante pregunta sobre el contenido
+    del video, utiliza Vvideo como fuente principal.
+
+27. Si pregunta de qué trata el video, explica
+    el contenido utilizando la información de Vvideo.
+
+28. No inventes información sobre el video que
+    no esté respaldada por Vvideo.
+
+29. Si el estudiante solicita el texto completo
+    del video, debe recibir el contenido completo
+    de Vvideo.
+
+`;
+
+
+}
+
+
+/*
+============================================================
+PREPARAR HISTORIAL PARA LA IA
+============================================================
+*/
+
+function prepararHistorial(
+    history,
+    preguntaActual
+) {
+
+    if (!Array.isArray(history)) {
+
+        return [];
+
+    }
+
+
+    let historial =
+        history
+            .slice(-20)
+            .map(mensaje => {
+
+                const sender =
+                    mensaje?.sender === "user"
+                        ? "user"
+                        : "assistant";
+
+
+                const content =
+                    limpiarCampo(
+                        mensaje?.text
+                    );
+
+
+                return {
+
+                    role:
+                        sender,
+
+                    content:
+                        content
+
+                };
+
+            })
+            .filter(mensaje =>
+                mensaje.content !== ""
             );
 
 
-        } catch (error) {
+    const ultimo =
+        historial[
+            historial.length - 1
+        ];
 
-            console.error(
-                "ERROR LEYENDO HISTORIAL:",
-                error
+
+    if (
+        ultimo &&
+        ultimo.role === "user" &&
+        normalizar(ultimo.content) ===
+            normalizar(preguntaActual)
+    ) {
+
+        historial =
+            historial.slice(
+                0,
+                -1
             );
 
+    }
 
-            history = [];
+
+    return historial;
+
+}
+
+
+/*
+============================================================
+LLAMAR A GROQ
+============================================================
+*/
+
+async function consultarGroq(
+    pregunta,
+    systemPrompt,
+    history = []
+) {
+
+    if (!process.env.GROQ_API_KEY) {
+
+        throw new Error(
+            "GROQ_API_KEY no está configurada."
+        );
+
+    }
+
+
+    const mensajes = [
+
+        {
+            role:
+                "system",
+
+            content:
+                systemPrompt
 
         }
 
+    ];
 
-        console.log(
-            "Historial enviado:",
-            history
+
+    /*
+    ========================================================
+    HISTORIAL
+    ========================================================
+    */
+
+    if (
+        Array.isArray(history) &&
+        history.length > 0
+    ) {
+
+        mensajes.push(
+            ...history
+        );
+
+    }
+
+
+    /*
+    ========================================================
+    PREGUNTA ACTUAL
+    ========================================================
+    */
+
+    mensajes.push({
+
+        role:
+            "user",
+
+        content:
+            pregunta
+
+    });
+
+
+    console.log(
+        "===== HISTORIAL ENVIADO A GROQ ====="
+    );
+
+    console.log(
+        history
+    );
+
+
+    console.log(
+        "===== TOTAL DE MENSAJES A GROQ ====="
+    );
+
+    console.log(
+        mensajes.length
+    );
+
+
+    /*
+    ========================================================
+    PETICIÓN A GROQ
+    ========================================================
+    */
+
+    const response =
+        await fetch(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${process.env.GROQ_API_KEY}`
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        model:
+                            "openai/gpt-oss-20b",
+
+                        messages:
+                            mensajes,
+
+                        temperature:
+                            0.1,
+
+                        max_tokens:
+                            1000
+
+                    })
+
+            }
         );
 
 
-        /*
-        ========================================================
-        LIMPIAR CONTEXTO
-        ========================================================
+    /*
+    ========================================================
+    COMPROBAR RESPUESTA
+    ========================================================
+    */
 
-        Solo se envían propiedades que realmente existen
-        y contienen información.
+    if (!response.ok) {
 
-        No se crean Vvideo, Vcorrect o Vincorrect
-        artificialmente.
-        ========================================================
-        */
-
-        const contextoLimpio = {};
+        const error =
+            await response.text();
 
 
-        if (
-            storylineData &&
-            typeof storylineData === "object"
-        ) {
+        console.error(
+            "ERROR GROQ:",
+            error
+        );
 
-            for (
-                const [nombre, valor]
-                of Object.entries(storylineData)
+
+        throw new Error(
+            "Groq respondió con HTTP " +
+            response.status
+        );
+
+    }
+
+
+    const data =
+    await response.json();
+
+console.log(
+    "===== RESPUESTA COMPLETA DE GROQ ====="
+);
+
+console.dir(
+    data,
+    {
+        depth: null
+    }
+);
+
+
+const reply =
+    data?.choices?.[0]?.message?.content?.trim();
+
+
+if (!reply) {
+
+    console.error(
+        "===== GROQ NO DEVOLVIÓ CONTENT ====="
+    );
+
+    console.error(
+        JSON.stringify(
+            data,
+            null,
+            2
+        )
+    );
+
+    throw new Error(
+        "Groq no devolvió contenido."
+    );
+
+}
+
+
+    console.log(
+        "RESPUESTA GROQ:",
+        reply
+    );
+
+
+    return reply;
+
+}
+
+
+/*
+============================================================
+CHAT
+============================================================
+*/
+
+app.post(
+    "/chat",
+    async (req, res) => {
+
+        try {
+
+            const message =
+                limpiarCampo(
+                    req.body?.message
+                );
+
+
+            const storyline =
+                req.body?.storyline || {};
+
+
+            const history =
+                Array.isArray(
+                    req.body?.history
+                )
+                    ? req.body.history
+                    : [];
+
+
+            if (!message) {
+
+                return res.status(400).json({
+
+                    reply:
+                        "No recibí ninguna pregunta."
+
+                });
+
+            }
+
+
+            /*
+            ====================================================
+            OBTENER CONTEXTO
+            ====================================================
+            */
+
+            const contexto =
+                obtenerContextoStoryline(
+                    storyline
+                );
+
+
+            /*
+            ====================================================
+            PREPARAR MEMORIA
+            ====================================================
+            */
+
+            const historialIA =
+                prepararHistorial(
+                    history,
+                    message
+                );
+
+
+            /*
+            ====================================================
+            MOSTRAR INFORMACIÓN
+            ====================================================
+            */
+
+            console.log(
+                "\n\n========================================"
+            );
+
+            console.log(
+                "NUEVA PREGUNTA"
+            );
+
+            console.log(
+                "========================================"
+            );
+
+            console.log(
+                "PREGUNTA:",
+                message
+            );
+
+
+            mostrarContexto(
+                contexto
+            );
+
+
+            console.log(
+                "HISTORIAL RECIBIDO:",
+                history.length,
+                "mensajes"
+            );
+
+
+            console.log(
+                "HISTORIAL UTILIZABLE:",
+                historialIA.length,
+                "mensajes"
+            );
+
+
+            /*
+            ====================================================
+            VERIFICACIÓN ESPECIAL DEL EJERCICIO
+            ====================================================
+            */
+
+            if (
+                esPreguntaSobreErrorEjercicio(
+                    message
+                )
             ) {
 
-                if (
-                    valor !== undefined &&
-                    valor !== null &&
-                    String(valor).trim() !== ""
-                ) {
+                console.log(
+                    "===== PREGUNTA SOBRE ERROR DEL EJERCICIO ====="
+                );
 
-                    contextoLimpio[nombre] =
-                        String(valor).trim();
+                console.log(
+                    "Vcorrect disponible:",
+                    Boolean(
+                        contexto.Vcorrect
+                    )
+                );
+
+                console.log(
+                    "Vincorrect disponible:",
+                    Boolean(
+                        contexto.Vincorrect
+                    )
+                );
+
+                console.log(
+                    "===== VINCORRECT QUE SE ENVIARÁ A GROQ ====="
+                );
+
+                console.log(
+                    contexto.Vincorrect
+                );
+
+                console.log(
+                    "===== VCORRECT QUE SE ENVIARÁ A GROQ ====="
+                );
+
+                console.log(
+                    contexto.Vcorrect
+                );
+
+            }
+
+
+            /*
+            ====================================================
+            RESPUESTAS DIRECTAS DE UBICACIÓN
+            ====================================================
+            */
+
+            if (
+                esPreguntaDeModulo(
+                    message
+                )
+            ) {
+
+                return res.json({
+
+                    reply:
+                        contexto.modulo
+                            ? `Estás en el ${contexto.modulo}.`
+                            : "No tengo disponible el módulo actual."
+
+                });
+
+            }
+
+
+            if (
+                esPreguntaDeNivel(
+                    message
+                )
+            ) {
+
+                return res.json({
+
+                    reply:
+                        contexto.nivel
+                            ? `Estás en el nivel ${contexto.nivel}.`
+                            : "No tengo disponible el nivel actual."
+
+                });
+
+            }
+
+
+            if (
+                esPreguntaDeTema(
+                    message
+                )
+            ) {
+
+                return res.json({
+
+                    reply:
+                        contexto.tema
+                            ? `El tema actual es ${contexto.tema}.`
+                            : "No tengo disponible el tema actual."
+
+                });
+
+            }
+
+
+            if (
+                esPreguntaDeSeccion(
+                    message
+                )
+            ) {
+
+                return res.json({
+
+                    reply:
+                        contexto.seccion
+                            ? `Estás en la sección ${contexto.seccion}.`
+                            : "No tengo disponible la sección actual."
+
+                });
+
+            }
+
+
+            if (
+                esPreguntaDeDiapositiva(
+                    message
+                )
+            ) {
+
+                return res.json({
+
+                    reply:
+                        contexto.diapositiva
+                            ? `Estás en ${contexto.diapositiva}.`
+                            : "No tengo disponible la diapositiva actual."
+
+                });
+
+            }
+
+
+            /*
+            ====================================================
+            PREGUNTAS SOBRE LO QUE ESTÁ EN PANTALLA
+            ====================================================
+            */
+
+            if (
+                esPreguntaDeContexto(
+                    message
+                )
+            ) {
+
+                const respuesta = [
+
+                    contexto.contexto
+                        ? `Contexto: ${contexto.contexto}`
+                        : "",
+
+                    contexto.texto
+                        ? `\nContenido: ${contexto.texto}`
+                        : ""
+
+                ]
+                .filter(Boolean)
+                .join("\n");
+
+
+                if (respuesta) {
+
+                    return res.json({
+
+                        reply:
+                            respuesta
+
+                    });
 
                 }
 
             }
 
-        }
 
+            /*
+            ====================================================
+            TEXTO DE LA DIAPOSITIVA
+            ====================================================
+            */
 
-        console.log(
-            "===== CONTEXTO REAL ENVIADO ====="
-        );
+            if (
+                esPreguntaDeTexto(
+                    message
+                )
+            ) {
 
+                if (
+                    contexto.texto
+                ) {
 
-        console.log(
-            contextoLimpio
-        );
+                    return res.json({
 
+                        reply:
+                            contexto.texto
 
-        /*
-        ========================================================
-        ENVIAR PREGUNTA + STORYLINE + HISTORIAL
-        ========================================================
-        */
-
-        const response =
-            await fetch(
-                "/chat",
-                {
-
-                    method: "POST",
-
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-
-                    body: JSON.stringify({
-
-                        message:
-                            text,
-
-
-                        storyline:
-                            contextoLimpio,
-
-
-                        history:
-                            history
-
-                    })
+                    });
 
                 }
 
-            );
+
+                return res.json({
+
+                    reply:
+                        "No tengo texto disponible para la diapositiva actual."
+
+                });
+
+            }
 
 
-        /*
-        ========================================================
-        COMPROBAR RESPUESTA
-        ========================================================
-        */
+            /*
+============================================================
+PREGUNTA SOBRE ERROR DEL EJERCICIO
+============================================================
 
-        if (!response.ok) {
+TRATAMIENTO ESPECIAL
 
-            console.error(
-                "ERROR HTTP:",
-                response.status
-            );
+Cuando el estudiante pregunta por qué una respuesta
+está mal, analizamos directamente Vincorrect y Vcorrect.
+
+IMPORTANTE:
+NO utilizamos el historial de conversación en este caso,
+para evitar que una respuesta anterior de la IA interfiera
+con el análisis actual.
+============================================================
+*/
+
+if (
+    esPreguntaSobreErrorEjercicio(
+        message
+    )
+) {
+
+    console.log(
+        "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
+    );
+
+    console.log(
+        "Vcorrect:",
+        contexto.Vcorrect
+    );
+
+    console.log(
+        "Vincorrect:",
+        contexto.Vincorrect
+    );
 
 
-            return (
-                "Error del servidor: " +
-                response.status
-            );
+    /*
+    ========================================================
+    COMPROBAR QUE EXISTAN RESPUESTAS INCORRECTAS
+    ========================================================
+    */
 
-        }
+    if (
+        !contexto.Vincorrect
+    ) {
 
-
-        /*
-        ========================================================
-        CONVERTIR RESPUESTA
-        ========================================================
-        */
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "===== RESPUESTA DEL SERVIDOR ====="
+        console.warn(
+            "Vincorrect está vacío."
         );
 
+        return res.json({
 
-        console.log(
-            data
-        );
+            reply:
+                "No tengo disponibles las respuestas incorrectas de este ejercicio."
 
-
-        /*
-        ========================================================
-        DEVOLVER RESPUESTA
-        ========================================================
-        */
-
-        return (
-            data.reply ||
-            "No recibí una respuesta del tutor."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "ERROR AL CONECTAR CON EL SERVIDOR:",
-            error
-        );
-
-
-        return (
-            "Error al conectar con el servidor."
-        );
+        });
 
     }
 
+
+    /*
+    ========================================================
+    PROMPT ESPECIAL
+    ========================================================
+    */
+
+    const promptErrorEjercicio = `
+
+Eres un tutor de inglés.
+
+El estudiante está realizando un ejercicio de gramática.
+
+El estudiante pregunta:
+
+"${message}"
+
+
+============================================================
+RESPUESTAS CORRECTAS DEL EJERCICIO
+============================================================
+
+${contexto.Vcorrect || "No disponible"}
+
+
+============================================================
+RESPUESTAS INCORRECTAS DEL EJERCICIO
+============================================================
+
+${contexto.Vincorrect}
+
+
+============================================================
+TAREA
+============================================================
+
+Debes explicar POR QUÉ las frases de Vincorrect son
+incorrectas.
+
+IMPORTANTE:
+
+Vincorrect contiene las frases que el ejercicio considera
+INCORRECTAS.
+
+Vcorrect contiene las frases que el ejercicio considera
+CORRECTAS.
+
+Debes utilizar ambos grupos para analizar la regla
+gramatical del ejercicio.
+
+
+============================================================
+INSTRUCCIONES
+============================================================
+
+1. Lee cada frase de Vincorrect.
+
+2. Identifica exactamente qué palabra, estructura
+   o elemento gramatical hace que la frase sea incorrecta.
+
+3. Compara la estructura incorrecta con las estructuras
+   correctas presentes en Vcorrect cuando sea útil.
+
+4. Explica la regla gramatical de manera sencilla.
+
+5. Cuando sea posible, muestra cómo debería escribirse
+   correctamente la frase incorrecta.
+
+6. Si hay varias frases en Vincorrect, analiza cada una
+   por separado.
+
+7. No inventes frases que no estén relacionadas con
+   el ejercicio.
+
+8. No digas que no tienes acceso a las frases.
+
+9. No pidas al estudiante que vuelva a proporcionar
+   las opciones.
+
+10. No necesitas saber cuál frase seleccionó realmente
+    el estudiante.
+
+11. NO utilices el historial anterior de la conversación
+    para determinar cuáles son las frases correctas
+    o incorrectas. Utiliza exclusivamente los datos
+    proporcionados arriba.
+
+12. Responde en español.
+
+13. Sé claro y pedagógico.
+
+14. No menciones Vcorrect, Vincorrect, Storyline,
+    programación, variables, JSON ni el funcionamiento
+    interno del sistema.
+
+
+============================================================
+FORMATO DE RESPUESTA
+============================================================
+
+Para cada frase incorrecta utiliza esta estructura:
+
+Frase incorrecta:
+[frase]
+
+¿Qué está mal?
+[explicación concreta]
+
+Forma correcta:
+[frase corregida]
+
+¿Por qué?
+[explicación sencilla de la regla]
+
+
+============================================================
+OBJETIVO
+============================================================
+
+El estudiante debe entender qué error gramatical
+cometió y aprender la regla, no solamente recibir
+la respuesta correcta.
+
+IMPORTANTE:
+
+Responde directamente con la explicación final.
+No escribas ni muestres tu razonamiento interno.
+No dediques espacio a analizar cómo vas a responder.
+
+Sé conciso pero explica claramente cada frase incorrecta.
+
+`;
+
+
+    /*
+    ========================================================
+    LLAMAR A GROQ SIN HISTORIAL
+    ========================================================
+    */
+
+    const reply =
+        await consultarGroq(
+            message,
+            promptErrorEjercicio,
+            []
+        );
+
+
+    console.log(
+        "===== RESPUESTA DEL ANÁLISIS DEL EJERCICIO ====="
+    );
+
+    console.log(
+        reply
+    );
+
+
+    return res.json({
+
+        reply:
+            reply
+
+    });
+
 }
-```
+
+/*
+============================================================
+TEXTO COMPLETO DEL VIDEO
+============================================================
+*/
+
+if (
+    esPreguntaSobreTextoVideo(
+        message
+    )
+) {
+
+    console.log(
+        "===== SOLICITUD DE TEXTO COMPLETO DEL VIDEO ====="
+    );
+
+
+    console.log(
+        "Vvideo disponible:",
+        Boolean(
+            contexto.Vvideo
+        )
+    );
+
+
+    if (
+        contexto.Vvideo
+    ) {
+
+        return res.json({
+
+            reply:
+                contexto.Vvideo
+
+        });
+
+    }
+
+
+    return res.json({
+
+        reply:
+            "No tengo disponible el texto del video actual."
+
+    });
+
+}
+
+/*
+============================================================
+EXPLICAR EL CONTENIDO DEL VIDEO
+============================================================
+*/
+
+if (
+    esPreguntaSobreContenidoVideo(
+        message
+    )
+) {
+
+    console.log(
+        "===== PREGUNTA SOBRE CONTENIDO DEL VIDEO ====="
+    );
+
+
+    if (
+        contexto.Vvideo
+    ) {
+
+        const promptVideo = `
+
+Eres un tutor virtual de un curso educativo.
+
+El estudiante está viendo un video.
+
+Pregunta del estudiante:
+
+"${message}"
+
+
+============================================================
+TEXTO DEL VIDEO
+============================================================
+
+${contexto.Vvideo}
+
+
+============================================================
+INSTRUCCIONES
+============================================================
+
+Responde la pregunta utilizando como fuente
+principal el texto del video.
+
+Si el estudiante pregunta de qué trata el video,
+explica sus ideas principales de manera clara,
+sencilla y pedagógica.
+
+No inventes información que no esté respaldada
+por el texto del video.
+
+No agregues información externa como si hubiera
+aparecido en el video.
+
+Responde siempre en español.
+
+No menciones variables, programación,
+JSON, Storyline ni el funcionamiento interno
+del sistema.
+
+`;
+
+
+        const reply =
+            await consultarGroq(
+                message,
+                promptVideo,
+                historialIA
+            );
+
+
+        return res.json({
+
+            reply:
+                reply
+
+        });
+
+    }
+
+
+    return res.json({
+
+        reply:
+            "No tengo disponible el contenido del video actual."
+
+    });
+
+}
+
+
+
+            /*
+            ====================================================
+            PREGUNTA GENERAL → GROQ + CONTEXTO + MEMORIA
+            ====================================================
+            */
+
+            const systemPrompt =
+                construirPrompt(
+                    contexto
+                );
+
+
+            const reply =
+                await consultarGroq(
+                    message,
+                    systemPrompt,
+                    historialIA
+                );
+
+
+            return res.json({
+
+                reply:
+                    reply
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "===== ERROR /chat ====="
+            );
+
+            console.error(
+                error
+            );
+
+
+            return res.status(500).json({
+
+                reply:
+                    "Ocurrió un error al procesar la pregunta."
+
+            });
+
+        }
+
+    }
+);
+
+
+/*
+============================================================
+INICIAR SERVIDOR
+============================================================
+*/
+
+const PORT =
+    process.env.PORT || 3000;
+
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "TUTOR IA INICIADO"
+        );
+
+        console.log(
+            "Puerto:",
+            PORT
+        );
+
+        console.log(
+            "Modelo:",
+            "openai/gpt-oss-20b"
+        );
+
+        console.log(
+            "Contexto:",
+            "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto, Vvideo"
+        );
+
+        console.log(
+            "Ejercicio:",
+            "Vcorrect, Vincorrect"
+        );
+
+        console.log(
+            "Memoria:",
+            "historial enviado desde localStorage"
+        );
+
+        console.log(
+            "========================================"
+        );
+
+    }
+);
