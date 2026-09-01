@@ -125,6 +125,11 @@ function obtenerContextoStoryline(storyline) {
         storyline?.vincorrect ??
         "";
 
+const Vvideo =
+    storyline?.Vvideo ??
+    storyline?.vVideo ??
+    storyline?.vvideo ??
+    "";
 
     return {
 
@@ -175,9 +180,14 @@ function obtenerContextoStoryline(storyline) {
             ),
 
         Vincorrect:
-            limpiarCampo(
-                Vincorrect
-            )
+    limpiarCampo(
+        Vincorrect
+    ),
+
+Vvideo:
+    limpiarCampo(
+        Vvideo
+    )
 
     };
 
@@ -248,6 +258,11 @@ function mostrarContexto(contexto) {
         "Vincorrect:",
         contexto.Vincorrect
     );
+
+console.log(
+    "Vvideo:",
+    contexto.Vvideo
+);
 
     console.log(
         "========================================\n"
@@ -322,7 +337,7 @@ function esPreguntaDeTema(texto) {
         pregunta.includes("cual es el tema") ||
         pregunta.includes("que tema") ||
         pregunta.includes("sobre que tema") ||
-        pregunta.includes("de que trata")
+        pregunta === "de que trata"
     );
 
 }
@@ -443,6 +458,72 @@ function esPreguntaSobreErrorEjercicio(texto) {
 
 }
 
+/*
+============================================================
+PREGUNTA POR EL TEXTO COMPLETO DEL VIDEO
+============================================================
+*/
+
+function esPreguntaSobreTextoVideo(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("cual es el texto del video") ||
+
+        pregunta.includes("que dice el video") ||
+
+        pregunta.includes("que dice el video completo") ||
+
+        pregunta.includes("dame el texto del video") ||
+
+        pregunta.includes("dame el texto completo del video") ||
+
+        pregunta.includes("muestrame el texto del video") ||
+
+        pregunta.includes("muestrame el texto completo del video") ||
+
+        pregunta.includes("texto completo del video") ||
+
+        pregunta.includes("transcripcion del video")
+
+    );
+
+}
+
+
+/*
+============================================================
+PREGUNTA SOBRE EL CONTENIDO DEL VIDEO
+============================================================
+*/
+
+function esPreguntaSobreContenidoVideo(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("de que trata el video") ||
+
+        pregunta.includes("de que habla el video") ||
+
+        pregunta.includes("que explica el video") ||
+
+        pregunta.includes("explicame el video") ||
+
+        pregunta.includes("explica el video") ||
+
+        pregunta.includes("cual es el tema del video") ||
+
+        pregunta.includes("que se habla en el video")
+
+    );
+
+}
 
 /*
 ============================================================
@@ -485,6 +566,20 @@ ${contexto.contexto || "No disponible"}
 Texto:
 ${contexto.texto || "No disponible"}
 
+
+============================================================
+CONTENIDO DEL VIDEO
+============================================================
+
+Vvideo contiene el texto asociado al video
+que está viendo el estudiante.
+
+Utiliza este contenido como fuente para
+responder preguntas relacionadas con el video.
+
+Vvideo:
+
+${contexto.Vvideo || "No disponible"}
 
 ============================================================
 DATOS DEL EJERCICIO
@@ -681,6 +776,19 @@ REGLAS GENERALES DEL TUTOR
 25. Cuando Vincorrect tenga contenido,
     úsalo directamente para explicar
     el error del ejercicio.
+
+26. Si el estudiante pregunta sobre el contenido
+    del video, utiliza Vvideo como fuente principal.
+
+27. Si pregunta de qué trata el video, explica
+    el contenido utilizando la información de Vvideo.
+
+28. No inventes información sobre el video que
+    no esté respaldada por Vvideo.
+
+29. Si el estudiante solicita el texto completo
+    del video, debe recibir el contenido completo
+    de Vvideo.
 
 `;
 
@@ -1535,6 +1643,147 @@ Sé conciso pero explica claramente cada frase incorrecta.
 
 }
 
+/*
+============================================================
+TEXTO COMPLETO DEL VIDEO
+============================================================
+*/
+
+if (
+    esPreguntaSobreTextoVideo(
+        message
+    )
+) {
+
+    console.log(
+        "===== SOLICITUD DE TEXTO COMPLETO DEL VIDEO ====="
+    );
+
+
+    console.log(
+        "Vvideo disponible:",
+        Boolean(
+            contexto.Vvideo
+        )
+    );
+
+
+    if (
+        contexto.Vvideo
+    ) {
+
+        return res.json({
+
+            reply:
+                contexto.Vvideo
+
+        });
+
+    }
+
+
+    return res.json({
+
+        reply:
+            "No tengo disponible el texto del video actual."
+
+    });
+
+}
+
+/*
+============================================================
+EXPLICAR EL CONTENIDO DEL VIDEO
+============================================================
+*/
+
+if (
+    esPreguntaSobreContenidoVideo(
+        message
+    )
+) {
+
+    console.log(
+        "===== PREGUNTA SOBRE CONTENIDO DEL VIDEO ====="
+    );
+
+
+    if (
+        contexto.Vvideo
+    ) {
+
+        const promptVideo = `
+
+Eres un tutor virtual de un curso educativo.
+
+El estudiante está viendo un video.
+
+Pregunta del estudiante:
+
+"${message}"
+
+
+============================================================
+TEXTO DEL VIDEO
+============================================================
+
+${contexto.Vvideo}
+
+
+============================================================
+INSTRUCCIONES
+============================================================
+
+Responde la pregunta utilizando como fuente
+principal el texto del video.
+
+Si el estudiante pregunta de qué trata el video,
+explica sus ideas principales de manera clara,
+sencilla y pedagógica.
+
+No inventes información que no esté respaldada
+por el texto del video.
+
+No agregues información externa como si hubiera
+aparecido en el video.
+
+Responde siempre en español.
+
+No menciones variables, programación,
+JSON, Storyline ni el funcionamiento interno
+del sistema.
+
+`;
+
+
+        const reply =
+            await consultarGroq(
+                message,
+                promptVideo,
+                historialIA
+            );
+
+
+        return res.json({
+
+            reply:
+                reply
+
+        });
+
+    }
+
+
+    return res.json({
+
+        reply:
+            "No tengo disponible el contenido del video actual."
+
+    });
+
+}
+
+
 
             /*
             ====================================================
@@ -1622,7 +1871,7 @@ app.listen(
 
         console.log(
             "Contexto:",
-            "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto"
+            "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto, Vvideo"
         );
 
         console.log(

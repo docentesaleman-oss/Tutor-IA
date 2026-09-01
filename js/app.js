@@ -32,6 +32,9 @@ Las respuestas que Storyline considera correctas.
 Vincorrect:
 Las respuestas que Storyline considera incorrectas.
 
+Vvideo:
+Contiene el texto asociado al video actual.
+
 El tutor NO sabe cuáles seleccionó realmente
 el estudiante.
 ============================================================
@@ -50,7 +53,8 @@ let storylineData = {
     texto: "",
 
     Vcorrect: "",
-    Vincorrect: ""
+    Vincorrect: "",
+    Vvideo: ""
 
 };
 
@@ -114,6 +118,14 @@ function actualizarStoryline(datos) {
     actualizarCampo("Vcorrect");
     actualizarCampo("Vincorrect");
 
+    /*
+    ========================================================
+    CONTENIDO DEL VIDEO
+    ========================================================
+    */
+
+    actualizarCampo("Vvideo");
+
 
     storylineData.tipo =
         datos.tipo || "contenido";
@@ -166,6 +178,11 @@ function actualizarStoryline(datos) {
     console.log(
         "Vincorrect:",
         storylineData.Vincorrect
+    );
+
+    console.log(
+        "Vvideo:",
+        storylineData.Vvideo
     );
 
 }
@@ -596,7 +613,16 @@ async function sendMessage() {
                 storylineData.Vcorrect,
 
             Vincorrect:
-                storylineData.Vincorrect
+                storylineData.Vincorrect,
+
+            /*
+            ==================================================
+            CONTENIDO DEL VIDEO
+            ==================================================
+            */
+
+            Vvideo:
+                storylineData.Vvideo
 
         };
 
