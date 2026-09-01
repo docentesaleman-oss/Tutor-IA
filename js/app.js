@@ -50,7 +50,8 @@ let storylineData = {
     texto: "",
 
     Vcorrect: "",
-    Vincorrect: ""
+Vincorrect: "",
+Vvideo: ""
 
 };
 
@@ -111,12 +112,14 @@ function actualizarStoryline(datos) {
     ========================================================
     */
 
-    actualizarCampo("Vcorrect");
-    actualizarCampo("Vincorrect");
+   actualizarCampo("Vcorrect");
+actualizarCampo("Vincorrect");
+
+actualizarCampo("Vvideo");
 
 
-    storylineData.tipo =
-        datos.tipo || "contenido";
+storylineData.tipo =
+    datos.tipo || "contenido";
 
 
     console.log(
@@ -167,6 +170,11 @@ function actualizarStoryline(datos) {
         "Vincorrect:",
         storylineData.Vincorrect
     );
+
+console.log(
+    "Vvideo:",
+    storylineData.Vvideo
+);
 
 }
 
@@ -562,43 +570,46 @@ async function sendMessage() {
 
         const contextoParaPregunta = {
 
-            tipo:
-                storylineData.tipo,
+    tipo:
+        storylineData.tipo,
 
-            tema:
-                storylineData.tema,
+    tema:
+        storylineData.tema,
 
-            nivel:
-                storylineData.nivel,
+    nivel:
+        storylineData.nivel,
 
-            modulo:
-                storylineData.modulo,
+    modulo:
+        storylineData.modulo,
 
-            seccion:
-                storylineData.seccion,
+    seccion:
+        storylineData.seccion,
 
-            diapositiva:
-                storylineData.diapositiva,
+    diapositiva:
+        storylineData.diapositiva,
 
-            contexto:
-                storylineData.contexto,
+    contexto:
+        storylineData.contexto,
 
-            texto:
-                storylineData.texto,
+    texto:
+        storylineData.texto,
 
-            /*
-            ==================================================
-            RESPUESTAS DEL EJERCICIO
-            ==================================================
-            */
+    /*
+    ==================================================
+    RESPUESTAS DEL EJERCICIO
+    ==================================================
+    */
 
-            Vcorrect:
-                storylineData.Vcorrect,
+    Vcorrect:
+        storylineData.Vcorrect,
 
-            Vincorrect:
-                storylineData.Vincorrect
+    Vincorrect:
+        storylineData.Vincorrect,
 
-        };
+    Vvideo:
+        storylineData.Vvideo
+
+};
 
 
         console.log(

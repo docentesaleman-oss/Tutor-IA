@@ -102,6 +102,9 @@ async function askGPT(text, storylineData) {
     Vincorrect:
         storylineData.Vincorrect || "",
 
+    Vvideo:
+        storylineData.Vvideo || "",
+
     tipo:
         storylineData.tipo || ""
 
