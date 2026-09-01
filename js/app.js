@@ -1,3 +1,4 @@
+```javascript
 const prompt = document.getElementById("prompt");
 const send = document.getElementById("send");
 const clearChat = document.getElementById("clearChat");
@@ -32,6 +33,9 @@ Las respuestas que Storyline considera correctas.
 Vincorrect:
 Las respuestas que Storyline considera incorrectas.
 
+Vvideo:
+Contiene el texto asociado al video actual.
+
 El tutor NO sabe cuáles seleccionó realmente
 el estudiante.
 ============================================================
@@ -50,7 +54,8 @@ let storylineData = {
     texto: "",
 
     Vcorrect: "",
-    Vincorrect: ""
+    Vincorrect: "",
+    Vvideo: ""
 
 };
 
@@ -115,6 +120,21 @@ function actualizarStoryline(datos) {
     actualizarCampo("Vincorrect");
 
 
+    /*
+    ========================================================
+    CONTENIDO DEL VIDEO
+    ========================================================
+    */
+
+    actualizarCampo("Vvideo");
+
+
+    /*
+    ========================================================
+    TIPO DE CONTENIDO
+    ========================================================
+    */
+
     storylineData.tipo =
         datos.tipo || "contenido";
 
@@ -166,6 +186,11 @@ function actualizarStoryline(datos) {
     console.log(
         "Vincorrect:",
         storylineData.Vincorrect
+    );
+
+    console.log(
+        "Vvideo:",
+        storylineData.Vvideo
     );
 
 }
@@ -596,7 +621,16 @@ async function sendMessage() {
                 storylineData.Vcorrect,
 
             Vincorrect:
-                storylineData.Vincorrect
+                storylineData.Vincorrect,
+
+            /*
+            ==================================================
+            CONTENIDO DEL VIDEO
+            ==================================================
+            */
+
+            Vvideo:
+                storylineData.Vvideo
 
         };
 
@@ -607,6 +641,38 @@ async function sendMessage() {
 
         console.log(
             contextoParaPregunta
+        );
+
+
+        /*
+        ====================================================
+        VERIFICAR DATOS ESPECIALES
+        ====================================================
+        */
+
+        console.log(
+            "===== DATOS ESPECIALES ====="
+        );
+
+        console.log(
+            "Vcorrect disponible:",
+            Boolean(
+                contextoParaPregunta.Vcorrect
+            )
+        );
+
+        console.log(
+            "Vincorrect disponible:",
+            Boolean(
+                contextoParaPregunta.Vincorrect
+            )
+        );
+
+        console.log(
+            "Vvideo disponible:",
+            Boolean(
+                contextoParaPregunta.Vvideo
+            )
         );
 
 
@@ -725,3 +791,4 @@ window.addEventListener(
 
     }
 );
+```
