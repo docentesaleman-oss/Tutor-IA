@@ -50,8 +50,7 @@ let storylineData = {
     texto: "",
 
     Vcorrect: "",
-Vincorrect: "",
-Vvideo: ""
+    Vincorrect: ""
 
 };
 
@@ -112,14 +111,12 @@ function actualizarStoryline(datos) {
     ========================================================
     */
 
-   actualizarCampo("Vcorrect");
-actualizarCampo("Vincorrect");
-
-actualizarCampo("Vvideo");
+    actualizarCampo("Vcorrect");
+    actualizarCampo("Vincorrect");
 
 
-storylineData.tipo =
-    datos.tipo || "contenido";
+    storylineData.tipo =
+        datos.tipo || "contenido";
 
 
     console.log(
@@ -170,11 +167,6 @@ storylineData.tipo =
         "Vincorrect:",
         storylineData.Vincorrect
     );
-
-console.log(
-    "Vvideo:",
-    storylineData.Vvideo
-);
 
 }
 
@@ -456,15 +448,6 @@ window.addEventListener(
         }
 
 
-        console.log(
-            "===== MENSAJE POSTMESSAGE RECIBIDO ====="
-        );
-
-        console.log(
-            event.data
-        );
-
-
         if (
             event.data.type ===
             "STORYLINE_CONTEXT"
@@ -474,34 +457,20 @@ window.addEventListener(
                 "===== MENSAJE RECIBIDO DE STORYLINE ====="
             );
 
-
-            const datos =
-                event.data.datos;
-
-
             console.log(
-                "DATOS RECIBIDOS:",
-                datos
+                event.data
             );
 
 
             actualizarStoryline(
-                datos
-            );
-
-
-            console.log(
-                "===== VVIDEO DESPUÉS DE ACTUALIZAR ====="
-            );
-
-            console.log(
-                storylineData.Vvideo
+                event.data.datos
             );
 
         }
 
     }
 );
+
 
 /*
 ============================================================
@@ -593,46 +562,43 @@ async function sendMessage() {
 
         const contextoParaPregunta = {
 
-    tipo:
-        storylineData.tipo,
+            tipo:
+                storylineData.tipo,
 
-    tema:
-        storylineData.tema,
+            tema:
+                storylineData.tema,
 
-    nivel:
-        storylineData.nivel,
+            nivel:
+                storylineData.nivel,
 
-    modulo:
-        storylineData.modulo,
+            modulo:
+                storylineData.modulo,
 
-    seccion:
-        storylineData.seccion,
+            seccion:
+                storylineData.seccion,
 
-    diapositiva:
-        storylineData.diapositiva,
+            diapositiva:
+                storylineData.diapositiva,
 
-    contexto:
-        storylineData.contexto,
+            contexto:
+                storylineData.contexto,
 
-    texto:
-        storylineData.texto,
+            texto:
+                storylineData.texto,
 
-    /*
-    ==================================================
-    RESPUESTAS DEL EJERCICIO
-    ==================================================
-    */
+            /*
+            ==================================================
+            RESPUESTAS DEL EJERCICIO
+            ==================================================
+            */
 
-    Vcorrect:
-        storylineData.Vcorrect,
+            Vcorrect:
+                storylineData.Vcorrect,
 
-    Vincorrect:
-        storylineData.Vincorrect,
+            Vincorrect:
+                storylineData.Vincorrect
 
-    Vvideo:
-        storylineData.Vvideo
-
-};
+        };
 
 
         console.log(
