@@ -603,6 +603,10 @@ async function sendMessage() {
             text
         );
 
+console.log("===== STORYLINE DATA ANTES DE ENVIAR =====");
+console.log(storylineData);
+console.log("Vvideo directo:", storylineData.Vvideo);
+
 
         /*
         ====================================================
