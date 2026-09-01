@@ -48,16 +48,64 @@ ACTUALIZAR CONTEXTO DE STORYLINE
 function actualizarStoryline(datos) {
 
     if (!datos || typeof datos !== "object") {
-
-        console.warn(
-            "STORYLINE → datos inválidos:",
-            datos
-        );
-
+        console.warn("STORYLINE → datos inválidos:", datos);
         return;
-
     }
 
+    console.log("===== DATOS RECIBIDOS DE STORYLINE =====");
+    console.log(datos);
+
+    /*
+    ========================================================
+    NO SOBRESCRIBIR INFORMACIÓN VÁLIDA CON CAMPOS VACÍOS
+    ========================================================
+    */
+
+    const campos = [
+        "tema",
+        "nivel",
+        "modulo",
+        "seccion",
+        "diapositiva",
+        "contexto",
+        "texto",
+        "Vcorrect",
+        "Vincorrect",
+        "Vvideo",
+        "tipo"
+    ];
+
+    campos.forEach(function (campo) {
+
+        if (
+            datos[campo] !== undefined &&
+            datos[campo] !== null
+        ) {
+
+            const valor = String(datos[campo]).trim();
+
+            /*
+            SOLO actualizar si realmente hay información.
+            Un "" NO puede borrar información existente.
+            */
+
+            if (valor !== "") {
+                storylineData[campo] = valor;
+            }
+        }
+    });
+
+    /*
+    ========================================================
+    MOSTRAR RESULTADO REAL
+    ========================================================
+    */
+
+    console.log("===== STORYLINE DATA ACTUALIZADO =====");
+    console.log(storylineData);
+
+    console.log("Vvideo:", storylineData.Vvideo);
+}
 
     /*
     ========================================================
