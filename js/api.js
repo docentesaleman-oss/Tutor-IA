@@ -10,7 +10,6 @@ const __filename =
 const __dirname =
     path.dirname(__filename);
 
-
 const app =
     express();
 
@@ -77,41 +76,10 @@ function limpiarCampo(valor) {
 /*
 ============================================================
 OBTENER CONTEXTO OFICIAL DE STORYLINE
-
-FUENTE:
-
-vTema
-vNivel
-vModulo
-vSeccion
-vDiapositiva
-vContexto
-vTexto
-Vcorrect
-Vincorrect
 ============================================================
 */
 
 function obtenerContextoStoryline(storyline) {
-
-    /*
-    ========================================================
-    IMPORTANTE
-
-    Aceptamos tanto:
-
-    Vcorrect
-    Vincorrect
-
-    como:
-
-    vCorrect
-    vIncorrect
-
-    Esto evita problemas si algún punto del envío cambia
-    únicamente la mayúscula/minúscula del nombre.
-    ========================================================
-    */
 
     const Vcorrect =
         storyline?.Vcorrect ??
@@ -125,11 +93,12 @@ function obtenerContextoStoryline(storyline) {
         storyline?.vincorrect ??
         "";
 
-const Vvideo =
-    storyline?.Vvideo ??
-    storyline?.vVideo ??
-    storyline?.vvideo ??
-    "";
+    const Vvideo =
+        storyline?.Vvideo ??
+        storyline?.vVideo ??
+        storyline?.vvideo ??
+        "";
+
 
     return {
 
@@ -168,26 +137,20 @@ const Vvideo =
                 storyline?.texto
             ),
 
-        /*
-        ====================================================
-        RESPUESTAS DEL EJERCICIO
-        ====================================================
-        */
-
         Vcorrect:
             limpiarCampo(
                 Vcorrect
             ),
 
         Vincorrect:
-    limpiarCampo(
-        Vincorrect
-    ),
+            limpiarCampo(
+                Vincorrect
+            ),
 
-Vvideo:
-    limpiarCampo(
-        Vvideo
-    )
+        Vvideo:
+            limpiarCampo(
+                Vvideo
+            )
 
     };
 
@@ -196,7 +159,7 @@ Vvideo:
 
 /*
 ============================================================
-MOSTRAR CONTEXTO EN CONSOLA
+MOSTRAR CONTEXTO
 ============================================================
 */
 
@@ -259,10 +222,10 @@ function mostrarContexto(contexto) {
         contexto.Vincorrect
     );
 
-console.log(
-    "Vvideo:",
-    contexto.Vvideo
-);
+    console.log(
+        "Vvideo:",
+        contexto.Vvideo
+    );
 
     console.log(
         "========================================\n"
@@ -407,7 +370,7 @@ function esPreguntaDeTexto(texto) {
 
 /*
 ============================================================
-DETECTAR PREGUNTAS SOBRE EL ERROR DEL EJERCICIO
+PREGUNTA SOBRE ERROR DEL EJERCICIO
 ============================================================
 */
 
@@ -419,48 +382,32 @@ function esPreguntaSobreErrorEjercicio(texto) {
     return (
 
         pregunta.includes("porque me quedo mal") ||
-
         pregunta.includes("por que me quedo mal") ||
-
         pregunta.includes("porque me quedo") ||
-
         pregunta.includes("por que me quedo") ||
-
         pregunta.includes("porque esta mal") ||
-
         pregunta.includes("por que esta mal") ||
-
         pregunta.includes("porque esta incorrecta") ||
-
         pregunta.includes("por que esta incorrecta") ||
-
         pregunta.includes("porque es incorrecta") ||
-
         pregunta.includes("por que es incorrecta") ||
-
         pregunta.includes("por que esta mal mi respuesta") ||
-
         pregunta.includes("porque esta mal mi respuesta") ||
-
         pregunta.includes("explicame el error") ||
-
         pregunta.includes("explicame por que") ||
-
         pregunta.includes("explica por que") ||
-
         pregunta.includes("que hice mal") ||
-
         pregunta.includes("que esta mal") ||
-
         pregunta.includes("cual fue el error")
 
     );
 
 }
 
+
 /*
 ============================================================
-PREGUNTA POR EL TEXTO COMPLETO DEL VIDEO
+TEXTO COMPLETO DEL VIDEO
 ============================================================
 */
 
@@ -472,21 +419,13 @@ function esPreguntaSobreTextoVideo(texto) {
     return (
 
         pregunta.includes("cual es el texto del video") ||
-
         pregunta.includes("que dice el video") ||
-
         pregunta.includes("que dice el video completo") ||
-
         pregunta.includes("dame el texto del video") ||
-
         pregunta.includes("dame el texto completo del video") ||
-
         pregunta.includes("muestrame el texto del video") ||
-
         pregunta.includes("muestrame el texto completo del video") ||
-
         pregunta.includes("texto completo del video") ||
-
         pregunta.includes("transcripcion del video")
 
     );
@@ -496,7 +435,7 @@ function esPreguntaSobreTextoVideo(texto) {
 
 /*
 ============================================================
-PREGUNTA SOBRE EL CONTENIDO DEL VIDEO
+CONTENIDO DEL VIDEO
 ============================================================
 */
 
@@ -508,26 +447,21 @@ function esPreguntaSobreContenidoVideo(texto) {
     return (
 
         pregunta.includes("de que trata el video") ||
-
         pregunta.includes("de que habla el video") ||
-
         pregunta.includes("que explica el video") ||
-
         pregunta.includes("explicame el video") ||
-
         pregunta.includes("explica el video") ||
-
         pregunta.includes("cual es el tema del video") ||
-
         pregunta.includes("que se habla en el video")
 
     );
 
 }
 
+
 /*
 ============================================================
-CONSTRUIR PROMPT DE CONTEXTO
+CONSTRUIR PROMPT
 ============================================================
 */
 
@@ -537,8 +471,8 @@ function construirPrompt(contexto) {
 
 Eres un tutor virtual de un curso educativo.
 
-El contexto que recibes proviene DIRECTAMENTE
-de las variables de Storyline del estudiante.
+El contexto proviene directamente de las
+variables actuales del curso.
 
 
 ============================================================
@@ -571,234 +505,66 @@ ${contexto.texto || "No disponible"}
 CONTENIDO DEL VIDEO
 ============================================================
 
-Vvideo contiene el texto asociado al video
-que está viendo el estudiante.
-
-Utiliza este contenido como fuente para
-responder preguntas relacionadas con el video.
-
-Vvideo:
-
 ${contexto.Vvideo || "No disponible"}
+
 
 ============================================================
 DATOS DEL EJERCICIO
 ============================================================
 
-Vcorrect contiene las respuestas que Storyline
-considera CORRECTAS:
+RESPUESTAS CORRECTAS:
 
 ${contexto.Vcorrect || "No disponible"}
 
 
-Vincorrect contiene las respuestas que Storyline
-considera INCORRECTAS:
+RESPUESTAS INCORRECTAS:
 
 ${contexto.Vincorrect || "No disponible"}
 
 
 ============================================================
-REGLA ESPECIAL PARA "¿POR QUÉ ME QUEDÓ MAL?"
-============================================================
-
-Cuando el estudiante pregunte:
-
-"¿Por qué me quedó mal?"
-
-"¿Por qué me quedó mal la respuesta?"
-
-"¿Qué hice mal?"
-
-"¿Por qué está mal?"
-
-o haga una pregunta equivalente sobre el error
-del ejercicio:
-
-DEBES ANALIZAR DIRECTAMENTE EL CONTENIDO DE
-Vincorrect.
-
-Vincorrect es la fuente PRINCIPAL para explicar
-el error.
-
-NO necesitas saber qué opción seleccionó
-el estudiante.
-
-NO debes pedirle al estudiante que comparta
-las frases nuevamente.
-
-NO debes responder:
-
-"No tengo disponibles las frases incorrectas."
-
-si Vincorrect contiene información.
-
-NO debes decir:
-
-"necesito saber qué seleccionaste"
-
-"necesito saber qué marcaste"
-
-"compárteme las opciones"
-
-"no puedo saber qué respuesta elegiste"
-
-En cambio:
-
-1. Lee todas las frases de Vincorrect.
-
-2. Analiza cada frase incorrecta.
-
-3. Identifica exactamente qué parte está mal.
-
-4. Explica la regla gramatical, lingüística
-   o de vocabulario correspondiente.
-
-5. Utiliza Vcorrect como referencia para entender
-   la estructura correcta del ejercicio.
-
-6. Si es necesario, muestra la corrección.
-
-7. Si hay varias frases en Vincorrect,
-   analízalas una por una.
-
-8. No inventes respuestas que no estén
-   en los datos recibidos.
-
-9. No afirmes que el estudiante seleccionó
-   una frase específica.
-
-10. No necesitas conocer la selección real
-    del estudiante para explicar por qué
-    las frases de Vincorrect son incorrectas.
-
-
-============================================================
-EJEMPLO DEL TIPO DE ANÁLISIS
-============================================================
-
-Si Vincorrect contiene:
-
-"The woman who daughter goes..."
-
-debes explicar que "who daughter" no expresa
-posesión correctamente y que "whose daughter"
-es la estructura adecuada.
-
-Si Vincorrect contiene:
-
-"The car who is parked..."
-
-debes explicar que "who" se utiliza para personas
-y que para un objeto como "car" corresponde
-normalmente "which" o "that".
-
-Estos ejemplos sirven solamente para mostrar
-el tipo de análisis esperado.
-
-Siempre debes analizar primero los datos reales
-de Vincorrect.
-
-
-============================================================
-REGLAS GENERALES DEL TUTOR
+REGLAS
 ============================================================
 
 1. Responde siempre en español.
 
-2. Utiliza los datos recibidos como fuente principal
-   para responder sobre el curso.
+2. Utiliza el contexto recibido como fuente principal.
 
-3. Si el estudiante pregunta en qué módulo está,
-   utiliza exactamente el valor de Módulo.
+3. No inventes información.
 
-4. Si pregunta cuál es el tema,
-   utiliza exactamente el valor de Tema.
+4. Si preguntan por el ejercicio,
+   utiliza Vcorrect y Vincorrect.
 
-5. Si pregunta en qué sección está,
-   utiliza exactamente el valor de Sección.
+5. Si preguntan por qué una respuesta está mal,
+   analiza Vincorrect directamente.
 
-6. Si pregunta qué diapositiva está viendo,
-   utiliza exactamente el valor de Diapositiva.
+6. Si preguntan sobre el video,
+   utiliza Vvideo como fuente principal.
 
-7. Si pregunta qué está viendo,
-   utiliza Contexto y Texto.
+7. Si solicitan el texto completo del video,
+   devuelve Vvideo completo.
 
-8. Si pide que expliques el contenido,
-   explica el contenido de Texto utilizando
-   Contexto como apoyo.
+8. Si preguntan de qué trata el video,
+   explica sus ideas principales usando Vvideo.
 
-9. Si pregunta por qué le quedó mal un ejercicio,
-   analiza Vincorrect.
+9. No afirmes qué opción seleccionó el estudiante.
 
-10. Utiliza Vcorrect como referencia para
-    comprender la estructura correcta.
+10. Mantén las respuestas dentro del contenido
+    del curso actual.
 
-11. Nunca afirmes cuáles respuestas seleccionó
-    el estudiante.
+11. No menciones variables, JSON, programación
+    ni funcionamiento interno.
 
-12. Nunca inventes selecciones del estudiante.
-
-13. Mantén coherencia con la conversación anterior.
-
-14. Si el estudiante hace referencia a algo
-    que acaba de preguntar, utiliza el historial
-    de conversación.
-
-15. No inventes información que contradiga
-    los datos recibidos.
-
-16. Si el texto de la diapositiva contiene
-    ejemplos, vocabulario, gramática,
-    preguntas o instrucciones, puedes explicarlos.
-
-17. No menciones variables internas.
-
-18. No menciones JSON.
-
-19. No menciones programación.
-
-20. No menciones Storyline como parte
-    de la respuesta al estudiante.
-
-21. Responde de forma clara y apropiada
-    para el nivel indicado.
-
-22. Prioriza la explicación pedagógica
-    sobre simplemente dar la respuesta.
-
-23. Si Vincorrect contiene varias frases,
-    puedes analizarlas una por una.
-
-24. Si Vcorrect contiene varias frases,
-    utilízalas conjuntamente como referencia
-    para identificar la regla del ejercicio.
-
-25. Cuando Vincorrect tenga contenido,
-    úsalo directamente para explicar
-    el error del ejercicio.
-
-26. Si el estudiante pregunta sobre el contenido
-    del video, utiliza Vvideo como fuente principal.
-
-27. Si pregunta de qué trata el video, explica
-    el contenido utilizando la información de Vvideo.
-
-28. No inventes información sobre el video que
-    no esté respaldada por Vvideo.
-
-29. Si el estudiante solicita el texto completo
-    del video, debe recibir el contenido completo
-    de Vvideo.
+12. Responde de forma clara y pedagógica.
 
 `;
-
 
 }
 
 
 /*
 ============================================================
-PREPARAR HISTORIAL PARA LA IA
+PREPARAR HISTORIAL
 ============================================================
 */
 
@@ -813,7 +579,6 @@ function prepararHistorial(
 
     }
 
-
     let historial =
         history
             .slice(-20)
@@ -824,12 +589,10 @@ function prepararHistorial(
                         ? "user"
                         : "assistant";
 
-
                 const content =
                     limpiarCampo(
                         mensaje?.text
                     );
-
 
                 return {
 
@@ -842,8 +605,9 @@ function prepararHistorial(
                 };
 
             })
-            .filter(mensaje =>
-                mensaje.content !== ""
+            .filter(
+                mensaje =>
+                    mensaje.content !== ""
             );
 
 
@@ -876,7 +640,7 @@ function prepararHistorial(
 
 /*
 ============================================================
-LLAMAR A GROQ
+GROQ
 ============================================================
 */
 
@@ -909,12 +673,6 @@ async function consultarGroq(
     ];
 
 
-    /*
-    ========================================================
-    HISTORIAL
-    ========================================================
-    */
-
     if (
         Array.isArray(history) &&
         history.length > 0
@@ -927,12 +685,6 @@ async function consultarGroq(
     }
 
 
-    /*
-    ========================================================
-    PREGUNTA ACTUAL
-    ========================================================
-    */
-
     mensajes.push({
 
         role:
@@ -943,30 +695,6 @@ async function consultarGroq(
 
     });
 
-
-    console.log(
-        "===== HISTORIAL ENVIADO A GROQ ====="
-    );
-
-    console.log(
-        history
-    );
-
-
-    console.log(
-        "===== TOTAL DE MENSAJES A GROQ ====="
-    );
-
-    console.log(
-        mensajes.length
-    );
-
-
-    /*
-    ========================================================
-    PETICIÓN A GROQ
-    ========================================================
-    */
 
     const response =
         await fetch(
@@ -1007,23 +735,15 @@ async function consultarGroq(
         );
 
 
-    /*
-    ========================================================
-    COMPROBAR RESPUESTA
-    ========================================================
-    */
-
     if (!response.ok) {
 
         const error =
             await response.text();
 
-
         console.error(
             "ERROR GROQ:",
             error
         );
-
 
         throw new Error(
             "Groq respondió con HTTP " +
@@ -1034,49 +754,20 @@ async function consultarGroq(
 
 
     const data =
-    await response.json();
+        await response.json();
 
-console.log(
-    "===== RESPUESTA COMPLETA DE GROQ ====="
-);
 
-console.dir(
-    data,
-    {
-        depth: null
+    const reply =
+        data?.choices?.[0]?.message?.content?.trim();
+
+
+    if (!reply) {
+
+        throw new Error(
+            "Groq no devolvió contenido."
+        );
+
     }
-);
-
-
-const reply =
-    data?.choices?.[0]?.message?.content?.trim();
-
-
-if (!reply) {
-
-    console.error(
-        "===== GROQ NO DEVOLVIÓ CONTENT ====="
-    );
-
-    console.error(
-        JSON.stringify(
-            data,
-            null,
-            2
-        )
-    );
-
-    throw new Error(
-        "Groq no devolvió contenido."
-    );
-
-}
-
-
-    console.log(
-        "RESPUESTA GROQ:",
-        reply
-    );
 
 
     return reply;
@@ -1128,7 +819,7 @@ app.post(
 
             /*
             ====================================================
-            OBTENER CONTEXTO
+            CONTEXTO
             ====================================================
             */
 
@@ -1138,11 +829,10 @@ app.post(
                 );
 
 
-            /*
-            ====================================================
-            PREPARAR MEMORIA
-            ====================================================
-            */
+            mostrarContexto(
+                contexto
+            );
+
 
             const historialIA =
                 prepararHistorial(
@@ -1153,99 +843,7 @@ app.post(
 
             /*
             ====================================================
-            MOSTRAR INFORMACIÓN
-            ====================================================
-            */
-
-            console.log(
-                "\n\n========================================"
-            );
-
-            console.log(
-                "NUEVA PREGUNTA"
-            );
-
-            console.log(
-                "========================================"
-            );
-
-            console.log(
-                "PREGUNTA:",
-                message
-            );
-
-
-            mostrarContexto(
-                contexto
-            );
-
-
-            console.log(
-                "HISTORIAL RECIBIDO:",
-                history.length,
-                "mensajes"
-            );
-
-
-            console.log(
-                "HISTORIAL UTILIZABLE:",
-                historialIA.length,
-                "mensajes"
-            );
-
-
-            /*
-            ====================================================
-            VERIFICACIÓN ESPECIAL DEL EJERCICIO
-            ====================================================
-            */
-
-            if (
-                esPreguntaSobreErrorEjercicio(
-                    message
-                )
-            ) {
-
-                console.log(
-                    "===== PREGUNTA SOBRE ERROR DEL EJERCICIO ====="
-                );
-
-                console.log(
-                    "Vcorrect disponible:",
-                    Boolean(
-                        contexto.Vcorrect
-                    )
-                );
-
-                console.log(
-                    "Vincorrect disponible:",
-                    Boolean(
-                        contexto.Vincorrect
-                    )
-                );
-
-                console.log(
-                    "===== VINCORRECT QUE SE ENVIARÁ A GROQ ====="
-                );
-
-                console.log(
-                    contexto.Vincorrect
-                );
-
-                console.log(
-                    "===== VCORRECT QUE SE ENVIARÁ A GROQ ====="
-                );
-
-                console.log(
-                    contexto.Vcorrect
-                );
-
-            }
-
-
-            /*
-            ====================================================
-            RESPUESTAS DIRECTAS DE UBICACIÓN
+            UBICACIÓN
             ====================================================
             */
 
@@ -1341,7 +939,7 @@ app.post(
 
             /*
             ====================================================
-            PREGUNTAS SOBRE LO QUE ESTÁ EN PANTALLA
+            CONTEXTO DE PANTALLA
             ====================================================
             */
 
@@ -1382,7 +980,7 @@ app.post(
 
             /*
             ====================================================
-            TEXTO DE LA DIAPOSITIVA
+            TEXTO DE PANTALLA
             ====================================================
             */
 
@@ -1392,14 +990,121 @@ app.post(
                 )
             ) {
 
+                return res.json({
+
+                    reply:
+                        contexto.texto ||
+                        "No tengo texto disponible para la diapositiva actual."
+
+                });
+
+            }
+
+
+            /*
+            ====================================================
+            ERROR DEL EJERCICIO
+            ====================================================
+            */
+
+            if (
+                esPreguntaSobreErrorEjercicio(
+                    message
+                )
+            ) {
+
                 if (
-                    contexto.texto
+                    !contexto.Vincorrect
                 ) {
 
                     return res.json({
 
                         reply:
-                            contexto.texto
+                            "No tengo disponibles las respuestas incorrectas de este ejercicio."
+
+                    });
+
+                }
+
+
+                const promptErrorEjercicio = `
+
+Eres un tutor de inglés.
+
+El estudiante pregunta:
+
+"${message}"
+
+
+RESPUESTAS CORRECTAS:
+
+${contexto.Vcorrect || "No disponible"}
+
+
+RESPUESTAS INCORRECTAS:
+
+${contexto.Vincorrect}
+
+
+Explica por qué las frases incorrectas
+son incorrectas.
+
+Analiza cada frase por separado.
+
+Identifica el error.
+
+Explica la regla.
+
+Muestra la forma correcta cuando sea posible.
+
+No inventes información.
+
+No necesitas saber qué opción seleccionó
+el estudiante.
+
+Responde en español de forma clara y pedagógica.
+
+`;
+
+
+                const reply =
+                    await consultarGroq(
+                        message,
+                        promptErrorEjercicio,
+                        []
+                    );
+
+
+                return res.json({
+
+                    reply:
+                        reply
+
+                });
+
+            }
+
+
+            /*
+            ====================================================
+            TEXTO COMPLETO DEL VIDEO
+            ====================================================
+            */
+
+            if (
+                esPreguntaSobreTextoVideo(
+                    message
+                )
+            ) {
+
+                if (
+                    contexto.Vvideo
+                ) {
+
+                    return res.json({
+
+                        reply:
+                            contexto.Vvideo
 
                     });
 
@@ -1409,7 +1114,7 @@ app.post(
                 return res.json({
 
                     reply:
-                        "No tengo texto disponible para la diapositiva actual."
+                        "No tengo disponible el texto del video actual."
 
                 });
 
@@ -1417,377 +1122,81 @@ app.post(
 
 
             /*
-============================================================
-PREGUNTA SOBRE ERROR DEL EJERCICIO
-============================================================
+            ====================================================
+            CONTENIDO DEL VIDEO
+            ====================================================
+            */
 
-TRATAMIENTO ESPECIAL
+            if (
+                esPreguntaSobreContenidoVideo(
+                    message
+                )
+            ) {
 
-Cuando el estudiante pregunta por qué una respuesta
-está mal, analizamos directamente Vincorrect y Vcorrect.
+                if (
+                    !contexto.Vvideo
+                ) {
 
-IMPORTANTE:
-NO utilizamos el historial de conversación en este caso,
-para evitar que una respuesta anterior de la IA interfiera
-con el análisis actual.
-============================================================
-*/
+                    return res.json({
 
-if (
-    esPreguntaSobreErrorEjercicio(
-        message
-    )
-) {
+                        reply:
+                            "No tengo disponible el contenido del video actual."
 
-    console.log(
-        "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
-    );
+                    });
 
-    console.log(
-        "Vcorrect:",
-        contexto.Vcorrect
-    );
+                }
 
-    console.log(
-        "Vincorrect:",
-        contexto.Vincorrect
-    );
 
+                const promptVideo = `
 
-    /*
-    ========================================================
-    COMPROBAR QUE EXISTAN RESPUESTAS INCORRECTAS
-    ========================================================
-    */
-
-    if (
-        !contexto.Vincorrect
-    ) {
-
-        console.warn(
-            "Vincorrect está vacío."
-        );
-
-        return res.json({
-
-            reply:
-                "No tengo disponibles las respuestas incorrectas de este ejercicio."
-
-        });
-
-    }
-
-
-    /*
-    ========================================================
-    PROMPT ESPECIAL
-    ========================================================
-    */
-
-    const promptErrorEjercicio = `
-
-Eres un tutor de inglés.
-
-El estudiante está realizando un ejercicio de gramática.
-
-El estudiante pregunta:
-
-"${message}"
-
-
-============================================================
-RESPUESTAS CORRECTAS DEL EJERCICIO
-============================================================
-
-${contexto.Vcorrect || "No disponible"}
-
-
-============================================================
-RESPUESTAS INCORRECTAS DEL EJERCICIO
-============================================================
-
-${contexto.Vincorrect}
-
-
-============================================================
-TAREA
-============================================================
-
-Debes explicar POR QUÉ las frases de Vincorrect son
-incorrectas.
-
-IMPORTANTE:
-
-Vincorrect contiene las frases que el ejercicio considera
-INCORRECTAS.
-
-Vcorrect contiene las frases que el ejercicio considera
-CORRECTAS.
-
-Debes utilizar ambos grupos para analizar la regla
-gramatical del ejercicio.
-
-
-============================================================
-INSTRUCCIONES
-============================================================
-
-1. Lee cada frase de Vincorrect.
-
-2. Identifica exactamente qué palabra, estructura
-   o elemento gramatical hace que la frase sea incorrecta.
-
-3. Compara la estructura incorrecta con las estructuras
-   correctas presentes en Vcorrect cuando sea útil.
-
-4. Explica la regla gramatical de manera sencilla.
-
-5. Cuando sea posible, muestra cómo debería escribirse
-   correctamente la frase incorrecta.
-
-6. Si hay varias frases en Vincorrect, analiza cada una
-   por separado.
-
-7. No inventes frases que no estén relacionadas con
-   el ejercicio.
-
-8. No digas que no tienes acceso a las frases.
-
-9. No pidas al estudiante que vuelva a proporcionar
-   las opciones.
-
-10. No necesitas saber cuál frase seleccionó realmente
-    el estudiante.
-
-11. NO utilices el historial anterior de la conversación
-    para determinar cuáles son las frases correctas
-    o incorrectas. Utiliza exclusivamente los datos
-    proporcionados arriba.
-
-12. Responde en español.
-
-13. Sé claro y pedagógico.
-
-14. No menciones Vcorrect, Vincorrect, Storyline,
-    programación, variables, JSON ni el funcionamiento
-    interno del sistema.
-
-
-============================================================
-FORMATO DE RESPUESTA
-============================================================
-
-Para cada frase incorrecta utiliza esta estructura:
-
-Frase incorrecta:
-[frase]
-
-¿Qué está mal?
-[explicación concreta]
-
-Forma correcta:
-[frase corregida]
-
-¿Por qué?
-[explicación sencilla de la regla]
-
-
-============================================================
-OBJETIVO
-============================================================
-
-El estudiante debe entender qué error gramatical
-cometió y aprender la regla, no solamente recibir
-la respuesta correcta.
-
-IMPORTANTE:
-
-Responde directamente con la explicación final.
-No escribas ni muestres tu razonamiento interno.
-No dediques espacio a analizar cómo vas a responder.
-
-Sé conciso pero explica claramente cada frase incorrecta.
-
-`;
-
-
-    /*
-    ========================================================
-    LLAMAR A GROQ SIN HISTORIAL
-    ========================================================
-    */
-
-    const reply =
-        await consultarGroq(
-            message,
-            promptErrorEjercicio,
-            []
-        );
-
-
-    console.log(
-        "===== RESPUESTA DEL ANÁLISIS DEL EJERCICIO ====="
-    );
-
-    console.log(
-        reply
-    );
-
-
-    return res.json({
-
-        reply:
-            reply
-
-    });
-
-}
-
-/*
-============================================================
-TEXTO COMPLETO DEL VIDEO
-============================================================
-*/
-
-if (
-    esPreguntaSobreTextoVideo(
-        message
-    )
-) {
-
-    console.log(
-        "===== SOLICITUD DE TEXTO COMPLETO DEL VIDEO ====="
-    );
-
-
-    console.log(
-        "Vvideo disponible:",
-        Boolean(
-            contexto.Vvideo
-        )
-    );
-
-
-    if (
-        contexto.Vvideo
-    ) {
-
-        return res.json({
-
-            reply:
-                contexto.Vvideo
-
-        });
-
-    }
-
-
-    return res.json({
-
-        reply:
-            "No tengo disponible el texto del video actual."
-
-    });
-
-}
-
-/*
-============================================================
-EXPLICAR EL CONTENIDO DEL VIDEO
-============================================================
-*/
-
-if (
-    esPreguntaSobreContenidoVideo(
-        message
-    )
-) {
-
-    console.log(
-        "===== PREGUNTA SOBRE CONTENIDO DEL VIDEO ====="
-    );
-
-
-    if (
-        contexto.Vvideo
-    ) {
-
-        const promptVideo = `
-
-Eres un tutor virtual de un curso educativo.
+Eres un tutor virtual.
 
 El estudiante está viendo un video.
 
-Pregunta del estudiante:
+Pregunta:
 
 "${message}"
 
 
-============================================================
-TEXTO DEL VIDEO
-============================================================
+TEXTO DEL VIDEO:
 
 ${contexto.Vvideo}
 
 
-============================================================
-INSTRUCCIONES
-============================================================
+Responde utilizando exclusivamente
+la información respaldada por el texto del video.
 
-Responde la pregunta utilizando como fuente
-principal el texto del video.
+Explica las ideas principales de forma clara
+y pedagógica.
 
-Si el estudiante pregunta de qué trata el video,
-explica sus ideas principales de manera clara,
-sencilla y pedagógica.
+No inventes información.
 
-No inventes información que no esté respaldada
-por el texto del video.
-
-No agregues información externa como si hubiera
-aparecido en el video.
-
-Responde siempre en español.
-
-No menciones variables, programación,
-JSON, Storyline ni el funcionamiento interno
-del sistema.
+Responde en español.
 
 `;
 
 
-        const reply =
-            await consultarGroq(
-                message,
-                promptVideo,
-                historialIA
-            );
+                const reply =
+                    await consultarGroq(
+                        message,
+                        promptVideo,
+                        historialIA
+                    );
 
 
-        return res.json({
+                return res.json({
 
-            reply:
-                reply
+                    reply:
+                        reply
 
-        });
+                });
 
-    }
-
-
-    return res.json({
-
-        reply:
-            "No tengo disponible el contenido del video actual."
-
-    });
-
-}
-
+            }
 
 
             /*
             ====================================================
-            PREGUNTA GENERAL → GROQ + CONTEXTO + MEMORIA
+            PREGUNTA GENERAL
             ====================================================
             */
 
@@ -1839,6 +1248,33 @@ del sistema.
 
 /*
 ============================================================
+HEALTH CHECK
+============================================================
+*/
+
+app.get(
+    "/api/health",
+    (req, res) => {
+
+        res.json({
+
+            ok:
+                true,
+
+            service:
+                "Tutor IA",
+
+            video:
+                true
+
+        });
+
+    }
+);
+
+
+/*
+============================================================
 INICIAR SERVIDOR
 ============================================================
 */
@@ -1870,18 +1306,13 @@ app.listen(
         );
 
         console.log(
-            "Contexto:",
-            "vTema, vNivel, vModulo, vSeccion, vDiapositiva, vContexto, vTexto, Vvideo"
+            "Vvideo:",
+            "ACTIVADO"
         );
 
         console.log(
-            "Ejercicio:",
-            "Vcorrect, Vincorrect"
-        );
-
-        console.log(
-            "Memoria:",
-            "historial enviado desde localStorage"
+            "Vcorrect / Vincorrect:",
+            "ACTIVADOS"
         );
 
         console.log(
