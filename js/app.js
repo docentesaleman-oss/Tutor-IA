@@ -1,4 +1,3 @@
-```javascript
 const prompt = document.getElementById("prompt");
 const send = document.getElementById("send");
 const clearChat = document.getElementById("clearChat");
@@ -22,19 +21,36 @@ CONTEXTO ACTUAL DE STORYLINE
 
 IMPORTANTE:
 
-El contexto se reemplaza cuando cambia la diapositiva.
+Este objeto representa ÚNICAMENTE el contexto actual
+recibido desde Storyline.
 
-NO se mantienen Vvideo, Vcorrect o Vincorrect
-de una diapositiva anterior.
+Vcorrect y Vincorrect contienen:
 
-Solo se conservan campos que realmente llegan
-con contenido desde Storyline.
+Vcorrect:
+Las respuestas que Storyline considera correctas.
+
+Vincorrect:
+Las respuestas que Storyline considera incorrectas.
+
+El tutor NO sabe cuáles seleccionó realmente
+el estudiante.
 ============================================================
 */
 
 let storylineData = {
 
-    tipo: "contenido"
+    tipo: "contenido",
+
+    tema: "",
+    nivel: "",
+    modulo: "",
+    seccion: "",
+    diapositiva: "",
+    contexto: "",
+    texto: "",
+
+    Vcorrect: "",
+    Vincorrect: ""
 
 };
 
@@ -48,146 +64,18 @@ ACTUALIZAR CONTEXTO DE STORYLINE
 function actualizarStoryline(datos) {
 
     if (!datos || typeof datos !== "object") {
-        console.warn("STORYLINE → datos inválidos:", datos);
+
+        console.warn(
+            "STORYLINE → datos inválidos:",
+            datos
+        );
+
         return;
-    }
-
-    console.log("===== DATOS RECIBIDOS DE STORYLINE =====");
-    console.log(datos);
-
-    /*
-    ========================================================
-    NO SOBRESCRIBIR INFORMACIÓN VÁLIDA CON CAMPOS VACÍOS
-    ========================================================
-    */
-
-    const campos = [
-        "tema",
-        "nivel",
-        "modulo",
-        "seccion",
-        "diapositiva",
-        "contexto",
-        "texto",
-        "Vcorrect",
-        "Vincorrect",
-        "Vvideo",
-        "tipo"
-    ];
-
-    campos.forEach(function (campo) {
-
-        if (
-            datos[campo] !== undefined &&
-            datos[campo] !== null
-        ) {
-
-            const valor = String(datos[campo]).trim();
-
-            /*
-            SOLO actualizar si realmente hay información.
-            Un "" NO puede borrar información existente.
-            */
-
-            if (valor !== "") {
-                storylineData[campo] = valor;
-            }
-        }
-    });
-
-    /*
-    ========================================================
-    MOSTRAR RESULTADO REAL
-    ========================================================
-    */
-
-    console.log("===== STORYLINE DATA ACTUALIZADO =====");
-    console.log(storylineData);
-
-    console.log("Vvideo:", storylineData.Vvideo);
-}
-
-    /*
-    ========================================================
-    IDENTIFICAR LA DIAPOSITIVA ACTUAL
-    ========================================================
-    */
-
-    const nuevaDiapositiva =
-        datos.diapositiva !== undefined &&
-        datos.diapositiva !== null
-            ? String(datos.diapositiva).trim()
-            : "";
-
-
-    const diapositivaAnterior =
-        storylineData.diapositiva || "";
-
-
-    /*
-    ========================================================
-    SI ES UNA DIAPOSITIVA NUEVA
-    ========================================================
-
-    Se elimina completamente el contexto anterior.
-
-    Esto evita que Vvideo, Vcorrect o Vincorrect
-    pasen de una diapositiva a otra.
-    ========================================================
-    */
-
-    if (
-        nuevaDiapositiva &&
-        nuevaDiapositiva !== diapositivaAnterior
-    ) {
-
-        storylineData = {
-
-            tipo:
-                datos.tipo || "contenido",
-
-            diapositiva:
-                nuevaDiapositiva
-
-        };
 
     }
 
 
-    /*
-    ========================================================
-    SI NO TENEMOS IDENTIFICADOR DE DIAPOSITIVA
-    ========================================================
-
-    Actualizamos sobre el contexto existente,
-    pero sin crear variables vacías.
-    ========================================================
-    */
-
-
-    const campos = [
-
-        "tema",
-        "nivel",
-        "modulo",
-        "seccion",
-        "diapositiva",
-        "contexto",
-        "texto",
-        "Vcorrect",
-        "Vincorrect",
-        "Vvideo"
-
-    ];
-
-
-    /*
-    ========================================================
-    ACTUALIZAR CAMPOS
-    ========================================================
-    */
-
-    for (const nombre of campos) {
+    const actualizarCampo = function(nombre) {
 
         if (
             datos[nombre] !== undefined &&
@@ -197,11 +85,6 @@ function actualizarStoryline(datos) {
             const valor =
                 String(datos[nombre]).trim();
 
-
-            /*
-            Solo guardar valores que realmente existen.
-            */
-
             if (valor !== "") {
 
                 storylineData[nombre] =
@@ -209,116 +92,80 @@ function actualizarStoryline(datos) {
 
             }
 
-
-            /*
-            ==================================================
-            IMPORTANTE:
-
-            Si estamos en la misma diapositiva y Storyline
-            vuelve a mandar un campo vacío, NO borramos un
-            valor válido que acabamos de recibir.
-
-            Esto protege especialmente Vvideo.
-            ==================================================
-            */
-
         }
 
-    }
+    };
 
 
-    /*
-    ========================================================
-    TIPO
-    ========================================================
-    */
-
-    if (
-        datos.tipo !== undefined &&
-        datos.tipo !== null &&
-        String(datos.tipo).trim() !== ""
-    ) {
-
-        storylineData.tipo =
-            String(datos.tipo).trim();
-
-    }
-
+    actualizarCampo("tema");
+    actualizarCampo("nivel");
+    actualizarCampo("modulo");
+    actualizarCampo("seccion");
+    actualizarCampo("diapositiva");
+    actualizarCampo("contexto");
+    actualizarCampo("texto");
 
     /*
     ========================================================
-    MOSTRAR CONTEXTO RECIBIDO
+    RESPUESTAS DEL EJERCICIO
     ========================================================
     */
+
+    actualizarCampo("Vcorrect");
+    actualizarCampo("Vincorrect");
+
+
+    storylineData.tipo =
+        datos.tipo || "contenido";
+
 
     console.log(
         "===== CONTEXTO STORYLINE ACTUALIZADO ====="
     );
 
-
-    console.log(
-        "StorylineData:",
-        storylineData
-    );
-
-
     console.log(
         "vTema:",
-        storylineData.tema || ""
+        storylineData.tema
     );
-
 
     console.log(
         "vNivel:",
-        storylineData.nivel || ""
+        storylineData.nivel
     );
-
 
     console.log(
         "vModulo:",
-        storylineData.modulo || ""
+        storylineData.modulo
     );
-
 
     console.log(
         "vSeccion:",
-        storylineData.seccion || ""
+        storylineData.seccion
     );
-
 
     console.log(
         "vDiapositiva:",
-        storylineData.diapositiva || ""
+        storylineData.diapositiva
     );
-
 
     console.log(
         "vContexto:",
-        storylineData.contexto || ""
+        storylineData.contexto
     );
-
 
     console.log(
         "vTexto:",
-        storylineData.texto || ""
+        storylineData.texto
     );
-
 
     console.log(
         "Vcorrect:",
-        storylineData.Vcorrect || ""
+        storylineData.Vcorrect
     );
-
 
     console.log(
         "Vincorrect:",
-        storylineData.Vincorrect || ""
-    );
-
-
-    console.log(
-        "Vvideo:",
-        storylineData.Vvideo || ""
+        storylineData.Vincorrect
     );
 
 }
@@ -352,13 +199,11 @@ function guardarChat() {
             JSON.stringify(chatHistory)
         );
 
-
         console.log(
             "CHAT GUARDADO:",
             chatHistory.length,
             "mensajes"
         );
-
 
     } catch (error) {
 
@@ -416,7 +261,6 @@ function cargarChat() {
             "===== MEMORIA DEL CHAT CARGADA ====="
         );
 
-
         console.log(
             "Mensajes:",
             chatHistory.length
@@ -473,7 +317,6 @@ function cargarChat() {
             error
         );
 
-
         chatHistory = [];
 
     }
@@ -492,7 +335,6 @@ if (clearChat) {
     clearChat.onclick = function() {
 
         chatHistory = [];
-
 
         localStorage.removeItem(
             CHAT_STORAGE_KEY
@@ -615,7 +457,6 @@ window.addEventListener(
                 "===== MENSAJE RECIBIDO DE STORYLINE ====="
             );
 
-
             console.log(
                 event.data
             );
@@ -654,74 +495,6 @@ function solicitarContextoStoryline() {
         "*"
 
     );
-
-}
-
-
-/*
-============================================================
-CREAR CONTEXTO PARA ENVIAR AL SERVIDOR
-============================================================
-
-IMPORTANTE:
-
-Aquí NO se crean Vvideo, Vcorrect o Vincorrect
-si están vacíos o no existen.
-
-Por tanto, una diapositiva de ejercicio no recibirá
-Vvideo vacío y una diapositiva de video no recibirá
-Vcorrect/Vincorrect vacíos.
-============================================================
-*/
-
-function construirContextoParaPregunta() {
-
-    const contexto = {};
-
-
-    const campos = [
-
-        "tipo",
-        "tema",
-        "nivel",
-        "modulo",
-        "seccion",
-        "diapositiva",
-        "contexto",
-        "texto",
-        "Vcorrect",
-        "Vincorrect",
-        "Vvideo"
-
-    ];
-
-
-    for (const nombre of campos) {
-
-        if (
-            storylineData[nombre] !== undefined &&
-            storylineData[nombre] !== null
-        ) {
-
-            const valor =
-                String(
-                    storylineData[nombre]
-                ).trim();
-
-
-            if (valor !== "") {
-
-                contexto[nombre] =
-                    valor;
-
-            }
-
-        }
-
-    }
-
-
-    return contexto;
 
 }
 
@@ -775,43 +548,62 @@ async function sendMessage() {
             "===== PREGUNTA AL TUTOR ====="
         );
 
-
         console.log(
             "Pregunta:",
             text
         );
 
 
-        console.log(
-            "===== STORYLINE DATA ANTES DE ENVIAR ====="
-        );
-
-
-        console.log(
-            storylineData
-        );
-
-
-        console.log(
-            "Vvideo directo:",
-            storylineData.Vvideo || ""
-        );
-
-
         /*
         ====================================================
-        CONSTRUIR CONTEXTO REAL
+        COPIA EXACTA DEL CONTEXTO ACTUAL
         ====================================================
         */
 
-        const contextoParaPregunta =
-            construirContextoParaPregunta();
+        const contextoParaPregunta = {
+
+            tipo:
+                storylineData.tipo,
+
+            tema:
+                storylineData.tema,
+
+            nivel:
+                storylineData.nivel,
+
+            modulo:
+                storylineData.modulo,
+
+            seccion:
+                storylineData.seccion,
+
+            diapositiva:
+                storylineData.diapositiva,
+
+            contexto:
+                storylineData.contexto,
+
+            texto:
+                storylineData.texto,
+
+            /*
+            ==================================================
+            RESPUESTAS DEL EJERCICIO
+            ==================================================
+            */
+
+            Vcorrect:
+                storylineData.Vcorrect,
+
+            Vincorrect:
+                storylineData.Vincorrect
+
+        };
 
 
         console.log(
             "===== CONTEXTO ENVIADO AL SERVIDOR ====="
         );
-
 
         console.log(
             contextoParaPregunta
@@ -933,4 +725,3 @@ window.addEventListener(
 
     }
 );
-```
