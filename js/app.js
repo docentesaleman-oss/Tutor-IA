@@ -517,20 +517,72 @@ function solicitarContextoStoryline() {
         "===== TUTOR SOLICITA CONTEXTO A STORYLINE ====="
     );
 
+    const mensaje = {
+        type: "REQUEST_STORYLINE_CONTEXT"
+    };
 
-    window.parent.postMessage(
 
-        {
-            type:
-                "REQUEST_STORYLINE_CONTEXT"
-        },
+    /*
+    ========================================================
+    ENVIAR A LA VENTANA PADRE
+    ========================================================
+    */
 
-        "*"
+    try {
 
-    );
+        window.parent.postMessage(
+            mensaje,
+            "*"
+        );
+
+        console.log(
+            "TUTOR → STORYLINE: solicitud enviada a parent"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "ERROR enviando a parent:",
+            error
+        );
+
+    }
+
+
+    /*
+    ========================================================
+    ENVIAR TAMBIÉN A LA VENTANA SUPERIOR
+    ========================================================
+    */
+
+    try {
+
+        if (
+            window.top &&
+            window.top !== window.parent
+        ) {
+
+            window.top.postMessage(
+                mensaje,
+                "*"
+            );
+
+            console.log(
+                "TUTOR → STORYLINE: solicitud enviada a top"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "No fue posible enviar a top:",
+            error
+        );
+
+    }
 
 }
-
 
 /*
 ============================================================
