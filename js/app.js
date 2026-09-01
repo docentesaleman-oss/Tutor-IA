@@ -32,6 +32,9 @@ Las respuestas que Storyline considera correctas.
 Vincorrect:
 Las respuestas que Storyline considera incorrectas.
 
+Vvideo:
+El contenido asociado al video actual.
+
 El tutor NO sabe cuáles seleccionó realmente
 el estudiante.
 ============================================================
@@ -42,15 +45,24 @@ let storylineData = {
     tipo: "contenido",
 
     tema: "",
+
     nivel: "",
+
     modulo: "",
+
     seccion: "",
+
     diapositiva: "",
+
     contexto: "",
+
     texto: "",
 
     Vcorrect: "",
-    Vincorrect: ""
+
+    Vincorrect: "",
+
+    Vvideo: ""
 
 };
 
@@ -71,7 +83,6 @@ function actualizarStoryline(datos) {
         );
 
         return;
-
     }
 
 
@@ -98,12 +109,19 @@ function actualizarStoryline(datos) {
 
 
     actualizarCampo("tema");
+
     actualizarCampo("nivel");
+
     actualizarCampo("modulo");
+
     actualizarCampo("seccion");
+
     actualizarCampo("diapositiva");
+
     actualizarCampo("contexto");
+
     actualizarCampo("texto");
+
 
     /*
     ========================================================
@@ -112,7 +130,17 @@ function actualizarStoryline(datos) {
     */
 
     actualizarCampo("Vcorrect");
+
     actualizarCampo("Vincorrect");
+
+
+    /*
+    ========================================================
+    CONTENIDO DEL VIDEO
+    ========================================================
+    */
+
+    actualizarCampo("Vvideo");
 
 
     storylineData.tipo =
@@ -123,49 +151,64 @@ function actualizarStoryline(datos) {
         "===== CONTEXTO STORYLINE ACTUALIZADO ====="
     );
 
+
     console.log(
         "vTema:",
         storylineData.tema
     );
+
 
     console.log(
         "vNivel:",
         storylineData.nivel
     );
 
+
     console.log(
         "vModulo:",
         storylineData.modulo
     );
+
 
     console.log(
         "vSeccion:",
         storylineData.seccion
     );
 
+
     console.log(
         "vDiapositiva:",
         storylineData.diapositiva
     );
+
 
     console.log(
         "vContexto:",
         storylineData.contexto
     );
 
+
     console.log(
         "vTexto:",
         storylineData.texto
     );
+
 
     console.log(
         "Vcorrect:",
         storylineData.Vcorrect
     );
 
+
     console.log(
         "Vincorrect:",
         storylineData.Vincorrect
+    );
+
+
+    console.log(
+        "Vvideo:",
+        storylineData.Vvideo
     );
 
 }
@@ -199,11 +242,13 @@ function guardarChat() {
             JSON.stringify(chatHistory)
         );
 
+
         console.log(
             "CHAT GUARDADO:",
             chatHistory.length,
             "mensajes"
         );
+
 
     } catch (error) {
 
@@ -261,6 +306,7 @@ function cargarChat() {
             "===== MEMORIA DEL CHAT CARGADA ====="
         );
 
+
         console.log(
             "Mensajes:",
             chatHistory.length
@@ -317,6 +363,7 @@ function cargarChat() {
             error
         );
 
+
         chatHistory = [];
 
     }
@@ -335,6 +382,7 @@ if (clearChat) {
     clearChat.onclick = function() {
 
         chatHistory = [];
+
 
         localStorage.removeItem(
             CHAT_STORAGE_KEY
@@ -457,6 +505,7 @@ window.addEventListener(
                 "===== MENSAJE RECIBIDO DE STORYLINE ====="
             );
 
+
             console.log(
                 event.data
             );
@@ -548,6 +597,7 @@ async function sendMessage() {
             "===== PREGUNTA AL TUTOR ====="
         );
 
+
         console.log(
             "Pregunta:",
             text
@@ -586,6 +636,7 @@ async function sendMessage() {
             texto:
                 storylineData.texto,
 
+
             /*
             ==================================================
             RESPUESTAS DEL EJERCICIO
@@ -596,7 +647,17 @@ async function sendMessage() {
                 storylineData.Vcorrect,
 
             Vincorrect:
-                storylineData.Vincorrect
+                storylineData.Vincorrect,
+
+
+            /*
+            ==================================================
+            CONTENIDO DEL VIDEO
+            ==================================================
+            */
+
+            Vvideo:
+                storylineData.Vvideo
 
         };
 
@@ -604,6 +665,7 @@ async function sendMessage() {
         console.log(
             "===== CONTEXTO ENVIADO AL SERVIDOR ====="
         );
+
 
         console.log(
             contextoParaPregunta

@@ -6,10 +6,12 @@ async function askGPT(text, storylineData) {
             "===== ENVIANDO AL SERVIDOR ====="
         );
 
+
         console.log(
             "Pregunta:",
             text
         );
+
 
         console.log(
             "Storyline:",
@@ -25,6 +27,7 @@ async function askGPT(text, storylineData) {
 
         let history = [];
 
+
         try {
 
             history = JSON.parse(
@@ -33,12 +36,14 @@ async function askGPT(text, storylineData) {
                 ) || "[]"
             );
 
+
         } catch (error) {
 
             console.error(
                 "ERROR LEYENDO HISTORIAL:",
                 error
             );
+
 
             history = [];
 
@@ -64,48 +69,60 @@ async function askGPT(text, storylineData) {
 
                     method: "POST",
 
+
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
+
 
                     body: JSON.stringify({
 
                         message: text,
 
+
                         storyline: {
 
-    tema:
-        storylineData.tema || "",
+                            tema:
+                                storylineData.tema || "",
 
-    nivel:
-        storylineData.nivel || "",
+                            nivel:
+                                storylineData.nivel || "",
 
-    modulo:
-        storylineData.modulo || "",
+                            modulo:
+                                storylineData.modulo || "",
 
-    seccion:
-        storylineData.seccion || "",
+                            seccion:
+                                storylineData.seccion || "",
 
-    diapositiva:
-        storylineData.diapositiva || "",
+                            diapositiva:
+                                storylineData.diapositiva || "",
 
-    contexto:
-        storylineData.contexto || "",
+                            contexto:
+                                storylineData.contexto || "",
 
-    texto:
-        storylineData.texto || "",
+                            texto:
+                                storylineData.texto || "",
 
-    Vcorrect:
-        storylineData.Vcorrect || "",
 
-    Vincorrect:
-        storylineData.Vincorrect || "",
+                            Vcorrect:
+                                storylineData.Vcorrect || "",
 
-    tipo:
-        storylineData.tipo || ""
+                            Vincorrect:
+                                storylineData.Vincorrect || "",
 
-},
+
+                            Vvideo:
+                                storylineData.Vvideo || "",
+
+
+                            tipo:
+                                storylineData.tipo || ""
+
+                        },
+
 
                         history:
                             history
@@ -113,6 +130,7 @@ async function askGPT(text, storylineData) {
                     })
 
                 }
+
             );
 
 
@@ -151,6 +169,7 @@ async function askGPT(text, storylineData) {
         console.log(
             "===== RESPUESTA DEL SERVIDOR ====="
         );
+
 
         console.log(
             data
