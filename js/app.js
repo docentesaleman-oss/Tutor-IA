@@ -456,6 +456,15 @@ window.addEventListener(
         }
 
 
+        console.log(
+            "===== MENSAJE POSTMESSAGE RECIBIDO ====="
+        );
+
+        console.log(
+            event.data
+        );
+
+
         if (
             event.data.type ===
             "STORYLINE_CONTEXT"
@@ -465,20 +474,34 @@ window.addEventListener(
                 "===== MENSAJE RECIBIDO DE STORYLINE ====="
             );
 
+
+            const datos =
+                event.data.datos;
+
+
             console.log(
-                event.data
+                "DATOS RECIBIDOS:",
+                datos
             );
 
 
             actualizarStoryline(
-                event.data.datos
+                datos
+            );
+
+
+            console.log(
+                "===== VVIDEO DESPUÉS DE ACTUALIZAR ====="
+            );
+
+            console.log(
+                storylineData.Vvideo
             );
 
         }
 
     }
 );
-
 
 /*
 ============================================================
