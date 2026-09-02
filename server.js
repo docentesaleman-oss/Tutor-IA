@@ -407,75 +407,68 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         contextoEjercicio.includes("posttest") ||
         contextoEjercicio.includes("ejercicio") ||
         contextoEjercicio.includes("actividad") ||
-        contextoEjercicio.includes("elige") ||
+        contextoEjercicio.includes("evaluacion") ||
         contextoEjercicio.includes("selecciona") ||
         contextoEjercicio.includes("seleccione") ||
+        contextoEjercicio.includes("elige") ||
         contextoEjercicio.includes("escoge") ||
         contextoEjercicio.includes("escoger") ||
-        contextoEjercicio.includes("elige la") ||
-        contextoEjercicio.includes("correct") ||
         Boolean(contexto.Vcorrect) ||
         Boolean(contexto.Vincorrect);
 
-    const solicitudDirecta =
+    const solicitudRespuesta =
+        pregunta.includes("respuesta correcta") ||
+        pregunta.includes("respuesta correcta") ||
         pregunta.includes("cual es la respuesta") ||
-        pregunta.includes("cual es la respuesta correcta") ||
         pregunta.includes("cual es la correcta") ||
-        pregunta.includes("cual opcion es correcta") ||
-        pregunta.includes("que opcion es correcta") ||
-        pregunta.includes("que opcion debo escoger") ||
-        pregunta.includes("que opcion debo elegir") ||
-        pregunta.includes("que tengo que escoger") ||
-        pregunta.includes("que tengo que elegir") ||
-        pregunta.includes("que debo escoger") ||
+        pregunta.includes("cual es correcto") ||
+        pregunta.includes("cual opcion") ||
+        pregunta.includes("que opcion") ||
         pregunta.includes("que debo elegir") ||
-        pregunta.includes("cual debo escoger") ||
+        pregunta.includes("que debo escoger") ||
+        pregunta.includes("que tengo que elegir") ||
+        pregunta.includes("que tengo que escoger") ||
         pregunta.includes("cual debo elegir") ||
-        pregunta.includes("cual selecciono") ||
+        pregunta.includes("cual debo escoger") ||
         pregunta.includes("que selecciono") ||
-        pregunta.includes("cual marco") ||
+        pregunta.includes("cual selecciono") ||
         pregunta.includes("que marco") ||
+        pregunta.includes("cual marco") ||
+        pregunta.includes("que pongo") ||
+        pregunta.includes("que escribo") ||
+        pregunta.includes("que respuesta pongo") ||
+        pregunta.includes("que respuesta doy") ||
         pregunta.includes("dime la respuesta") ||
         pregunta.includes("dame la respuesta") ||
         pregunta.includes("dime cual es") ||
         pregunta.includes("dime cual") ||
-        pregunta.includes("dime que poner") ||
-        pregunta.includes("que pongo") ||
-        pregunta.includes("resuelve el ejercicio") ||
-        pregunta.includes("resuelveme el ejercicio") ||
+        pregunta.includes("resuelve") ||
+        pregunta.includes("resuelveme") ||
+        pregunta.includes("haz el ejercicio") ||
         pregunta.includes("hazme el ejercicio") ||
-        pregunta.includes("haz el ejercicio por mi") ||
         pregunta.includes("hazlo por mi") ||
-        pregunta.includes("respondeme el ejercicio") ||
-        pregunta.includes("responde el ejercicio") ||
-        pregunta.includes("cual respuesta pongo") ||
-        pregunta.includes("que respuesta pongo") ||
-        pregunta.includes("que respuesta doy") ||
-        pregunta.includes("que escribo") ||
-        pregunta.includes("que debo escribir") ||
+        pregunta.includes("respondeme") ||
+        pregunta.includes("responde por mi") ||
         pregunta.includes("esta bien mi respuesta") ||
         pregunta.includes("mi respuesta esta bien") ||
         pregunta.includes("mi respuesta es correcta") ||
         pregunta.includes("es correcta mi respuesta") ||
         pregunta.includes("esta correcta mi respuesta");
 
-    const solicitudDeOrientacionEnEjercicio =
-        esEjercicio &&
-        (
-            pregunta.includes("que tengo que hacer") ||
-            pregunta.includes("que debo hacer") ||
-            pregunta.includes("como hago el ejercicio") ||
-            pregunta.includes("como resuelvo") ||
-            pregunta.includes("como lo hago") ||
-            pregunta.includes("que hago aqui") ||
-            pregunta.includes("que hago aca") ||
-            pregunta.includes("que hago aquí") ||
-            pregunta.includes("que hago acá")
-        );
+    const solicitudAyudaEjercicio =
+        pregunta.includes("que tengo que hacer") ||
+        pregunta.includes("que debo hacer") ||
+        pregunta.includes("como hago") ||
+        pregunta.includes("como lo hago") ||
+        pregunta.includes("como resuelvo") ||
+        pregunta.includes("ayudame con el ejercicio") ||
+        pregunta.includes("ayudame a resolver") ||
+        pregunta.includes("ayudame a contestar") ||
+        pregunta.includes("ayudame a responder");
 
     return (
-        solicitudDirecta ||
-        solicitudDeOrientacionEnEjercicio
+        solicitudRespuesta ||
+        (esEjercicio && solicitudAyudaEjercicio)
     );
 
 }
@@ -1130,22 +1123,20 @@ if (
         message,
         contexto
     )
-)
-
-{
+) {
 
     console.log(
-        "===== SOLICITUD DE RESPUESTA BLOQUEADA ====="
+        "===== EJERCICIO BLOQUEADO ====="
     );
 
     console.log(
-        "Pregunta bloqueada:",
+        "Pregunta:",
         message
     );
 
     return res.json({
         reply:
-            "No puedo darte directamente la respuesta de un ejercicio ni decirte qué opción seleccionar. Sí puedo ayudarte a comprender la regla o el concepto necesario para resolverlo por ti mismo."
+            "No puedo resolver, indicar ni confirmar respuestas de ejercicios o evaluaciones. Tampoco puedo solicitar información adicional para hacerlo. Puedo ayudarte con una explicación general del concepto o la regla necesaria para que lo resuelvas por ti mismo."
     });
 
 }
