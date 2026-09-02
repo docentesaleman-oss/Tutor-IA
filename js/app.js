@@ -542,6 +542,58 @@ function solicitarContextoStoryline() {
 
 }
 
+/*
+============================================================
+BLOQUEAR SOLICITUDES DE RESPUESTAS DE EJERCICIOS
+============================================================
+*/
+
+function esSolicitudDeRespuesta(texto) {
+
+    const pregunta = texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const patrones = [
+
+        "cual es la respuesta",
+        "cual es la respuesta correcta",
+        "cual es la correcta",
+        "cual respuesta es correcta",
+        "que respuesta es correcta",
+        "que tengo que escoger",
+        "que debo escoger",
+        "que debo elegir",
+        "que tengo que elegir",
+        "cual debo escoger",
+        "cual debo elegir",
+        "que marco",
+        "cual marco",
+        "dime la respuesta",
+        "dame la respuesta",
+        "dime cual es",
+        "dime cual",
+        "cual selecciono",
+        "cual selecciono",
+        "cual opcion es correcta",
+        "que opcion es correcta",
+        "que opcion debo marcar",
+        "que opcion debo escoger",
+        "resuelve el ejercicio",
+        "resuelveme el ejercicio",
+        "hazme el ejercicio",
+        "haz el ejercicio por mi",
+        "dime que poner",
+        "que pongo"
+
+    ];
+
+    return patrones.some(
+        patron => pregunta.includes(patron)
+    );
+}
 
 /*
 ============================================================
@@ -653,17 +705,28 @@ async function sendMessage() {
         );
 
 
-        const response =
-            await askGPT(
-                text,
-                contextoParaPregunta
-            );
+        if (esSolicitudDeRespuesta(text)) {
 
+    addMessage(
+        "No puedo darte directamente la respuesta del ejercicio ni indicarte qué opción seleccionar. Sí puedo explicarte la regla o el concepto necesario para que puedas resolverlo por ti mismo.",
+        "bot"
+    );
 
-        addMessage(
-            response,
-            "bot"
+} else {
+
+    const response =
+        await askGPT(
+            text,
+            contextoParaPregunta
         );
+
+
+    addMessage(
+        response,
+        "bot"
+    );
+
+}
 
 
     } catch (error) {
