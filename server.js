@@ -407,21 +407,13 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         contextoEjercicio.includes("posttest") ||
         contextoEjercicio.includes("ejercicio") ||
         contextoEjercicio.includes("actividad") ||
-        contextoEjercicio.includes("evaluacion") ||
-        contextoEjercicio.includes("selecciona") ||
-        contextoEjercicio.includes("seleccione") ||
-        contextoEjercicio.includes("elige") ||
-        contextoEjercicio.includes("escoge") ||
-        contextoEjercicio.includes("escoger") ||
         Boolean(contexto.Vcorrect) ||
         Boolean(contexto.Vincorrect);
 
     const solicitudRespuesta =
         pregunta.includes("respuesta correcta") ||
-        pregunta.includes("respuesta correcta") ||
         pregunta.includes("cual es la respuesta") ||
         pregunta.includes("cual es la correcta") ||
-        pregunta.includes("cual es correcto") ||
         pregunta.includes("cual opcion") ||
         pregunta.includes("que opcion") ||
         pregunta.includes("que debo elegir") ||
@@ -436,39 +428,30 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("cual marco") ||
         pregunta.includes("que pongo") ||
         pregunta.includes("que escribo") ||
-        pregunta.includes("que respuesta pongo") ||
-        pregunta.includes("que respuesta doy") ||
         pregunta.includes("dime la respuesta") ||
         pregunta.includes("dame la respuesta") ||
-        pregunta.includes("dime cual es") ||
         pregunta.includes("dime cual") ||
-        pregunta.includes("resuelve") ||
-        pregunta.includes("resuelveme") ||
+        pregunta.includes("resuelve el ejercicio") ||
+        pregunta.includes("resuelveme el ejercicio") ||
         pregunta.includes("haz el ejercicio") ||
         pregunta.includes("hazme el ejercicio") ||
         pregunta.includes("hazlo por mi") ||
-        pregunta.includes("respondeme") ||
-        pregunta.includes("responde por mi") ||
         pregunta.includes("esta bien mi respuesta") ||
         pregunta.includes("mi respuesta esta bien") ||
         pregunta.includes("mi respuesta es correcta") ||
-        pregunta.includes("es correcta mi respuesta") ||
-        pregunta.includes("esta correcta mi respuesta");
+        pregunta.includes("es correcta mi respuesta");
 
-    const solicitudAyudaEjercicio =
+    const solicitudAyuda =
         pregunta.includes("que tengo que hacer") ||
         pregunta.includes("que debo hacer") ||
-        pregunta.includes("como hago") ||
-        pregunta.includes("como lo hago") ||
+        pregunta.includes("como hago el ejercicio") ||
         pregunta.includes("como resuelvo") ||
         pregunta.includes("ayudame con el ejercicio") ||
-        pregunta.includes("ayudame a resolver") ||
-        pregunta.includes("ayudame a contestar") ||
-        pregunta.includes("ayudame a responder");
+        pregunta.includes("ayudame a resolver");
 
     return (
         solicitudRespuesta ||
-        (esEjercicio && solicitudAyudaEjercicio)
+        (esEjercicio && solicitudAyuda)
     );
 
 }
@@ -1140,7 +1123,6 @@ if (
     });
 
 }
-
             /*
             ====================================================
             PREPARAR MEMORIA
