@@ -382,6 +382,50 @@ function esPreguntaDeTexto(texto) {
 
 }
 
+/*
+============================================================
+BLOQUEAR SOLICITUDES DE RESPUESTA DE EJERCICIOS
+============================================================
+*/
+
+function esSolicitudDeRespuesta(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+
+        pregunta.includes("cual es la respuesta") ||
+        pregunta.includes("cual es la respuesta correcta") ||
+        pregunta.includes("cual es la correcta") ||
+        pregunta.includes("cual opcion es correcta") ||
+        pregunta.includes("que opcion es correcta") ||
+        pregunta.includes("que opcion debo escoger") ||
+        pregunta.includes("que opcion debo elegir") ||
+        pregunta.includes("que tengo que escoger") ||
+        pregunta.includes("que tengo que elegir") ||
+        pregunta.includes("que debo escoger") ||
+        pregunta.includes("que debo elegir") ||
+        pregunta.includes("cual debo escoger") ||
+        pregunta.includes("cual debo elegir") ||
+        pregunta.includes("cual selecciono") ||
+        pregunta.includes("que selecciono") ||
+        pregunta.includes("cual marco") ||
+        pregunta.includes("que marco") ||
+        pregunta.includes("dime la respuesta") ||
+        pregunta.includes("dame la respuesta") ||
+        pregunta.includes("dime cual es") ||
+        pregunta.includes("dime cual") ||
+        pregunta.includes("dime que poner") ||
+        pregunta.includes("que pongo") ||
+        pregunta.includes("resuelve el ejercicio") ||
+        pregunta.includes("resuelveme el ejercicio") ||
+        pregunta.includes("hazme el ejercicio") ||
+        pregunta.includes("haz el ejercicio por mi")
+
+    );
+
+}
 
 /*
 ============================================================
@@ -1022,6 +1066,33 @@ app.post(
                     storyline
                 );
 
+/*
+============================================================
+BLOQUEO DE RESPUESTAS DE EJERCICIOS
+============================================================
+*/
+
+if (
+    esSolicitudDeRespuesta(
+        message
+    )
+) {
+
+    console.log(
+        "===== SOLICITUD DE RESPUESTA BLOQUEADA ====="
+    );
+
+    console.log(
+        "Pregunta bloqueada:",
+        message
+    );
+
+    return res.json({
+        reply:
+            "No puedo darte directamente la respuesta de un ejercicio ni decirte qué opción seleccionar. Sí puedo ayudarte a comprender la regla o el concepto necesario para resolverlo por ti mismo."
+    });
+
+}
 
             /*
             ====================================================
