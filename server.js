@@ -676,7 +676,7 @@ Utiliza las frases correctas como referencia.
 No inventes información.
 
 
-```text
+
 ============================================================
 REGLAS GENERALES
 ============================================================
