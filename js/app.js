@@ -603,30 +603,96 @@ ENVIAR PREGUNTA
 
 async function sendMessage() {
 
-    const text =
-        prompt.value.trim();
-
+    const text = prompt.value.trim();
 
     if (!text) {
+        return;
+    }
+
+    addMessage(text, "user");
+
+    prompt.value = "";
+
+    send.disabled = true;
+
+
+    /*
+    ========================================================
+    BLOQUEO ABSOLUTO DE SOLICITUDES DE RESPUESTA
+    ========================================================
+    */
+
+    const pregunta = text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+
+    const pideRespuesta =
+
+        pregunta.includes("respuesta correcta") ||
+        pregunta.includes("respuesta es") ||
+        pregunta.includes("cual es la respuesta") ||
+        pregunta.includes("cual es la correcta") ||
+        pregunta.includes("cual opcion") ||
+        pregunta.includes("que opcion") ||
+        pregunta.includes("que tengo que escoger") ||
+        pregunta.includes("que tengo que elegir") ||
+        pregunta.includes("que debo escoger") ||
+        pregunta.includes("que debo elegir") ||
+        pregunta.includes("cual debo escoger") ||
+        pregunta.includes("cual debo elegir") ||
+        pregunta.includes("cual selecciono") ||
+        pregunta.includes("que selecciono") ||
+        pregunta.includes("cual marco") ||
+        pregunta.includes("que marco") ||
+        pregunta.includes("dime la respuesta") ||
+        pregunta.includes("dame la respuesta") ||
+        pregunta.includes("dime cual") ||
+        pregunta.includes("dime que poner") ||
+        pregunta.includes("que pongo") ||
+        pregunta.includes("resuelve el ejercicio") ||
+        pregunta.includes("resuelveme el ejercicio") ||
+        pregunta.includes("hazme el ejercicio") ||
+        pregunta.includes("haz el ejercicio por mi");
+
+
+    /*
+    ========================================================
+    SI PIDE LA RESPUESTA, NO SE ENVÍA AL SERVIDOR
+    ========================================================
+    */
+
+    if (pideRespuesta) {
+
+        console.log(
+            "===== SOLICITUD DE RESPUESTA BLOQUEADA ====="
+        );
+
+        console.log(
+            "Pregunta bloqueada:",
+            text
+        );
+
+
+        addMessage(
+            "No puedo darte directamente la respuesta de un ejercicio ni decirte qué opción seleccionar. Puedo ayudarte explicándote la regla o el concepto necesario para que lo resuelvas por ti mismo.",
+            "bot"
+        );
+
+
+        send.disabled = false;
 
         return;
-
     }
 
 
-    addMessage(
-        text,
-        "user"
-    );
-
-
-    prompt.value =
-        "";
-
-
-    send.disabled =
-        true;
-
+    /*
+    ========================================================
+    PREGUNTA NORMAL
+    ========================================================
+    */
 
     try {
 
@@ -634,18 +700,11 @@ async function sendMessage() {
             "===== PREGUNTA AL TUTOR ====="
         );
 
-
         console.log(
             "Pregunta:",
             text
         );
 
-
-        /*
-        ====================================================
-        UTILIZAR EL CONTEXTO QUE YA ESTÁ EN STORYLINE DATA
-        ====================================================
-        */
 
         const contextoParaPregunta = {
 
@@ -689,44 +748,22 @@ async function sendMessage() {
             "===== CONTEXTO ENVIADO AL SERVIDOR ====="
         );
 
-
         console.log(
             contextoParaPregunta
         );
 
 
-        console.log(
-            "===== VVIDEO ENVIADO ====="
+        const response =
+            await askGPT(
+                text,
+                contextoParaPregunta
+            );
+
+
+        addMessage(
+            response,
+            "bot"
         );
-
-
-        console.log(
-            contextoParaPregunta.Vvideo
-        );
-
-
-        if (esSolicitudDeRespuesta(text)) {
-
-    addMessage(
-        "No puedo darte directamente la respuesta del ejercicio ni indicarte qué opción seleccionar. Sí puedo explicarte la regla o el concepto necesario para que puedas resolverlo por ti mismo.",
-        "bot"
-    );
-
-} else {
-
-    const response =
-        await askGPT(
-            text,
-            contextoParaPregunta
-        );
-
-
-    addMessage(
-        response,
-        "bot"
-    );
-
-}
 
 
     } catch (error) {
@@ -745,11 +782,9 @@ async function sendMessage() {
     }
 
 
-    send.disabled =
-        false;
+    send.disabled = false;
 
 }
-
 
 /*
 ============================================================
