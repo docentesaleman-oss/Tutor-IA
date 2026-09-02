@@ -388,13 +388,36 @@ BLOQUEAR SOLICITUDES DE RESPUESTA DE EJERCICIOS
 ============================================================
 */
 
-function esSolicitudDeRespuesta(texto) {
+function esSolicitudDeRespuesta(texto, contexto = {}) {
 
     const pregunta =
         normalizar(texto);
 
-    return (
+    const contextoEjercicio =
+        normalizar(
+            [
+                contexto.seccion,
+                contexto.contexto,
+                contexto.texto
+            ].join(" ")
+        );
 
+    const esEjercicio =
+        contextoEjercicio.includes("pretest") ||
+        contextoEjercicio.includes("posttest") ||
+        contextoEjercicio.includes("ejercicio") ||
+        contextoEjercicio.includes("actividad") ||
+        contextoEjercicio.includes("elige") ||
+        contextoEjercicio.includes("selecciona") ||
+        contextoEjercicio.includes("seleccione") ||
+        contextoEjercicio.includes("escoge") ||
+        contextoEjercicio.includes("escoger") ||
+        contextoEjercicio.includes("elige la") ||
+        contextoEjercicio.includes("correct") ||
+        Boolean(contexto.Vcorrect) ||
+        Boolean(contexto.Vincorrect);
+
+    const solicitudDirecta =
         pregunta.includes("cual es la respuesta") ||
         pregunta.includes("cual es la respuesta correcta") ||
         pregunta.includes("cual es la correcta") ||
@@ -421,8 +444,38 @@ function esSolicitudDeRespuesta(texto) {
         pregunta.includes("resuelve el ejercicio") ||
         pregunta.includes("resuelveme el ejercicio") ||
         pregunta.includes("hazme el ejercicio") ||
-        pregunta.includes("haz el ejercicio por mi")
+        pregunta.includes("haz el ejercicio por mi") ||
+        pregunta.includes("hazlo por mi") ||
+        pregunta.includes("respondeme el ejercicio") ||
+        pregunta.includes("responde el ejercicio") ||
+        pregunta.includes("cual respuesta pongo") ||
+        pregunta.includes("que respuesta pongo") ||
+        pregunta.includes("que respuesta doy") ||
+        pregunta.includes("que escribo") ||
+        pregunta.includes("que debo escribir") ||
+        pregunta.includes("esta bien mi respuesta") ||
+        pregunta.includes("mi respuesta esta bien") ||
+        pregunta.includes("mi respuesta es correcta") ||
+        pregunta.includes("es correcta mi respuesta") ||
+        pregunta.includes("esta correcta mi respuesta");
 
+    const solicitudDeOrientacionEnEjercicio =
+        esEjercicio &&
+        (
+            pregunta.includes("que tengo que hacer") ||
+            pregunta.includes("que debo hacer") ||
+            pregunta.includes("como hago el ejercicio") ||
+            pregunta.includes("como resuelvo") ||
+            pregunta.includes("como lo hago") ||
+            pregunta.includes("que hago aqui") ||
+            pregunta.includes("que hago aca") ||
+            pregunta.includes("que hago aquí") ||
+            pregunta.includes("que hago acá")
+        );
+
+    return (
+        solicitudDirecta ||
+        solicitudDeOrientacionEnEjercicio
     );
 
 }
@@ -1074,9 +1127,12 @@ BLOQUEO DE RESPUESTAS DE EJERCICIOS
 
 if (
     esSolicitudDeRespuesta(
-        message
+        message,
+        contexto
     )
-) {
+)
+
+{
 
     console.log(
         "===== SOLICITUD DE RESPUESTA BLOQUEADA ====="
