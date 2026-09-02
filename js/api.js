@@ -71,9 +71,13 @@ async function askGPT(text, storylineData) {
 
                     body: JSON.stringify({
 
-                        message: text,
+                        message:
+                            text,
 
                         storyline: {
+
+                            tipo:
+                                storylineData.tipo || "contenido",
 
                             tema:
                                 storylineData.tema || "",
@@ -94,7 +98,16 @@ async function askGPT(text, storylineData) {
                                 storylineData.contexto || "",
 
                             texto:
-                                storylineData.texto || ""
+                                storylineData.texto || "",
+
+                            Vcorrect:
+                                storylineData.Vcorrect || "",
+
+                            Vincorrect:
+                                storylineData.Vincorrect || "",
+
+                            Vvideo:
+                                storylineData.Vvideo || ""
 
                         },
 

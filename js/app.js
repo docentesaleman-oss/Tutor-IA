@@ -9,7 +9,8 @@ MEMORIA LOCAL DEL CHAT
 ============================================================
 */
 
-const CHAT_STORAGE_KEY = "tutorIA_chatHistory";
+const CHAT_STORAGE_KEY =
+    "tutorIA_chatHistory";
 
 let chatHistory = [];
 
@@ -18,15 +19,6 @@ let chatHistory = [];
 ============================================================
 CONTEXTO ACTUAL DE STORYLINE
 ============================================================
-
-IMPORTANTE:
-
-Este objeto representa ÚNICAMENTE el contexto actual
-recibido desde Storyline.
-
-NO se guarda en localStorage.
-NO se recupera del historial del chat.
-============================================================
 */
 
 let storylineData = {
@@ -34,12 +26,24 @@ let storylineData = {
     tipo: "contenido",
 
     tema: "",
+
     nivel: "",
+
     modulo: "",
+
     seccion: "",
+
     diapositiva: "",
+
     contexto: "",
-    texto: ""
+
+    texto: "",
+
+    Vcorrect: "",
+
+    Vincorrect: "",
+
+    Vvideo: ""
 
 };
 
@@ -48,20 +52,14 @@ let storylineData = {
 ============================================================
 ACTUALIZAR CONTEXTO DE STORYLINE
 ============================================================
-
-Regla:
-
-- Si Storyline manda un valor válido → se actualiza.
-- Si manda "" → NO borra el valor anterior.
-
-Esto es necesario porque Storyline puede ejecutar el código
-antes de que algunas variables estén actualizadas.
-============================================================
 */
 
 function actualizarStoryline(datos) {
 
-    if (!datos || typeof datos !== "object") {
+    if (
+        !datos ||
+        typeof datos !== "object"
+    ) {
 
         console.warn(
             "STORYLINE → datos inválidos:",
@@ -73,39 +71,52 @@ function actualizarStoryline(datos) {
     }
 
 
-    const actualizarCampo = function(nombre) {
+    if (
+        datos.tipo !== undefined &&
+        datos.tipo !== null
+    ) {
 
-        if (
-            datos[nombre] !== undefined &&
-            datos[nombre] !== null
-        ) {
+        storylineData.tipo =
+            String(
+                datos.tipo
+            ).trim() || "contenido";
 
-            const valor =
-                String(datos[nombre]).trim();
+    }
 
-            if (valor !== "") {
+
+    const campos = [
+
+        "tema",
+        "nivel",
+        "modulo",
+        "seccion",
+        "diapositiva",
+        "contexto",
+        "texto",
+        "Vcorrect",
+        "Vincorrect",
+        "Vvideo"
+
+    ];
+
+
+    campos.forEach(
+        function(nombre) {
+
+            if (
+                datos[nombre] !== undefined &&
+                datos[nombre] !== null
+            ) {
 
                 storylineData[nombre] =
-                    valor;
+                    String(
+                        datos[nombre]
+                    ).trim();
 
             }
 
         }
-
-    };
-
-
-    actualizarCampo("tema");
-    actualizarCampo("nivel");
-    actualizarCampo("modulo");
-    actualizarCampo("seccion");
-    actualizarCampo("diapositiva");
-    actualizarCampo("contexto");
-    actualizarCampo("texto");
-
-
-    storylineData.tipo =
-        datos.tipo || "contenido";
+    );
 
 
     console.log(
@@ -147,6 +158,21 @@ function actualizarStoryline(datos) {
         storylineData.texto
     );
 
+    console.log(
+        "Vcorrect:",
+        storylineData.Vcorrect
+    );
+
+    console.log(
+        "Vincorrect:",
+        storylineData.Vincorrect
+    );
+
+    console.log(
+        "Vvideo:",
+        storylineData.Vvideo
+    );
+
 }
 
 
@@ -156,11 +182,14 @@ COMPATIBILIDAD CON CÓDIGO ANTERIOR
 ============================================================
 */
 
-window.recibirDatosStoryline = function(datos) {
+window.recibirDatosStoryline =
+    function(datos) {
 
-    actualizarStoryline(datos);
+        actualizarStoryline(
+            datos
+        );
 
-};
+    };
 
 
 /*
@@ -174,9 +203,15 @@ function guardarChat() {
     try {
 
         localStorage.setItem(
+
             CHAT_STORAGE_KEY,
-            JSON.stringify(chatHistory)
+
+            JSON.stringify(
+                chatHistory
+            )
+
         );
+
 
         console.log(
             "CHAT GUARDADO:",
@@ -199,13 +234,6 @@ function guardarChat() {
 /*
 ============================================================
 CARGAR CHAT
-============================================================
-
-IMPORTANTE:
-
-Aquí solamente recuperamos mensajes.
-
-NO recuperamos contexto de Storyline.
 ============================================================
 */
 
@@ -232,7 +260,11 @@ function cargarChat() {
             );
 
 
-        if (!Array.isArray(historial)) {
+        if (
+            !Array.isArray(
+                historial
+            )
+        ) {
 
             return;
 
@@ -247,6 +279,7 @@ function cargarChat() {
             "===== MEMORIA DEL CHAT CARGADA ====="
         );
 
+
         console.log(
             "Mensajes:",
             chatHistory.length
@@ -254,7 +287,9 @@ function cargarChat() {
 
 
         const messages =
-            document.getElementById("messages");
+            document.getElementById(
+                "messages"
+            );
 
 
         if (!messages) {
@@ -264,15 +299,19 @@ function cargarChat() {
         }
 
 
-        messages.innerHTML = "";
+        messages.innerHTML =
+            "";
 
 
         for (
-            const mensaje of chatHistory
+            const mensaje
+            of chatHistory
         ) {
 
             const message =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             message.className =
@@ -303,7 +342,9 @@ function cargarChat() {
             error
         );
 
-        chatHistory = [];
+
+        chatHistory =
+            [];
 
     }
 
@@ -318,31 +359,37 @@ ELIMINAR CHAT
 
 if (clearChat) {
 
-    clearChat.onclick = function() {
+    clearChat.onclick =
+        function() {
 
-        chatHistory = [];
-
-        localStorage.removeItem(
-            CHAT_STORAGE_KEY
-        );
+            chatHistory =
+                [];
 
 
-        const messages =
-            document.getElementById("messages");
+            localStorage.removeItem(
+                CHAT_STORAGE_KEY
+            );
 
 
-        if (messages) {
+            const messages =
+                document.getElementById(
+                    "messages"
+                );
 
-            messages.innerHTML = "";
 
-        }
+            if (messages) {
+
+                messages.innerHTML =
+                    "";
+
+            }
 
 
-        console.log(
-            "===== CHAT ELIMINADO ====="
-        );
+            console.log(
+                "===== CHAT ELIMINADO ====="
+            );
 
-    };
+        };
 
 }
 
@@ -360,7 +407,9 @@ function addMessage(
 ) {
 
     const messages =
-        document.getElementById("messages");
+        document.getElementById(
+            "messages"
+        );
 
 
     if (!messages) {
@@ -375,7 +424,9 @@ function addMessage(
 
 
     const message =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     message.className =
@@ -443,14 +494,21 @@ window.addEventListener(
                 "===== MENSAJE RECIBIDO DE STORYLINE ====="
             );
 
+
             console.log(
                 event.data
             );
 
 
-            actualizarStoryline(
+            if (
                 event.data.datos
-            );
+            ) {
+
+                actualizarStoryline(
+                    event.data.datos
+                );
+
+            }
 
         }
 
@@ -504,28 +562,18 @@ async function sendMessage() {
     }
 
 
-    /*
-    Mostrar pregunta
-    */
-
     addMessage(
         text,
         "user"
     );
 
 
-    /*
-    Limpiar entrada
-    */
-
-    prompt.value = "";
+    prompt.value =
+        "";
 
 
-    /*
-    Desactivar botón
-    */
-
-    send.disabled = true;
+    send.disabled =
+        true;
 
 
     try {
@@ -533,6 +581,7 @@ async function sendMessage() {
         console.log(
             "===== PREGUNTA AL TUTOR ====="
         );
+
 
         console.log(
             "Pregunta:",
@@ -542,7 +591,7 @@ async function sendMessage() {
 
         /*
         ====================================================
-        COPIA EXACTA DEL CONTEXTO ACTUAL
+        UTILIZAR EL CONTEXTO QUE YA ESTÁ EN STORYLINE DATA
         ====================================================
         */
 
@@ -570,7 +619,16 @@ async function sendMessage() {
                 storylineData.contexto,
 
             texto:
-                storylineData.texto
+                storylineData.texto,
+
+            Vcorrect:
+                storylineData.Vcorrect,
+
+            Vincorrect:
+                storylineData.Vincorrect,
+
+            Vvideo:
+                storylineData.Vvideo
 
         };
 
@@ -579,16 +637,21 @@ async function sendMessage() {
             "===== CONTEXTO ENVIADO AL SERVIDOR ====="
         );
 
+
         console.log(
             contextoParaPregunta
         );
 
 
-        /*
-        ====================================================
-        ENVIAR AL SERVIDOR
-        ====================================================
-        */
+        console.log(
+            "===== VVIDEO ENVIADO ====="
+        );
+
+
+        console.log(
+            contextoParaPregunta.Vvideo
+        );
+
 
         const response =
             await askGPT(
@@ -596,10 +659,6 @@ async function sendMessage() {
                 contextoParaPregunta
             );
 
-
-        /*
-        Mostrar respuesta
-        */
 
         addMessage(
             response,
@@ -623,7 +682,8 @@ async function sendMessage() {
     }
 
 
-    send.disabled = false;
+    send.disabled =
+        false;
 
 }
 
@@ -681,16 +741,8 @@ window.addEventListener(
     "load",
     function() {
 
-        /*
-        Recuperar SOLO el chat
-        */
-
         cargarChat();
 
-
-        /*
-        Pedir a Storyline el contexto actual
-        */
 
         setTimeout(
             solicitarContextoStoryline,
