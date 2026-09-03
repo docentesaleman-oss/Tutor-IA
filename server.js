@@ -2960,133 +2960,6 @@ IDIOMA OBLIGATORIO DE RESPUESTA:
 
 ${nombresIdioma[idiomaError] || "español"}
 
-Debes responder COMPLETAMENTE en ese idioma.
-
-La preferencia de idioma del estudiante tiene prioridad
-sobre cualquier otro idioma presente en este prompt,
-en Vcorrect, Vincorrect, Vtexto o en la pregunta.
-
-No cambies de idioma porque las frases del ejercicio
-estén escritas en inglés u otro idioma.
-
-"${message}"
-
-============================================================
-DINÁMICA DEL EJERCICIO
-============================================================
-
-${contexto.contexto || "No disponible"}
-
-============================================================
-REGLAS
-============================================================
-
-Explica únicamente cómo funciona la actividad
-y cómo debe proceder el estudiante para resolverla.
-
-La pregunta del estudiante puede ser:
-"¿por qué me quedó mal la respuesta?"
-
-En ese caso debes explicar que no tienes información
-sobre cuál elemento seleccionó o escribió el estudiante,
-por lo que NO puedes identificar el error específico.
-
-IMPORTANTE:
-
-NO inventes la respuesta del estudiante.
-
-NO supongas qué seleccionó.
-
-NO crees respuestas incorrectas hipotéticas.
-
-NO inventes frases como ejemplos de posibles errores.
-
-NO analices posibles errores que el estudiante pudo haber cometido.
-
-NO proporciones respuestas del ejercicio.
-
-NO proporciones palabras que correspondan a definiciones específicas.
-
-NO relaciones opciones con definiciones.
-
-NO reveles ni reconstruyas las respuestas correctas.
-
-NO intentes deducir las respuestas del ejercicio.
-
-NO pidas al estudiante que copie las opciones,
-la respuesta, el ejercicio o una captura.
-
-Si el estudiante pregunta por qué quedó mal,
-indica claramente que no puedes saber qué elemento
-seleccionó y, por esa razón, no puedes determinar
-el error concreto.
-
-Puedes explicar únicamente la dinámica general
-del ejercicio y el procedimiento que debe seguir.
-
-
-
-No menciones variables internas,
-programación, JSON ni el funcionamiento interno
-del sistema.
-
-`;
-
-        const reply =
-    await consultarGroq(
-        message,
-        promptErrorEjercicio,
-        historialIA
-    );
-
-
-        return res.json({
-
-            reply:
-                reply
-
-        });
-
-    }
-
-
-    /*
-    ========================================================
-    CASO 2:
-    Vincorrect CONTIENE RESPUESTAS INCORRECTAS REALES
-    ========================================================
-    */
-
-    const idiomaError =
-    detectarIdiomaPreferido(
-        historialIA
-    );
-
-
-const nombresIdioma = {
-
-    es: "español",
-    en: "inglés",
-    de: "alemán",
-    fr: "francés",
-    pt: "portugués",
-    it: "italiano",
-    zh: "chino",
-    ru: "ruso",
-    ar: "árabe",
-    ko: "coreano"
-
-};
-
-
-const promptErrorEjercicio = `
-
-Eres un tutor de inglés.
-
-IDIOMA OBLIGATORIO DE RESPUESTA:
-
-${nombresIdioma[idiomaError] || "español"}
-
 Debes realizar TODA la explicación en ese idioma.
 
 La preferencia de idioma del estudiante tiene prioridad
@@ -3106,6 +2979,105 @@ Pregunta del estudiante:
 
 "${message}"
 
+
+============================================================
+RESPUESTAS CORRECTAS
+============================================================
+
+${contexto.Vcorrect || "No disponible"}
+
+
+============================================================
+RESPUESTAS INCORRECTAS
+============================================================
+
+${contexto.Vincorrect}
+
+
+============================================================
+TAREA
+============================================================
+
+Explica por qué las frases incorrectas
+son incorrectas.
+
+Analiza cada frase por separado.
+
+Identifica exactamente qué palabra,
+estructura o elemento gramatical está mal.
+
+Utiliza las respuestas correctas como
+referencia cuando sea necesario.
+
+Explica la regla de manera sencilla.
+
+Cuando sea posible, muestra la forma correcta.
+
+No necesitas saber cuál opción seleccionó
+el estudiante.
+
+No pidas que vuelva a proporcionar las frases.
+
+No inventes información.
+
+
+============================================================
+FORMATO DE LA EXPLICACIÓN
+============================================================
+
+Para cada frase incorrecta utiliza cuatro apartados:
+
+1. La frase incorrecta.
+2. Qué está mal.
+3. La forma correcta.
+4. Por qué: explica la regla gramatical de manera sencilla.
+
+TODOS los encabezados y etiquetas deben estar escritos
+en el idioma obligatorio indicado arriba.
+
+NO escribas los encabezados en español cuando el idioma
+obligatorio sea diferente del español.
+
+NO mezcles idiomas en la explicación.
+
+La frase original y la frase corregida pueden mantenerse
+en el idioma original del ejercicio cuando corresponda.
+
+
+============================================================
+REGLAS
+============================================================
+
+- Analiza cada frase incorrecta disponible.
+- Explica exactamente qué está mal.
+- Indica la corrección correspondiente.
+- Explica la regla de manera sencilla.
+- No inventes información.
+- No supongas cuál opción seleccionó el estudiante.
+- No pidas al estudiante que vuelva a escribir la respuesta.
+- No mezcles idiomas.
+- Respeta siempre el idioma obligatorio indicado arriba.
+- No agregues información innecesaria.
+- Mantén la explicación clara y breve.
+
+No menciones variables internas,
+programación, JSON ni el funcionamiento
+interno del sistema.
+
+Vcorrect:
+${contexto.Vcorrect}
+
+Vincorrect:
+${contexto.Vincorrect}
+
+`;
+
+const reply =
+    await consultarGroq(
+        message,
+        promptErrorEjercicio,
+        historialIA
+    );
 
 ============================================================
 RESPUESTAS CORRECTAS
