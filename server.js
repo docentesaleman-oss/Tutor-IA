@@ -449,23 +449,23 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
 
    
     const solicitudValidacion =
-        pregunta.includes("esta bien") ||
-        pregunta.includes("esta mal") ||
-        pregunta.includes("es correcta") ||
-        pregunta.includes("es incorrecta") ||
-        pregunta.includes("esta correcta") ||
-        pregunta.includes("esta incorrecta") ||
-        pregunta.includes("es correcto") ||
-        pregunta.includes("es incorrecto") ||
-        pregunta.includes("esta escrita correctamente") ||
-        pregunta.includes("esta bien escrita") ||
-        pregunta.includes("esta mal escrita") ||
-        pregunta.includes("es correcto escribir") ||
-        pregunta.includes("es correcto decir") ||
-        pregunta.includes("lo escribi bien") ||
-        pregunta.includes("lo escribi mal") ||
-        pregunta.includes("la escribi bien") ||
-        pregunta.includes("la escribi mal");
+    pregunta.includes("esta bien") ||
+    pregunta.includes("esta mal") ||
+    pregunta.includes("es correcta") ||
+    pregunta.includes("es incorrecta") ||
+    pregunta.includes("esta correcta") ||
+    pregunta.includes("esta incorrecta") ||
+    pregunta.includes("es correcto") ||
+    pregunta.includes("es incorrecto") ||
+    pregunta.includes("esta escrita correctamente") ||
+    pregunta.includes("esta bien escrita") ||
+    pregunta.includes("esta mal escrita") ||
+    pregunta.includes("es correcto escribir") ||
+    pregunta.includes("es correcto decir") ||
+    pregunta.includes("lo escribi bien") ||
+    pregunta.includes("lo escribi mal") ||
+    pregunta.includes("la escribi bien") ||
+    pregunta.includes("la escribi mal");
 
     return (
         solicitudRespuesta ||
