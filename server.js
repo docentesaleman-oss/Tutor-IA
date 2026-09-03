@@ -407,11 +407,6 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         contextoEjercicio.includes("posttest") ||
         contextoEjercicio.includes("ejercicio") ||
         contextoEjercicio.includes("actividad") ||
-        contextoEjercicio.includes("evaluacion") ||
-        contextoEjercicio.includes("selecciona") ||
-        contextoEjercicio.includes("seleccione") ||
-        contextoEjercicio.includes("elige") ||
-        contextoEjercicio.includes("escoge") ||
         Boolean(contexto.Vcorrect) ||
         Boolean(contexto.Vincorrect);
 
@@ -444,32 +439,19 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("esta bien mi respuesta") ||
         pregunta.includes("mi respuesta esta bien") ||
         pregunta.includes("mi respuesta es correcta") ||
-        pregunta.includes("es correcta mi respuesta") ||
-        pregunta.includes("esta correcta mi respuesta");
+        pregunta.includes("es correcta mi respuesta");
 
-   
-    const solicitudValidacion =
-        pregunta.includes("esta bien") ||
-        pregunta.includes("esta mal") ||
-        pregunta.includes("es correcta") ||
-        pregunta.includes("es incorrecta") ||
-        pregunta.includes("esta correcta") ||
-        pregunta.includes("esta incorrecta") ||
-        pregunta.includes("es correcto") ||
-        pregunta.includes("es incorrecto") ||
-        pregunta.includes("esta escrita correctamente") ||
-        pregunta.includes("esta bien escrita") ||
-        pregunta.includes("esta mal escrita") ||
-        pregunta.includes("es correcto escribir") ||
-        pregunta.includes("es correcto decir") ||
-        pregunta.includes("lo escribi bien") ||
-        pregunta.includes("lo escribi mal") ||
-        pregunta.includes("la escribi bien") ||
-        pregunta.includes("la escribi mal");
+    const solicitudAyuda =
+        pregunta.includes("que tengo que hacer") ||
+        pregunta.includes("que debo hacer") ||
+        pregunta.includes("como hago el ejercicio") ||
+        pregunta.includes("como resuelvo") ||
+        pregunta.includes("ayudame con el ejercicio") ||
+        pregunta.includes("ayudame a resolver");
 
     return (
         solicitudRespuesta ||
-               (esEjercicio && solicitudValidacion)
+        (esEjercicio && solicitudAyuda)
     );
 
 }
@@ -694,7 +676,7 @@ Utiliza las frases correctas como referencia.
 No inventes información.
 
 
-
+```text
 ============================================================
 REGLAS GENERALES
 ============================================================
