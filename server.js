@@ -3152,7 +3152,7 @@ No menciones variables internas,
 programación, JSON ni el funcionamiento
 interno del sistema.
 
-
+`;
 
 const promptErrorEjercicio = `
 
