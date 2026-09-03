@@ -2920,17 +2920,54 @@ if (
 
 
     if (
-        !contexto.Vincorrect
-    ) {
+    !contexto.Vincorrect
+) {
 
-        return res.json({
+    const mensajesSinVincorrect = {
 
-            reply:
-                "No tengo disponibles las respuestas incorrectas de este ejercicio."
+        es:
+            "Todavía no hay información disponible sobre una respuesta incorrecta de este ejercicio.",
 
-        });
+        en:
+            "There is not yet any information available about an incorrect answer for this exercise.",
 
-    }
+        de:
+            "Es sind noch keine Informationen zu einer falschen Antwort in dieser Übung verfügbar.",
+
+        fr:
+            "Aucune information n'est encore disponible sur une réponse incorrecte pour cet exercice.",
+
+        pt:
+            "Ainda não há informações disponíveis sobre uma resposta incorreta para este exercício.",
+
+        it:
+            "Non ci sono ancora informazioni disponibili su una risposta errata per questo esercizio.",
+
+        zh:
+            "目前还没有关于此练习错误答案的信息。",
+
+        ru:
+            "Пока нет информации о неправильном ответе в этом упражнении.",
+
+        ar:
+            "لا توجد معلومات متاحة بعد حول إجابة غير صحيحة لهذا التمرين.",
+
+        ko:
+            "아직 이 연습 문제의 오답에 대한 정보가 없습니다."
+
+    };
+
+    return res.json({
+
+        reply:
+            mensajesSinVincorrect[
+                idiomaPersistente
+            ] ||
+            mensajesSinVincorrect.es
+
+    });
+
+}
 
 
     /*
