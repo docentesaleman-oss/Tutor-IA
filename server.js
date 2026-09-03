@@ -1138,6 +1138,11 @@ app.post(
                 obtenerContextoStoryline(
                     storyline
                 );
+console.log("===== DETECCIÓN EJERCICIO =====");
+console.log("Vcorrect existe:", Boolean(contexto.Vcorrect));
+console.log("Vincorrect existe:", Boolean(contexto.Vincorrect));
+console.log("Contexto:", contexto.contexto);
+console.log("Pregunta:", message);
 
 /*
 ============================================================
