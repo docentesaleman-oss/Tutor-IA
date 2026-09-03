@@ -590,7 +590,7 @@ function esPreguntaSobreTextoVideo(texto) {
 
     return (
 
-        pregunta.includes("cual es el texto del video") ||
+         pregunta.includes("cual es el texto del video") ||
 
         pregunta.includes("que dice el video") ||
 
@@ -606,7 +606,23 @@ function esPreguntaSobreTextoVideo(texto) {
 
         pregunta.includes("texto completo del video") ||
 
-        pregunta.includes("transcripcion del video")
+        pregunta.includes("transcripcion del video") ||
+
+        pregunta.includes("transcribir el video") ||
+
+        pregunta.includes("transcribe el video") ||
+
+        pregunta.includes("transcribeme el video") ||
+
+        pregunta.includes("puedes transcribir el video") ||
+
+        pregunta.includes("puedes transcribirme el video") ||
+
+        pregunta.includes("puedes transcribirlo") ||
+
+        pregunta.includes("puedes transcribirme") ||
+
+        pregunta.includes("transcribelo")
 
     );
 
