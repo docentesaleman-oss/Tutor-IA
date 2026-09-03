@@ -447,14 +447,7 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("es correcta mi respuesta") ||
         pregunta.includes("esta correcta mi respuesta");
 
-    const solicitudAyuda =
-        pregunta.includes("que tengo que hacer") ||
-        pregunta.includes("que debo hacer") ||
-        pregunta.includes("como hago el ejercicio") ||
-        pregunta.includes("como resuelvo") ||
-        pregunta.includes("ayudame con el ejercicio") ||
-        pregunta.includes("ayudame a resolver");
-
+   
     const solicitudValidacion =
         pregunta.includes("esta bien") ||
         pregunta.includes("esta mal") ||
@@ -476,8 +469,7 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
 
     return (
         solicitudRespuesta ||
-        (esEjercicio && solicitudAyuda) ||
-        (esEjercicio && solicitudValidacion)
+               (esEjercicio && solicitudValidacion)
     );
 
 }
