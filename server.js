@@ -1241,13 +1241,13 @@ async function consultarGroq(
                             0.1,
 
                         max_completion_tokens:
-                            2000,
+    100,
 
-                        reasoning_effort:
-                            "low",
+reasoning_effort:
+    "none",
 
-                        include_reasoning:
-                            false
+include_reasoning:
+    false
 
                     })
 
