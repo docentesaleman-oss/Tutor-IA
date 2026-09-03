@@ -174,6 +174,25 @@ function obtenerContextoStoryline(storyline) {
 
 /*
 ============================================================
+DETERMINAR SI LA DIAPOSITIVA ACTUAL ES DE VIDEO
+============================================================
+*/
+
+function esDiapositivaDeVideo(contexto = {}) {
+
+    const seccion =
+        normalizar(
+            contexto.seccion
+        );
+
+    return (
+        seccion.includes("video")
+    );
+
+}
+
+/*
+============================================================
 MOSTRAR CONTEXTO EN CONSOLA
 ============================================================
 */
@@ -1261,6 +1280,26 @@ console.log("Vcorrect existe:", Boolean(contexto.Vcorrect));
 console.log("Vincorrect existe:", Boolean(contexto.Vincorrect));
 console.log("Contexto:", contexto.contexto);
 console.log("Pregunta:", message);
+
+const contexto =
+    obtenerContextoStoryline(
+        storyline
+    );
+
+
+/*
+============================================================
+VALIDAR VVIDEO SEGÚN LA DIAPOSITIVA ACTUAL
+============================================================
+*/
+
+if (
+    !esDiapositivaDeVideo(contexto)
+) {
+
+    contexto.Vvideo = "";
+
+}
 
 /*
 ============================================================
