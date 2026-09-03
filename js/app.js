@@ -658,12 +658,13 @@ async function sendMessage() {
         return;
     }
 
+
+
     addMessage(text, "user");
 
     prompt.value = "";
 
     send.disabled = true;
-
 
     /*
     ========================================================

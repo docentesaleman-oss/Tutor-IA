@@ -1,3 +1,4 @@
+```javascript
 async function askGPT(text, storylineData) {
 
     try {
@@ -29,7 +30,7 @@ async function askGPT(text, storylineData) {
 
             history = JSON.parse(
                 localStorage.getItem(
-                    "tutorIA_chatHistory"
+                    "tutorIA_chatHistory_v2"
                 ) || "[]"
             );
 
