@@ -527,6 +527,26 @@ function esPreguntaSobreErrorEjercicio(texto) {
 
 }
 
+/*
+============================================================
+DETECTAR GUION DE VINCORRECT
+============================================================
+*/
+
+function esGuionVincorrect(contexto = {}) {
+
+    const Vincorrect =
+        normalizar(
+            contexto.Vincorrect
+        );
+
+    return (
+        Vincorrect.includes(
+            "usa vcorrect para determinar la respuesta correcta y vcontexto para determinar la dinamica del ejercicio"
+        )
+    );
+
+}
 
 /*
 ============================================================
@@ -1377,47 +1397,181 @@ if (
 
 
             /*
-            ====================================================
-            PREGUNTA SOBRE ERROR DEL EJERCICIO
-            ====================================================
-            */
+============================================================
+PREGUNTA SOBRE ERROR DEL EJERCICIO
+============================================================
+*/
 
-            if (
-                esPreguntaSobreErrorEjercicio(
-                    message
-                )
-            ) {
+if (
+    esPreguntaSobreErrorEjercicio(
+        message
+    )
+) {
 
-                console.log(
-                    "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
-                );
+    console.log(
+        "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
+    );
 
-                console.log(
-                    "Vcorrect:",
-                    contexto.Vcorrect
-                );
+    console.log(
+        "Vcorrect:",
+        contexto.Vcorrect
+    );
 
-                console.log(
-                    "Vincorrect:",
-                    contexto.Vincorrect
-                );
-
-
-                if (
-                    !contexto.Vincorrect
-                ) {
-
-                    return res.json({
-
-                        reply:
-                            "No tengo disponibles las respuestas incorrectas de este ejercicio."
-
-                    });
-
-                }
+    console.log(
+        "Vincorrect:",
+        contexto.Vincorrect
+    );
 
 
-                const promptErrorEjercicio = `
+    if (
+        !contexto.Vincorrect
+    ) {
+
+        return res.json({
+
+            reply:
+                "No tengo disponibles las respuestas incorrectas de este ejercicio."
+
+        });
+
+    }
+
+
+    /*
+    ========================================================
+    CASO 1:
+    Vincorrect CONTIENE EL GUION
+    ========================================================
+    */
+
+    if (
+        esGuionVincorrect(
+            contexto
+        )
+    ) {
+
+        console.log(
+            "===== VINCORRECT CONTIENE GUION ====="
+        );
+
+
+        const promptErrorEjercicio = `
+
+const promptErrorEjercicio = `
+
+Eres un tutor de inglés.
+
+El estudiante está realizando un ejercicio.
+
+Pregunta del estudiante:
+
+"${message}"
+
+
+============================================================
+DINÁMICA DEL EJERCICIO
+============================================================
+
+${contexto.contexto || "No disponible"}
+
+
+============================================================
+INFORMACIÓN DE REFERENCIA
+============================================================
+
+La información disponible permite conocer cómo
+funciona el ejercicio y cuáles son las respuestas
+que el ejercicio considera correctas.
+
+Esta información es SOLO una referencia interna
+para comprender la actividad.
+
+============================================================
+TAREA
+============================================================
+
+Explica al estudiante cómo funciona la actividad
+según las instrucciones del ejercicio.
+
+Si el estudiante pregunta por qué su respuesta
+quedó incorrecta, debes ser transparente:
+
+NO tienes información sobre cuál respuesta,
+opción, palabra o elemento seleccionó realmente
+el estudiante.
+
+Por lo tanto, NO puedes determinar qué error
+específico cometió.
+
+NO inventes posibles respuestas del estudiante.
+
+NO supongas qué pudo haber escrito o seleccionado.
+
+NO crees ejemplos de errores diciendo
+"si escribiste..." o "si seleccionaste...".
+
+NO analices posibles errores hipotéticos.
+
+NO enumeres posibles errores de ortografía,
+gramática, vocabulario o selección.
+
+NO reproduzcas las respuestas correctas
+del ejercicio.
+
+NO reveles cuál opción corresponde a cuál
+definición, frase, palabra o elemento.
+
+NO utilices la información de referencia
+para permitir que el estudiante deduzca
+directamente las respuestas del ejercicio.
+
+Explica únicamente la dinámica del ejercicio
+y el procedimiento general que debe seguir
+el estudiante para resolverlo.
+
+Si no es posible identificar el error concreto,
+dilo claramente.
+
+No pidas que el estudiante vuelva a proporcionar
+las opciones, frases, respuestas o capturas.
+
+No inventes información.
+
+Responde siempre en español.
+
+No menciones variables internas,
+programación, JSON ni el funcionamiento
+interno del sistema.
+
+`;
+
+
+        const reply =
+            await consultarGroq(
+                message,
+                promptErrorEjercicio,
+                []
+            );
+
+
+        return res.json({
+
+            reply:
+                reply
+
+        });
+
+    }
+
+
+    /*
+    ========================================================
+    CASO 2:
+    Vincorrect CONTIENE RESPUESTAS INCORRECTAS REALES
+    ========================================================
+    */
+
+    const promptErrorEjercicio = `
 
 Eres un tutor de inglés.
 
@@ -1494,22 +1648,22 @@ Forma correcta:
 `;
 
 
-                const reply =
-                    await consultarGroq(
-                        message,
-                        promptErrorEjercicio,
-                        []
-                    );
+    const reply =
+        await consultarGroq(
+            message,
+            promptErrorEjercicio,
+            []
+        );
 
 
-                return res.json({
+    return res.json({
 
-                    reply:
-                        reply
+        reply:
+            reply
 
-                });
+    });
 
-            }
+}
 
 
             /*
