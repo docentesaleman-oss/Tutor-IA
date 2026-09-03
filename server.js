@@ -1166,12 +1166,24 @@ if (
         message
     );
 
+    console.log(
+        "Es ejercicio:",
+        Boolean(
+            contexto.Vcorrect ||
+            contexto.Vincorrect ||
+            contexto.contexto
+        )
+    );
+
     return res.json({
+
         reply:
-            "No puedo resolver, indicar ni confirmar respuestas de ejercicios o evaluaciones. Tampoco puedo solicitar información adicional para hacerlo. Puedo ayudarte con una explicación general del concepto o la regla necesaria para que lo resuelvas por ti mismo."
+            "No puedo resolver, indicar ni confirmar respuestas de ejercicios o evaluaciones. Tampoco puedo corregir una respuesta concreta para decirte si es correcta o incorrecta. Puedo ayudarte con una explicación general de la regla o del concepto necesario para que lo resuelvas por ti mismo."
+
     });
 
 }
+
             /*
             ====================================================
             PREPARAR MEMORIA
