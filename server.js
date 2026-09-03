@@ -1457,7 +1457,6 @@ if (
 
         const promptErrorEjercicio = `
 
-const promptErrorEjercicio = `
 
 Eres un tutor de inglés.
 
