@@ -500,16 +500,15 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("la escribi bien") ||
         pregunta.includes("la escribi mal") ||
         pregunta.includes("is correct") ||
-        pregunta.includes("is incorrect") ||
-        pregunta.includes("is it correct") ||
-        pregunta.includes("is it incorrect") ||
-        pregunta.includes("is spelled correctly") ||
-        pregunta.includes("is spelled correctly") ||
-        pregunta.includes("is spelled right") ||
-        pregunta.includes("is this correct") ||
-        pregunta.includes("is this wrong") ||
-        pregunta.includes("did i write it correctly") ||
-        pregunta.includes("did i spell it correctly");
+pregunta.includes("is incorrect") ||
+pregunta.includes("is it correct") ||
+pregunta.includes("is it incorrect") ||
+pregunta.includes("spelled correctly") ||
+pregunta.includes("spelled right") ||
+pregunta.includes("is this correct") ||
+pregunta.includes("is this wrong") ||
+pregunta.includes("did i write it correctly") ||
+pregunta.includes("did i spell it correctly");
 
 
     /*
