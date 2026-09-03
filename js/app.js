@@ -10,7 +10,7 @@ MEMORIA LOCAL DEL CHAT
 */
 
 const CHAT_STORAGE_KEY =
-    "tutorIA_chatHistory";
+    "tutorIA_chatHistory_v2";
 
 let chatHistory = [];
 
