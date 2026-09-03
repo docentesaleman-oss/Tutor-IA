@@ -1,4 +1,4 @@
-```javascript
+javascript
 async function askGPT(text, storylineData) {
 
     try {
