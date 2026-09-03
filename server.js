@@ -976,11 +976,17 @@ async function consultarGroq(
                         messages:
                             mensajes,
 
-                        temperature:
-                            0.1,
+                       temperature:
+    0.1,
 
-                        max_tokens:
-                            1000
+max_completion_tokens:
+    2000,
+
+reasoning_effort:
+    "low",
+
+include_reasoning:
+    false
 
                     })
 
