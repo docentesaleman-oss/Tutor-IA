@@ -415,6 +415,7 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         Boolean(contexto.Vcorrect) ||
         Boolean(contexto.Vincorrect);
 
+
     const solicitudRespuesta =
         pregunta.includes("respuesta correcta") ||
         pregunta.includes("cual es la respuesta") ||
@@ -447,30 +448,58 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("es correcta mi respuesta") ||
         pregunta.includes("esta correcta mi respuesta");
 
-   
-    const solicitudValidacion =
-    pregunta.includes("esta bien") ||
-    pregunta.includes("esta mal") ||
-    pregunta.includes("es correcta") ||
-    pregunta.includes("es incorrecta") ||
-    pregunta.includes("esta correcta") ||
-    pregunta.includes("esta incorrecta") ||
-    pregunta.includes("es correcto") ||
-    pregunta.includes("es incorrecto") ||
-    pregunta.includes("esta escrita correctamente") ||
-    pregunta.includes("esta bien escrita") ||
-    pregunta.includes("esta mal escrita") ||
-    pregunta.includes("es correcto escribir") ||
-    pregunta.includes("es correcto decir") ||
-    pregunta.includes("lo escribi bien") ||
-    pregunta.includes("lo escribi mal") ||
-    pregunta.includes("la escribi bien") ||
-    pregunta.includes("la escribi mal");
 
-    return (
+    const solicitudValidacion =
+        pregunta.includes("esta bien") ||
+        pregunta.includes("esta mal") ||
+        pregunta.includes("es correcta") ||
+        pregunta.includes("es incorrecta") ||
+        pregunta.includes("esta correcta") ||
+        pregunta.includes("esta incorrecta") ||
+        pregunta.includes("es correcto") ||
+        pregunta.includes("es incorrecto") ||
+        pregunta.includes("esta escrita correctamente") ||
+        pregunta.includes("esta bien escrita") ||
+        pregunta.includes("esta mal escrita") ||
+        pregunta.includes("es correcto escribir") ||
+        pregunta.includes("es correcto decir") ||
+        pregunta.includes("lo escribi bien") ||
+        pregunta.includes("lo escribi mal") ||
+        pregunta.includes("la escribi bien") ||
+        pregunta.includes("la escribi mal");
+
+
+    const resultado =
         solicitudRespuesta ||
-               (esEjercicio && solicitudValidacion)
+        (esEjercicio && solicitudValidacion);
+
+
+    console.log(
+        "===== DETECCIÓN SOLICITUD DE RESPUESTA ====="
     );
+
+    console.log(
+        "Pregunta:",
+        pregunta
+    );
+
+    console.log(
+        "Es ejercicio:",
+        esEjercicio
+    );
+
+    console.log(
+        "Solicitud validación:",
+        solicitudValidacion
+    );
+
+    console.log(
+        "Resultado bloqueo:",
+        resultado
+    );
+
+
+    return resultado;
 
 }
 
