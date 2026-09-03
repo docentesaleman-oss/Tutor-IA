@@ -1281,11 +1281,6 @@ console.log("Vincorrect existe:", Boolean(contexto.Vincorrect));
 console.log("Contexto:", contexto.contexto);
 console.log("Pregunta:", message);
 
-const contexto =
-    obtenerContextoStoryline(
-        storyline
-    );
-
 
 /*
 ============================================================
