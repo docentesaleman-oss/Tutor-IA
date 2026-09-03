@@ -1346,152 +1346,294 @@ include_reasoning:
 
 /*
 ============================================================
-DETECTAR VALIDACIÓN EN CUALQUIER IDIOMA
+DETECTAR VALIDACIÓN EN LOS 10 IDIOMAS
 ============================================================
 */
 
-/*
-============================================================
-DETECTAR VALIDACIÓN EN CUALQUIER IDIOMA
-============================================================
-*/
+function detectarSolicitudDeValidacion(texto) {
 
-async function detectarSolicitudDeValidacion(texto) {
+    const pregunta =
+        normalizar(texto);
 
-    try {
 
-        const response =
-            await fetch(
-                "https://api.groq.com/openai/v1/chat/completions",
-                {
+    /*
+    ========================================================
+    ESPAÑOL
+    ========================================================
+    */
 
-                    method: "POST",
+    const espanol =
+        pregunta.includes("esta bien escrito") ||
+        pregunta.includes("esta bien escrita") ||
+        pregunta.includes("esta correctamente escrito") ||
+        pregunta.includes("esta correctamente escrita") ||
+        pregunta.includes("esta mal escrito") ||
+        pregunta.includes("esta mal escrita") ||
+        pregunta.includes("es correcto") ||
+        pregunta.includes("es correcta") ||
+        pregunta.includes("es incorrecto") ||
+        pregunta.includes("es incorrecta") ||
+        pregunta.includes("mi respuesta es correcta") ||
+        pregunta.includes("mi respuesta es incorrecta") ||
+        pregunta.includes("lo escribi bien") ||
+        pregunta.includes("lo escribi mal") ||
+        pregunta.includes("como se escribe correctamente") ||
+        pregunta.includes("como se escribe bien");
 
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization":
-                            `Bearer ${process.env.GROQ_API_KEY}`
-                    },
 
-                    body: JSON.stringify({
+    /*
+    ========================================================
+    FRANCÉS
+    ========================================================
+    */
 
-                        model:
-                            "openai/gpt-oss-20b",
+    const frances =
+        pregunta.includes("est-ce correct") ||
+        pregunta.includes("est ce correct") ||
+        pregunta.includes("est-ce que c'est correct") ||
+        pregunta.includes("est ce que c'est correct") ||
+        pregunta.includes("est-ce que ce mot est correct") ||
+        pregunta.includes("est ce que ce mot est correct") ||
+        pregunta.includes("ce mot est-il correct") ||
+        pregunta.includes("ce mot est il correct") ||
+        pregunta.includes("ce mot est-il correctement ecrit") ||
+        pregunta.includes("ce mot est il correctement ecrit") ||
+        pregunta.includes("cette phrase est-elle correcte") ||
+        pregunta.includes("cette phrase est elle correcte") ||
+        pregunta.includes("ma reponse est-elle correcte") ||
+        pregunta.includes("ma reponse est elle correcte") ||
+        pregunta.includes("correctement ecrit") ||
+        pregunta.includes("correctement ecrite");
 
-                        messages: [
 
-                            {
-                                role: "system",
+    /*
+    ========================================================
+    ALEMÁN
+    ========================================================
+    */
 
-                                content: `
-You are ONLY an intent classifier.
+    const aleman =
+        pregunta.includes("ist das richtig") ||
+        pregunta.includes("ist das korrekt") ||
+        pregunta.includes("ist das falsch") ||
+        pregunta.includes("ist dieses wort richtig") ||
+        pregunta.includes("ist dieses wort korrekt") ||
+        pregunta.includes("ist dieses wort falsch") ||
+        pregunta.includes("ist das wort richtig") ||
+        pregunta.includes("ist das wort korrekt") ||
+        pregunta.includes("ist das wort falsch") ||
+        pregunta.includes("richtig geschrieben") ||
+        pregunta.includes("korrekt geschrieben") ||
+        pregunta.includes("falsch geschrieben") ||
+        pregunta.includes("ist dieser satz richtig") ||
+        pregunta.includes("ist dieser satz korrekt") ||
+        pregunta.includes("ist dieser satz falsch") ||
+        pregunta.includes("ist meine antwort richtig") ||
+        pregunta.includes("ist meine antwort korrekt") ||
+        pregunta.includes("ist meine antwort falsch") ||
+        pregunta.includes("habe ich das richtig geschrieben") ||
+        pregunta.includes("habe ich das korrekt geschrieben");
 
-Determine whether the student's message asks to:
 
-- verify if a word is spelled correctly
-- verify if a sentence is written correctly
-- verify if an answer is correct
-- verify if something is wrong
-- confirm whether something is correct or incorrect
-- correct a word, sentence, answer or text
-- validate any response
+    /*
+    ========================================================
+    INGLÉS
+    ========================================================
+    */
 
-The student may write in ANY language.
+    const ingles =
+        pregunta.includes("is this correct") ||
+        pregunta.includes("is this incorrect") ||
+        pregunta.includes("is this wrong") ||
+        pregunta.includes("is it correct") ||
+        pregunta.includes("is it incorrect") ||
+        pregunta.includes("is it wrong") ||
+        pregunta.includes("is this word correct") ||
+        pregunta.includes("is this word spelled correctly") ||
+        pregunta.includes("is this word spelled right") ||
+        pregunta.includes("is this sentence correct") ||
+        pregunta.includes("is this sentence incorrect") ||
+        pregunta.includes("is my answer correct") ||
+        pregunta.includes("is my answer incorrect") ||
+        pregunta.includes("did i write it correctly") ||
+        pregunta.includes("did i spell it correctly") ||
+        pregunta.includes("did i write this correctly") ||
+        pregunta.includes("did i spell this correctly") ||
+        pregunta.includes("spelled correctly") ||
+        pregunta.includes("spelled right");
 
-Examples that MUST return BLOQUEAR:
 
-"Est-ce que ce mot est correctement écrit ?"
-"Ist dieses Wort richtig geschrieben?"
-"Is this word spelled correctly?"
-"¿Esta palabra está bien escrita?"
-"Ce mot est-il correct ?"
-"Ist das richtig?"
-"Is my answer correct?"
+    /*
+    ========================================================
+    PORTUGUÉS
+    ========================================================
+    */
 
-If the student is asking for any kind of validation,
-correction or confirmation, return:
+    const portugues =
+        pregunta.includes("esta correto") ||
+        pregunta.includes("esta correta") ||
+        pregunta.includes("esta errado") ||
+        pregunta.includes("esta errada") ||
+        pregunta.includes("isso esta correto") ||
+        pregunta.includes("isso esta correta") ||
+        pregunta.includes("isso esta errado") ||
+        pregunta.includes("isso esta errada") ||
+        pregunta.includes("esta palavra esta correta") ||
+        pregunta.includes("esta palavra esta escrita corretamente") ||
+        pregunta.includes("essa frase esta correta") ||
+        pregunta.includes("minha resposta esta correta") ||
+        pregunta.includes("minha resposta esta errada") ||
+        pregunta.includes("escrevi corretamente") ||
+        pregunta.includes("escrevi certo") ||
+        pregunta.includes("escrevi errado");
 
-BLOQUEAR
 
-Otherwise return:
+    /*
+    ========================================================
+    CHINO
+    ========================================================
+    */
 
-PERMITIR
+    const chino =
+        pregunta.includes("写对了吗") ||
+        pregunta.includes("写得对吗") ||
+        pregunta.includes("写正确了吗") ||
+        pregunta.includes("这个词写对了吗") ||
+        pregunta.includes("这个词正确吗") ||
+        pregunta.includes("这个词写得正确吗") ||
+        pregunta.includes("这个句子正确吗") ||
+        pregunta.includes("这个句子写对了吗") ||
+        pregunta.includes("我的答案正确吗") ||
+        pregunta.includes("我的答案对吗") ||
+        pregunta.includes("这样写对吗") ||
+        pregunta.includes("这样写正确吗");
 
-Do NOT answer the student's question.
-Do NOT explain anything.
-Return ONLY one word:
-BLOQUEAR
-or
-PERMITIR
-`
-                            },
 
-                            {
-                                role: "user",
+    /*
+    ========================================================
+    ITALIANO
+    ========================================================
+    */
 
-                                content: texto
-                            }
+    const italiano =
+        pregunta.includes("e corretto") ||
+        pregunta.includes("e corretta") ||
+        pregunta.includes("e sbagliato") ||
+        pregunta.includes("e sbagliata") ||
+        pregunta.includes("è corretto") ||
+        pregunta.includes("è corretta") ||
+        pregunta.includes("è sbagliato") ||
+        pregunta.includes("è sbagliata") ||
+        pregunta.includes("questa parola e corretta") ||
+        pregunta.includes("questa parola e scritta correttamente") ||
+        pregunta.includes("questa frase e corretta") ||
+        pregunta.includes("la mia risposta e corretta") ||
+        pregunta.includes("la mia risposta e sbagliata");
 
-                        ],
 
-                        temperature: 0,
+    /*
+    ========================================================
+    RUSO
+    ========================================================
+    */
 
-                        max_completion_tokens: 20,
+    const ruso =
+        pregunta.includes("это правильно") ||
+        pregunta.includes("это неправильно") ||
+        pregunta.includes("это слово правильно") ||
+        pregunta.includes("это слово написано правильно") ||
+        pregunta.includes("это слово написано неправильно") ||
+        pregunta.includes("это предложение правильно") ||
+        pregunta.includes("это предложение написано правильно") ||
+        pregunta.includes("мой ответ правильный") ||
+        pregunta.includes("мой ответ неправильный") ||
+        pregunta.includes("я правильно написал") ||
+        pregunta.includes("я правильно написала") ||
+        pregunta.includes("я правильно написал это слово") ||
+        pregunta.includes("я правильно написала это слово");
 
-                        reasoning_effort: "low",
 
-                        include_reasoning: false
+    /*
+    ========================================================
+    ÁRABE
+    ========================================================
+    */
 
-                    })
+    const arabe =
+        pregunta.includes("هل هذا صحيح") ||
+        pregunta.includes("هل هذا خطأ") ||
+        pregunta.includes("هل هذه الكلمة صحيحة") ||
+        pregunta.includes("هل هذه الكلمة مكتوبة بشكل صحيح") ||
+        pregunta.includes("هل هذه الجملة صحيحة") ||
+        pregunta.includes("هل هذه الجملة مكتوبة بشكل صحيح") ||
+        pregunta.includes("هل إجابتي صحيحة") ||
+        pregunta.includes("هل اجابتي صحيحة") ||
+        pregunta.includes("هل إجابتي خاطئة") ||
+        pregunta.includes("هل اجابتي خاطئة") ||
+        pregunta.includes("هل كتبتها بشكل صحيح") ||
+        pregunta.includes("هل كتبت هذا بشكل صحيح");
 
-                }
-            );
 
-        if (!response.ok) {
+    /*
+    ========================================================
+    COREANO
+    ========================================================
+    */
 
-            console.error(
-                "ERROR HTTP DETECTOR:",
-                response.status
-            );
+    const coreano =
+        pregunta.includes("이게 맞나요") ||
+        pregunta.includes("이게 맞습니까") ||
+        pregunta.includes("이게 틀렸나요") ||
+        pregunta.includes("이 단어가 맞나요") ||
+        pregunta.includes("이 단어가 맞습니까") ||
+        pregunta.includes("이 단어를 올바르게 썼나요") ||
+        pregunta.includes("이 단어가 맞게 쓰였나요") ||
+        pregunta.includes("이 문장이 맞나요") ||
+        pregunta.includes("이 문장이 맞습니까") ||
+        pregunta.includes("이 문장이 올바른가요") ||
+        pregunta.includes("내 답이 맞나요") ||
+        pregunta.includes("내 답변이 맞나요") ||
+        pregunta.includes("제가 올바르게 썼나요") ||
+        pregunta.includes("제가 맞게 썼나요");
 
-            return false;
-        }
 
-        const data =
-            await response.json();
+    /*
+    ========================================================
+    RESULTADO FINAL
+    ========================================================
+    */
 
-        const resultado =
-            data?.choices?.[0]?.message?.content
-                ?.trim()
-                .toUpperCase();
+    const resultado =
+        espanol ||
+        frances ||
+        aleman ||
+        ingles ||
+        portugues ||
+        chino ||
+        italiano ||
+        ruso ||
+        arabe ||
+        coreano;
 
-        console.log(
-            "===== DETECTOR MULTILINGÜE ====="
-        );
 
-        console.log(
-            "Pregunta:",
-            texto
-        );
+    console.log(
+        "===== DETECTOR MULTILINGÜE ====="
+    );
 
-        console.log(
-            "Resultado:",
-            resultado
-        );
+    console.log(
+        "Pregunta:",
+        texto
+    );
 
-        return resultado.includes("BLOQUEAR");
+    console.log(
+        "Resultado:",
+        resultado
+    );
 
-    } catch (error) {
 
-        console.error(
-            "ERROR DETECTOR MULTILINGÜE:",
-            error
-        );
+    return resultado;
 
-        return false;
-    }
 }
-
 /*
 ============================================================
 CHAT
