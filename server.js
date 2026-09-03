@@ -742,41 +742,182 @@ function esPreguntaSobreErrorEjercicio(texto) {
 
     return (
 
+        // ====================================================
+        // ESPAÑOL
+        // ====================================================
+
         pregunta.includes("porque me quedo mal") ||
-
         pregunta.includes("por que me quedo mal") ||
-
         pregunta.includes("porque me quedo") ||
-
         pregunta.includes("por que me quedo") ||
-
         pregunta.includes("porque esta mal") ||
-
         pregunta.includes("por que esta mal") ||
-
         pregunta.includes("porque esta incorrecta") ||
-
         pregunta.includes("por que esta incorrecta") ||
-
         pregunta.includes("porque es incorrecta") ||
-
         pregunta.includes("por que es incorrecta") ||
-
         pregunta.includes("por que esta mal mi respuesta") ||
-
         pregunta.includes("porque esta mal mi respuesta") ||
-
         pregunta.includes("explicame el error") ||
-
         pregunta.includes("explicame por que") ||
-
         pregunta.includes("explica por que") ||
-
         pregunta.includes("que hice mal") ||
-
         pregunta.includes("que esta mal") ||
+        pregunta.includes("cual fue el error") ||
 
-        pregunta.includes("cual fue el error")
+        // ====================================================
+        // INGLÉS
+        // ====================================================
+
+        pregunta.includes("why was my answer wrong") ||
+        pregunta.includes("why was my answer incorrect") ||
+        pregunta.includes("why did my answer go wrong") ||
+        pregunta.includes("why is my answer wrong") ||
+        pregunta.includes("why is my answer incorrect") ||
+        pregunta.includes("why did i get it wrong") ||
+        pregunta.includes("why did i get this wrong") ||
+        pregunta.includes("why did i get the answer wrong") ||
+        pregunta.includes("why is this wrong") ||
+        pregunta.includes("why is this incorrect") ||
+        pregunta.includes("explain the error") ||
+        pregunta.includes("explain why it is wrong") ||
+        pregunta.includes("explain why this is wrong") ||
+        pregunta.includes("what did i do wrong") ||
+        pregunta.includes("what is wrong with my answer") ||
+        pregunta.includes("what was the error") ||
+
+        // ====================================================
+        // ALEMÁN
+        // ====================================================
+
+        pregunta.includes("warum war meine antwort falsch") ||
+        pregunta.includes("warum war meine antwort nicht richtig") ||
+        pregunta.includes("warum ist meine antwort falsch") ||
+        pregunta.includes("warum ist meine antwort nicht richtig") ||
+        pregunta.includes("warum war meine antwort fehlerhaft") ||
+        pregunta.includes("warum habe ich die antwort falsch") ||
+        pregunta.includes("warum habe ich das falsch") ||
+        pregunta.includes("warum ist das falsch") ||
+        pregunta.includes("warum ist das nicht richtig") ||
+        pregunta.includes("erklaere mir den fehler") ||
+        pregunta.includes("erklaer mir den fehler") ||
+        pregunta.includes("erklaere warum das falsch ist") ||
+        pregunta.includes("erklaer warum das falsch ist") ||
+        pregunta.includes("was habe ich falsch gemacht") ||
+        pregunta.includes("was ist an meiner antwort falsch") ||
+        pregunta.includes("was war der fehler") ||
+
+        // ====================================================
+        // FRANCÉS
+        // ====================================================
+
+        pregunta.includes("pourquoi ma reponse est fausse") ||
+        pregunta.includes("pourquoi ma reponse etait fausse") ||
+        pregunta.includes("pourquoi ma reponse est incorrecte") ||
+        pregunta.includes("pourquoi ma reponse etait incorrecte") ||
+        pregunta.includes("pourquoi ai je eu faux") ||
+        pregunta.includes("pourquoi est ce faux") ||
+        pregunta.includes("pourquoi est ce incorrect") ||
+        pregunta.includes("explique moi l erreur") ||
+        pregunta.includes("explique moi pourquoi c est faux") ||
+        pregunta.includes("qu est ce que j ai fait de mal") ||
+        pregunta.includes("quelle etait l erreur") ||
+
+        // ====================================================
+        // PORTUGUÉS
+        // ====================================================
+
+        pregunta.includes("por que minha resposta estava errada") ||
+        pregunta.includes("por que minha resposta esta errada") ||
+        pregunta.includes("por que minha resposta estava incorreta") ||
+        pregunta.includes("por que minha resposta esta incorreta") ||
+        pregunta.includes("por que eu errei") ||
+        pregunta.includes("por que isso esta errado") ||
+        pregunta.includes("por que isso esta incorreto") ||
+        pregunta.includes("explique o erro") ||
+        pregunta.includes("explique por que esta errado") ||
+        pregunta.includes("o que eu fiz de errado") ||
+        pregunta.includes("qual foi o erro") ||
+
+        // ====================================================
+        // CHINO
+        // ====================================================
+
+        pregunta.includes("为什么我的答案错了") ||
+        pregunta.includes("为什么我的答案是错的") ||
+        pregunta.includes("为什么我的回答错了") ||
+        pregunta.includes("为什么我答错了") ||
+        pregunta.includes("为什么这个是错的") ||
+        pregunta.includes("为什么这是错误的") ||
+        pregunta.includes("解释一下错误") ||
+        pregunta.includes("解释一下为什么错了") ||
+        pregunta.includes("我哪里做错了") ||
+        pregunta.includes("哪里错了") ||
+        pregunta.includes("错误是什么") ||
+
+        // ====================================================
+        // ITALIANO
+        // ====================================================
+
+        pregunta.includes("perche la mia risposta era sbagliata") ||
+        pregunta.includes("perche la mia risposta e sbagliata") ||
+        pregunta.includes("perche la mia risposta era errata") ||
+        pregunta.includes("perche la mia risposta e errata") ||
+        pregunta.includes("perche ho sbagliato") ||
+        pregunta.includes("perche questa e sbagliata") ||
+        pregunta.includes("perche questo e sbagliato") ||
+        pregunta.includes("spiegami l errore") ||
+        pregunta.includes("spiegami perche e sbagliato") ||
+        pregunta.includes("cosa ho sbagliato") ||
+        pregunta.includes("qual e stato l errore") ||
+
+        // ====================================================
+        // RUSO
+        // ====================================================
+
+        pregunta.includes("почему мой ответ неправильный") ||
+        pregunta.includes("почему мой ответ был неправильным") ||
+        pregunta.includes("почему мой ответ неверный") ||
+        pregunta.includes("почему я ответил неправильно") ||
+        pregunta.includes("почему это неправильно") ||
+        pregunta.includes("почему это неверно") ||
+        pregunta.includes("объясни ошибку") ||
+        pregunta.includes("объясни почему это неправильно") ||
+        pregunta.includes("что я сделал неправильно") ||
+        pregunta.includes("в чем была ошибка") ||
+
+        // ====================================================
+        // ÁRABE
+        // ====================================================
+
+        pregunta.includes("لماذا كانت اجابتي خاطئة") ||
+        pregunta.includes("لماذا اجابتي خاطئة") ||
+        pregunta.includes("لماذا كانت إجابتي خاطئة") ||
+        pregunta.includes("لماذا إجابتي خاطئة") ||
+        pregunta.includes("لماذا اخطأت") ||
+        pregunta.includes("لماذا هذا خطأ") ||
+        pregunta.includes("اشرح لي الخطأ") ||
+        pregunta.includes("اشرح لماذا هذا خطأ") ||
+        pregunta.includes("ماذا فعلت بشكل خاطئ") ||
+        pregunta.includes("ما هو الخطأ") ||
+
+        // ====================================================
+        // COREANO
+        // ====================================================
+
+        pregunta.includes("왜 내 답이 틀렸어") ||
+        pregunta.includes("왜 제 답이 틀렸어요") ||
+        pregunta.includes("왜 내 답변이 틀렸어") ||
+        pregunta.includes("왜 제 답변이 틀렸어요") ||
+        pregunta.includes("왜 내가 틀렸어") ||
+        pregunta.includes("왜 이것이 틀렸어") ||
+        pregunta.includes("왜 이게 틀렸어") ||
+        pregunta.includes("오류를 설명해줘") ||
+        pregunta.includes("왜 틀렸는지 설명해줘") ||
+        pregunta.includes("내가 무엇을 잘못했어") ||
+        pregunta.includes("무엇이 잘못됐어") ||
+        pregunta.includes("무엇이 잘못되었어") ||
+        pregunta.includes("무슨 오류였어")
 
     );
 
@@ -1423,6 +1564,226 @@ function prepararHistorial(
     return resultado;
 
 }
+
+/*
+============================================================
+DETECTAR IDIOMA ACTUAL DE LA CONVERSACIÓN
+============================================================
+*/
+
+function detectarIdiomaPreferido(historialIA = []) {
+
+    const historialTexto =
+        historialIA
+            .map(mensaje =>
+                normalizar(
+                    mensaje.content
+                )
+            )
+            .join(" ");
+
+
+    /*
+    ========================================================
+    ESPAÑOL
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en espanol") ||
+        historialTexto.includes("habla en espanol") ||
+        historialTexto.includes("responde en espanol") ||
+        historialTexto.includes("quiero que hables en espanol") ||
+        historialTexto.includes("quiero que respondas en espanol")
+    ) {
+        return "es";
+    }
+
+
+    /*
+    ========================================================
+    INGLÉS
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en ingles") ||
+        historialTexto.includes("habla en ingles") ||
+        historialTexto.includes("responde en ingles") ||
+        historialTexto.includes("quiero que hables en ingles") ||
+        historialTexto.includes("quiero que respondas en ingles") ||
+        historialTexto.includes("speak in english") ||
+        historialTexto.includes("respond in english") ||
+        historialTexto.includes("answer in english") ||
+        historialTexto.includes("talk to me in english")
+    ) {
+        return "en";
+    }
+
+
+    /*
+    ========================================================
+    ALEMÁN
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en aleman") ||
+        historialTexto.includes("habla en aleman") ||
+        historialTexto.includes("responde en aleman") ||
+        historialTexto.includes("quiero que hables en aleman") ||
+        historialTexto.includes("quiero que respondas en aleman") ||
+        historialTexto.includes("sprich auf deutsch") ||
+        historialTexto.includes("antworte auf deutsch") ||
+        historialTexto.includes("sprich deutsch") ||
+        historialTexto.includes("antworte auf deutsch")
+    ) {
+        return "de";
+    }
+
+
+    /*
+    ========================================================
+    FRANCÉS
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en frances") ||
+        historialTexto.includes("habla en frances") ||
+        historialTexto.includes("responde en frances") ||
+        historialTexto.includes("quiero que hables en frances") ||
+        historialTexto.includes("quiero que respondas en frances") ||
+        historialTexto.includes("parle en francais") ||
+        historialTexto.includes("parlez en francais") ||
+        historialTexto.includes("reponds en francais") ||
+        historialTexto.includes("repondez en francais")
+    ) {
+        return "fr";
+    }
+
+
+    /*
+    ========================================================
+    PORTUGUÉS
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en portugues") ||
+        historialTexto.includes("habla en portugues") ||
+        historialTexto.includes("responde en portugues") ||
+        historialTexto.includes("quiero que hables en portugues") ||
+        historialTexto.includes("quiero que respondas en portugues") ||
+        historialTexto.includes("fale em portugues") ||
+        historialTexto.includes("responda em portugues") ||
+        historialTexto.includes("fale comigo em portugues")
+    ) {
+        return "pt";
+    }
+
+
+    /*
+    ========================================================
+    ITALIANO
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en italiano") ||
+        historialTexto.includes("habla en italiano") ||
+        historialTexto.includes("responde en italiano") ||
+        historialTexto.includes("quiero que hables en italiano") ||
+        historialTexto.includes("quiero que respondas en italiano") ||
+        historialTexto.includes("parla in italiano") ||
+        historialTexto.includes("rispondi in italiano") ||
+        historialTexto.includes("parlami in italiano")
+    ) {
+        return "it";
+    }
+
+
+    /*
+    ========================================================
+    CHINO
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en chino") ||
+        historialTexto.includes("habla en chino") ||
+        historialTexto.includes("responde en chino") ||
+        historialTexto.includes("用中文回答") ||
+        historialTexto.includes("用中文说") ||
+        historialTexto.includes("请用中文") ||
+        historialTexto.includes("用中文")
+    ) {
+        return "zh";
+    }
+
+
+    /*
+    ========================================================
+    RUSO
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en ruso") ||
+        historialTexto.includes("habla en ruso") ||
+        historialTexto.includes("responde en ruso") ||
+        historialTexto.includes("говори на русском") ||
+        historialTexto.includes("отвечай на русском") ||
+        historialTexto.includes("ответь на русском") ||
+        historialTexto.includes("на русском")
+    ) {
+        return "ru";
+    }
+
+
+    /*
+    ========================================================
+    ÁRABE
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en arabe") ||
+        historialTexto.includes("habla en arabe") ||
+        historialTexto.includes("responde en arabe") ||
+        historialTexto.includes("تحدث بالعربية") ||
+        historialTexto.includes("أجب بالعربية") ||
+        historialTexto.includes("أجب باللغة العربية") ||
+        historialTexto.includes("باللغة العربية") ||
+        historialTexto.includes("بالعربية")
+    ) {
+        return "ar";
+    }
+
+
+    /*
+    ========================================================
+    COREANO
+    ========================================================
+    */
+
+    if (
+        historialTexto.includes("hablame en coreano") ||
+        historialTexto.includes("habla en coreano") ||
+        historialTexto.includes("responde en coreano") ||
+        historialTexto.includes("한국어로 말해") ||
+        historialTexto.includes("한국어로 대답해") ||
+        historialTexto.includes("한국어로 답해") ||
+        historialTexto.includes("한국어로")
+    ) {
+        return "ko";
+    }
+
+
+    return "es";
+
+}
+
     
 /*
 ============================================================
@@ -1443,7 +1804,6 @@ async function consultarGroq(
         );
 
     }
-
 
     /*
     ========================================================
@@ -2104,119 +2464,10 @@ if (
     );
 
 
-    let idiomaBloqueo = "es";
-
-
-const historialTexto =
-    historialIA
-        .map(mensaje =>
-            normalizar(
-                mensaje.content
-            )
-        )
-        .join(" ");
-
-
-/*
-============================================================
-DETECTAR IDIOMA DE CONVERSACIÓN
-============================================================
-*/
-
-if (
-    historialTexto.includes("hablame en aleman") ||
-    historialTexto.includes("habla en aleman") ||
-    historialTexto.includes("responde en aleman") ||
-    historialTexto.includes("quiero que hables en aleman")
-) {
-
-    idiomaBloqueo = "de";
-
-}
-
-else if (
-    historialTexto.includes("hablame en ingles") ||
-    historialTexto.includes("habla en ingles") ||
-    historialTexto.includes("responde en ingles") ||
-    historialTexto.includes("quiero que hables en ingles")
-) {
-
-    idiomaBloqueo = "en";
-
-}
-
-else if (
-    historialTexto.includes("hablame en frances") ||
-    historialTexto.includes("habla en frances") ||
-    historialTexto.includes("responde en frances") ||
-    historialTexto.includes("quiero que hables en frances")
-) {
-
-    idiomaBloqueo = "fr";
-
-}
-
-else if (
-    historialTexto.includes("hablame en portugues") ||
-    historialTexto.includes("habla en portugues") ||
-    historialTexto.includes("responde en portugues") ||
-    historialTexto.includes("quiero que hables en portugues")
-) {
-
-    idiomaBloqueo = "pt";
-
-}
-
-else if (
-    historialTexto.includes("hablame en italiano") ||
-    historialTexto.includes("habla en italiano") ||
-    historialTexto.includes("responde en italiano") ||
-    historialTexto.includes("quiero que hables en italiano")
-) {
-
-    idiomaBloqueo = "it";
-
-}
-
-else if (
-    historialTexto.includes("hablame en chino") ||
-    historialTexto.includes("habla en chino") ||
-    historialTexto.includes("responde en chino")
-) {
-
-    idiomaBloqueo = "zh";
-
-}
-
-else if (
-    historialTexto.includes("hablame en ruso") ||
-    historialTexto.includes("habla en ruso") ||
-    historialTexto.includes("responde en ruso")
-) {
-
-    idiomaBloqueo = "ru";
-
-}
-
-else if (
-    historialTexto.includes("hablame en arabe") ||
-    historialTexto.includes("habla en arabe") ||
-    historialTexto.includes("responde en arabe")
-) {
-
-    idiomaBloqueo = "ar";
-
-}
-
-else if (
-    historialTexto.includes("hablame en coreano") ||
-    historialTexto.includes("habla en coreano") ||
-    historialTexto.includes("responde en coreano")
-) {
-
-    idiomaBloqueo = "ko";
-
-}
+   const idiomaBloqueo =
+    detectarIdiomaPreferido(
+        historialIA
+    );
 
 
 /*
@@ -2315,141 +2566,216 @@ return res.json({
             );
 
 
-            /*
-            ====================================================
-            RESPUESTAS DIRECTAS DE UBICACIÓN
-            ====================================================
-            */
+           /*
+============================================================
+RESPUESTAS DIRECTAS DE UBICACIÓN
+============================================================
+*/
 
-            if (
-                esPreguntaDeModulo(
-                    message
+const idiomaActual =
+    detectarIdiomaPreferido(
+        historialIA
+    );
+
+
+const mensajesUbicacion = {
+
+    es: {
+        modulo: "Estás en el",
+        nivel: "Estás en el nivel",
+        tema: "El tema actual es",
+        seccion: "Estás en la sección",
+        diapositiva: "Estás en"
+    },
+
+    en: {
+        modulo: "You are in",
+        nivel: "You are at level",
+        tema: "The current topic is",
+        seccion: "You are in the section",
+        diapositiva: "You are on"
+    },
+
+    de: {
+        modulo: "Du bist im",
+        nivel: "Du bist auf dem Niveau",
+        tema: "Das aktuelle Thema ist",
+        seccion: "Du bist im Abschnitt",
+        diapositiva: "Du bist auf"
+    },
+
+    fr: {
+        modulo: "Tu es dans le",
+        nivel: "Tu es au niveau",
+        tema: "Le thème actuel est",
+        seccion: "Tu es dans la section",
+        diapositiva: "Tu es sur"
+    },
+
+    pt: {
+        modulo: "Você está no",
+        nivel: "Você está no nível",
+        tema: "O tema atual é",
+        seccion: "Você está na seção",
+        diapositiva: "Você está em"
+    },
+
+    it: {
+        modulo: "Sei nel",
+        nivel: "Sei al livello",
+        tema: "Il tema attuale è",
+        seccion: "Sei nella sezione",
+        diapositiva: "Sei a"
+    },
+
+    zh: {
+        modulo: "你现在位于",
+        nivel: "你现在的级别是",
+        tema: "当前主题是",
+        seccion: "你现在位于",
+        diapositiva: "你现在位于"
+    },
+
+    ru: {
+        modulo: "Вы находитесь в",
+        nivel: "Ваш уровень",
+        tema: "Текущая тема:",
+        seccion: "Вы находитесь в разделе",
+        diapositiva: "Вы находитесь на"
+    },
+
+    ar: {
+        modulo: "أنت في",
+        nivel: "مستواك هو",
+        tema: "الموضوع الحالي هو",
+        seccion: "أنت في القسم",
+        diapositiva: "أنت في"
+    },
+
+    ko: {
+        modulo: "현재",
+        nivel: "현재 레벨은",
+        tema: "현재 주제는",
+        seccion: "현재 섹션은",
+        diapositiva: "현재 위치는"
+    }
+
+};
+
+
+const ubicacion =
+    mensajesUbicacion[idiomaActual] ||
+    mensajesUbicacion.es;
+
+
+if (
+    esPreguntaDeModulo(
+        message
+    )
+) {
+
+    return res.json({
+
+        reply:
+            contexto.modulo
+                ? `${ubicacion.modulo} ${contexto.modulo}.`
+                : (
+                    idiomaActual === "en"
+                        ? "The current module is not available."
+                        : idiomaActual === "de"
+                            ? "Das aktuelle Modul ist nicht verfügbar."
+                            : idiomaActual === "fr"
+                                ? "Le module actuel n'est pas disponible."
+                                : idiomaActual === "pt"
+                                    ? "O módulo atual não está disponível."
+                                    : idiomaActual === "it"
+                                        ? "Il modulo attuale non è disponibile."
+                                        : idiomaActual === "zh"
+                                            ? "当前模块不可用。"
+                                            : idiomaActual === "ru"
+                                                ? "Текущий модуль недоступен."
+                                                : idiomaActual === "ar"
+                                                    ? "الوحدة الحالية غير متاحة."
+                                                    : idiomaActual === "ko"
+                                                        ? "현재 모듈을 사용할 수 없습니다."
+                                                        : "No tengo disponible el módulo actual."
                 )
-            ) {
 
-                return res.json({
+    });
 
-                    reply:
-                        contexto.modulo
-                            ? `Estás en el ${contexto.modulo}.`
-                            : "No tengo disponible el módulo actual."
-
-                });
-
-            }
+}
 
 
-            if (
-                esPreguntaDeNivel(
-                    message
-                )
-            ) {
+if (
+    esPreguntaDeNivel(
+        message
+    )
+) {
 
-                return res.json({
+    return res.json({
 
-                    reply:
-                        contexto.nivel
-                            ? `Estás en el nivel ${contexto.nivel}.`
-                            : "No tengo disponible el nivel actual."
+        reply:
+            contexto.nivel
+                ? `${ubicacion.nivel} ${contexto.nivel}.`
+                : "No tengo disponible el nivel actual."
 
-                });
+    });
 
-            }
-
-
-            if (
-                esPreguntaDeTema(
-                    message
-                )
-            ) {
-
-                return res.json({
-
-                    reply:
-                        contexto.tema
-                            ? `El tema actual es ${contexto.tema}.`
-                            : "No tengo disponible el tema actual."
-
-                });
-
-            }
+}
 
 
-            if (
-                esPreguntaDeSeccion(
-                    message
-                )
-            ) {
+if (
+    esPreguntaDeTema(
+        message
+    )
+) {
 
-                return res.json({
+    return res.json({
 
-                    reply:
-                        contexto.seccion
-                            ? `Estás en la sección ${contexto.seccion}.`
-                            : "No tengo disponible la sección actual."
+        reply:
+            contexto.tema
+                ? `${ubicacion.tema} ${contexto.tema}.`
+                : "No tengo disponible el tema actual."
 
-                });
+    });
 
-            }
-
-
-            if (
-                esPreguntaDeDiapositiva(
-                    message
-                )
-            ) {
-
-                return res.json({
-
-                    reply:
-                        contexto.diapositiva
-                            ? `Estás en ${contexto.diapositiva}.`
-                            : "No tengo disponible la diapositiva actual."
-
-                });
-
-            }
+}
 
 
-            /*
-            ====================================================
-            PREGUNTAS SOBRE LO QUE ESTÁ EN PANTALLA
-            ====================================================
-            */
+if (
+    esPreguntaDeSeccion(
+        message
+    )
+) {
 
-            if (
-                esPreguntaDeContexto(
-                    message
-                )
-            ) {
+    return res.json({
 
-                const respuesta = [
+        reply:
+            contexto.seccion
+                ? `${ubicacion.seccion} ${contexto.seccion}.`
+                : "No tengo disponible la sección actual."
 
-                    contexto.contexto
-                        ? `Contexto: ${contexto.contexto}`
-                        : "",
+    });
 
-                    contexto.texto
-                        ? `\nContenido: ${contexto.texto}`
-                        : ""
-
-                ]
-                .filter(Boolean)
-                .join("\n");
+}
 
 
-                if (respuesta) {
+if (
+    esPreguntaDeDiapositiva(
+        message
+    )
+) {
 
-                    return res.json({
+    return res.json({
 
-                        reply:
-                            respuesta
+        reply:
+            contexto.diapositiva
+                ? `${ubicacion.diapositiva} ${contexto.diapositiva}.`
+                : "No tengo disponible la diapositiva actual."
 
-                    });
+    });
 
-                }
-
-            }
+}
 
 
             /*
@@ -2547,12 +2873,44 @@ if (
         );
 
 
-        const promptErrorEjercicio = `
+        const idiomaError =
+    detectarIdiomaPreferido(
+        historialIA
+    );
 
+
+const nombresIdioma = {
+
+    es: "español",
+    en: "inglés",
+    de: "alemán",
+    fr: "francés",
+    pt: "portugués",
+    it: "italiano",
+    zh: "chino",
+    ru: "ruso",
+    ar: "árabe",
+    ko: "coreano"
+
+};
+
+
+const promptErrorEjercicio = `
 
 Eres un tutor de inglés.
 
-El estudiante pregunta:
+IDIOMA OBLIGATORIO DE RESPUESTA:
+
+${nombresIdioma[idiomaError] || "español"}
+
+Debes responder COMPLETAMENTE en ese idioma.
+
+La preferencia de idioma del estudiante tiene prioridad
+sobre cualquier otro idioma presente en este prompt,
+en Vcorrect, Vincorrect, Vtexto o en la pregunta.
+
+No cambies de idioma porque las frases del ejercicio
+estén escritas en inglés u otro idioma.
 
 "${message}"
 
@@ -2642,9 +3000,48 @@ del sistema.
     ========================================================
     */
 
-    const promptErrorEjercicio = `
+    const idiomaError =
+    detectarIdiomaPreferido(
+        historialIA
+    );
+
+
+const nombresIdioma = {
+
+    es: "español",
+    en: "inglés",
+    de: "alemán",
+    fr: "francés",
+    pt: "portugués",
+    it: "italiano",
+    zh: "chino",
+    ru: "ruso",
+    ar: "árabe",
+    ko: "coreano"
+
+};
+
+
+const promptErrorEjercicio = `
 
 Eres un tutor de inglés.
+
+IDIOMA OBLIGATORIO DE RESPUESTA:
+
+${nombresIdioma[idiomaError] || "español"}
+
+Debes realizar TODA la explicación en ese idioma.
+
+La preferencia de idioma del estudiante tiene prioridad
+sobre el idioma de las frases de Vcorrect y Vincorrect.
+
+Aunque las frases del ejercicio estén en inglés,
+alemán, francés o cualquier otro idioma,
+la explicación debe realizarse en:
+
+${nombresIdioma[idiomaError] || "español"}
+
+No cambies de idioma.
 
 El estudiante está realizando un ejercicio.
 
