@@ -1996,7 +1996,7 @@ async function consultarGroq(
                             0.1,
 
                        max_completion_tokens:
-    250,
+    100,
 
 reasoning_effort:
     "low",
