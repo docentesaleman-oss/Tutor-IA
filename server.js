@@ -412,16 +412,14 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         contextoEjercicio.includes("seleccione") ||
         contextoEjercicio.includes("elige") ||
         contextoEjercicio.includes("escoge") ||
-        contextoEjercicio.includes("escoger") ||
         Boolean(contexto.Vcorrect) ||
         Boolean(contexto.Vincorrect);
 
+
     const solicitudRespuesta =
-        pregunta.includes("respuesta correcta") ||
         pregunta.includes("respuesta correcta") ||
         pregunta.includes("cual es la respuesta") ||
         pregunta.includes("cual es la correcta") ||
-        pregunta.includes("cual es correcto") ||
         pregunta.includes("cual opcion") ||
         pregunta.includes("que opcion") ||
         pregunta.includes("que debo elegir") ||
@@ -436,40 +434,72 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
         pregunta.includes("cual marco") ||
         pregunta.includes("que pongo") ||
         pregunta.includes("que escribo") ||
-        pregunta.includes("que respuesta pongo") ||
-        pregunta.includes("que respuesta doy") ||
         pregunta.includes("dime la respuesta") ||
         pregunta.includes("dame la respuesta") ||
-        pregunta.includes("dime cual es") ||
         pregunta.includes("dime cual") ||
-        pregunta.includes("resuelve") ||
-        pregunta.includes("resuelveme") ||
+        pregunta.includes("resuelve el ejercicio") ||
+        pregunta.includes("resuelveme el ejercicio") ||
         pregunta.includes("haz el ejercicio") ||
         pregunta.includes("hazme el ejercicio") ||
         pregunta.includes("hazlo por mi") ||
-        pregunta.includes("respondeme") ||
-        pregunta.includes("responde por mi") ||
         pregunta.includes("esta bien mi respuesta") ||
         pregunta.includes("mi respuesta esta bien") ||
         pregunta.includes("mi respuesta es correcta") ||
         pregunta.includes("es correcta mi respuesta") ||
         pregunta.includes("esta correcta mi respuesta");
 
-    const solicitudAyudaEjercicio =
-        pregunta.includes("que tengo que hacer") ||
-        pregunta.includes("que debo hacer") ||
-        pregunta.includes("como hago") ||
-        pregunta.includes("como lo hago") ||
-        pregunta.includes("como resuelvo") ||
-        pregunta.includes("ayudame con el ejercicio") ||
-        pregunta.includes("ayudame a resolver") ||
-        pregunta.includes("ayudame a contestar") ||
-        pregunta.includes("ayudame a responder");
 
-    return (
+    const solicitudValidacion =
+        pregunta.includes("esta bien") ||
+        pregunta.includes("esta mal") ||
+        pregunta.includes("es correcta") ||
+        pregunta.includes("es incorrecta") ||
+        pregunta.includes("esta correcta") ||
+        pregunta.includes("esta incorrecta") ||
+        pregunta.includes("es correcto") ||
+        pregunta.includes("es incorrecto") ||
+        pregunta.includes("esta escrita correctamente") ||
+        pregunta.includes("esta bien escrita") ||
+        pregunta.includes("esta mal escrita") ||
+        pregunta.includes("es correcto escribir") ||
+        pregunta.includes("es correcto decir") ||
+        pregunta.includes("lo escribi bien") ||
+        pregunta.includes("lo escribi mal") ||
+        pregunta.includes("la escribi bien") ||
+        pregunta.includes("la escribi mal");
+
+
+    const resultado =
         solicitudRespuesta ||
-        (esEjercicio && solicitudAyudaEjercicio)
+        (esEjercicio && solicitudValidacion);
+
+
+    console.log(
+        "===== DETECCIÓN SOLICITUD DE RESPUESTA ====="
     );
+
+    console.log(
+        "Pregunta:",
+        pregunta
+    );
+
+    console.log(
+        "Es ejercicio:",
+        esEjercicio
+    );
+
+    console.log(
+        "Solicitud validación:",
+        solicitudValidacion
+    );
+
+    console.log(
+        "Resultado bloqueo:",
+        resultado
+    );
+
+
+    return resultado;
 
 }
 
@@ -526,6 +556,26 @@ function esPreguntaSobreErrorEjercicio(texto) {
 
 }
 
+/*
+============================================================
+DETECTAR GUION DE VINCORRECT
+============================================================
+*/
+
+function esGuionVincorrect(contexto = {}) {
+
+    const Vincorrect =
+        normalizar(
+            contexto.Vincorrect
+        );
+
+    return (
+        Vincorrect.includes(
+            "usa vcorrect para determinar la respuesta correcta y vcontexto para determinar la dinamica del ejercicio"
+        )
+    );
+
+}
 
 /*
 ============================================================
@@ -693,7 +743,7 @@ Utiliza las frases correctas como referencia.
 No inventes información.
 
 
-```text
+
 ============================================================
 REGLAS GENERALES
 ============================================================
@@ -975,11 +1025,17 @@ async function consultarGroq(
                         messages:
                             mensajes,
 
-                        temperature:
-                            0.1,
+                       temperature:
+    0.1,
 
-                        max_tokens:
-                            1000
+max_completion_tokens:
+    2000,
+
+reasoning_effort:
+    "low",
+
+include_reasoning:
+    false
 
                     })
 
@@ -1111,6 +1167,11 @@ app.post(
                 obtenerContextoStoryline(
                     storyline
                 );
+console.log("===== DETECCIÓN EJERCICIO =====");
+console.log("Vcorrect existe:", Boolean(contexto.Vcorrect));
+console.log("Vincorrect existe:", Boolean(contexto.Vincorrect));
+console.log("Contexto:", contexto.contexto);
+console.log("Pregunta:", message);
 
 /*
 ============================================================
@@ -1134,9 +1195,20 @@ if (
         message
     );
 
+    console.log(
+        "Es ejercicio:",
+        Boolean(
+            contexto.Vcorrect ||
+            contexto.Vincorrect ||
+            contexto.contexto
+        )
+    );
+
     return res.json({
+
         reply:
-            "No puedo resolver, indicar ni confirmar respuestas de ejercicios o evaluaciones. Tampoco puedo solicitar información adicional para hacerlo. Puedo ayudarte con una explicación general del concepto o la regla necesaria para que lo resuelvas por ti mismo."
+            "No puedo resolver, indicar ni confirmar respuestas de ejercicios o evaluaciones. Tampoco puedo corregir una respuesta concreta para decirte si es correcta o incorrecta. Puedo ayudarte con una explicación general de la regla o del concepto necesario para que lo resuelvas por ti mismo."
+
     });
 
 }
@@ -1371,47 +1443,160 @@ if (
 
 
             /*
-            ====================================================
-            PREGUNTA SOBRE ERROR DEL EJERCICIO
-            ====================================================
-            */
+============================================================
+PREGUNTA SOBRE ERROR DEL EJERCICIO
+============================================================
+*/
 
-            if (
-                esPreguntaSobreErrorEjercicio(
-                    message
-                )
-            ) {
+if (
+    esPreguntaSobreErrorEjercicio(
+        message
+    )
+) {
 
-                console.log(
-                    "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
-                );
+    console.log(
+        "===== ANÁLISIS ESPECIAL DEL EJERCICIO ====="
+    );
 
-                console.log(
-                    "Vcorrect:",
-                    contexto.Vcorrect
-                );
+    console.log(
+        "Vcorrect:",
+        contexto.Vcorrect
+    );
 
-                console.log(
-                    "Vincorrect:",
-                    contexto.Vincorrect
-                );
-
-
-                if (
-                    !contexto.Vincorrect
-                ) {
-
-                    return res.json({
-
-                        reply:
-                            "No tengo disponibles las respuestas incorrectas de este ejercicio."
-
-                    });
-
-                }
+    console.log(
+        "Vincorrect:",
+        contexto.Vincorrect
+    );
 
 
-                const promptErrorEjercicio = `
+    if (
+        !contexto.Vincorrect
+    ) {
+
+        return res.json({
+
+            reply:
+                "No tengo disponibles las respuestas incorrectas de este ejercicio."
+
+        });
+
+    }
+
+
+    /*
+    ========================================================
+    CASO 1:
+    Vincorrect CONTIENE EL GUION
+    ========================================================
+    */
+
+    if (
+        esGuionVincorrect(
+            contexto
+        )
+    ) {
+
+        console.log(
+            "===== VINCORRECT CONTIENE GUION ====="
+        );
+
+
+        const promptErrorEjercicio = `
+
+
+Eres un tutor de inglés.
+
+El estudiante pregunta:
+
+"${message}"
+
+============================================================
+DINÁMICA DEL EJERCICIO
+============================================================
+
+${contexto.contexto || "No disponible"}
+
+============================================================
+REGLAS
+============================================================
+
+Explica únicamente cómo funciona la actividad
+y cómo debe proceder el estudiante para resolverla.
+
+La pregunta del estudiante puede ser:
+"¿por qué me quedó mal la respuesta?"
+
+En ese caso debes explicar que no tienes información
+sobre cuál elemento seleccionó o escribió el estudiante,
+por lo que NO puedes identificar el error específico.
+
+IMPORTANTE:
+
+NO inventes la respuesta del estudiante.
+
+NO supongas qué seleccionó.
+
+NO crees respuestas incorrectas hipotéticas.
+
+NO inventes frases como ejemplos de posibles errores.
+
+NO analices posibles errores que el estudiante pudo haber cometido.
+
+NO proporciones respuestas del ejercicio.
+
+NO proporciones palabras que correspondan a definiciones específicas.
+
+NO relaciones opciones con definiciones.
+
+NO reveles ni reconstruyas las respuestas correctas.
+
+NO intentes deducir las respuestas del ejercicio.
+
+NO pidas al estudiante que copie las opciones,
+la respuesta, el ejercicio o una captura.
+
+Si el estudiante pregunta por qué quedó mal,
+indica claramente que no puedes saber qué elemento
+seleccionó y, por esa razón, no puedes determinar
+el error concreto.
+
+Puedes explicar únicamente la dinámica general
+del ejercicio y el procedimiento que debe seguir.
+
+Responde siempre en español.
+
+No menciones variables internas,
+programación, JSON ni el funcionamiento interno
+del sistema.
+
+`;
+
+        const reply =
+            await consultarGroq(
+                message,
+                promptErrorEjercicio,
+                []
+            );
+
+
+        return res.json({
+
+            reply:
+                reply
+
+        });
+
+    }
+
+
+    /*
+    ========================================================
+    CASO 2:
+    Vincorrect CONTIENE RESPUESTAS INCORRECTAS REALES
+    ========================================================
+    */
+
+    const promptErrorEjercicio = `
 
 Eres un tutor de inglés.
 
@@ -1488,22 +1673,22 @@ Forma correcta:
 `;
 
 
-                const reply =
-                    await consultarGroq(
-                        message,
-                        promptErrorEjercicio,
-                        []
-                    );
+    const reply =
+        await consultarGroq(
+            message,
+            promptErrorEjercicio,
+            []
+        );
 
 
-                return res.json({
+    return res.json({
 
-                    reply:
-                        reply
+        reply:
+            reply
 
-                });
+    });
 
-            }
+}
 
 
             /*
