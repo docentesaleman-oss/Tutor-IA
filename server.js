@@ -1350,6 +1350,12 @@ DETECTAR VALIDACIÓN EN CUALQUIER IDIOMA
 ============================================================
 */
 
+/*
+============================================================
+DETECTAR VALIDACIÓN EN CUALQUIER IDIOMA
+============================================================
+*/
+
 async function detectarSolicitudDeValidacion(texto) {
 
     try {
@@ -1378,24 +1384,45 @@ async function detectarSolicitudDeValidacion(texto) {
                                 role: "system",
 
                                 content: `
-Determina únicamente si el estudiante está pidiendo
-VALIDAR, CORREGIR o CONFIRMAR una respuesta, palabra,
-frase, oración o texto.
+You are ONLY an intent classifier.
 
-La pregunta puede estar escrita en CUALQUIER idioma.
+Determine whether the student's message asks to:
 
-Si está preguntando si algo es correcto, incorrecto,
-está bien escrito, está mal escrito, o pide confirmar
-una respuesta, responde SI.
+- verify if a word is spelled correctly
+- verify if a sentence is written correctly
+- verify if an answer is correct
+- verify if something is wrong
+- confirm whether something is correct or incorrect
+- correct a word, sentence, answer or text
+- validate any response
 
-Si NO está pidiendo ninguna de esas cosas, responde NO.
+The student may write in ANY language.
 
-NO respondas la pregunta.
+Examples that MUST return BLOQUEAR:
 
-Responde únicamente:
-SI
-o
-NO
+"Est-ce que ce mot est correctement écrit ?"
+"Ist dieses Wort richtig geschrieben?"
+"Is this word spelled correctly?"
+"¿Esta palabra está bien escrita?"
+"Ce mot est-il correct ?"
+"Ist das richtig?"
+"Is my answer correct?"
+
+If the student is asking for any kind of validation,
+correction or confirmation, return:
+
+BLOQUEAR
+
+Otherwise return:
+
+PERMITIR
+
+Do NOT answer the student's question.
+Do NOT explain anything.
+Return ONLY one word:
+BLOQUEAR
+or
+PERMITIR
 `
                             },
 
@@ -1409,30 +1436,34 @@ NO
 
                         temperature: 0,
 
-                        max_completion_tokens: 5
+                        max_completion_tokens: 20,
+
+                        reasoning_effort: "low",
+
+                        include_reasoning: false
 
                     })
 
                 }
             );
 
-
         if (!response.ok) {
 
+            console.error(
+                "ERROR HTTP DETECTOR:",
+                response.status
+            );
+
             return false;
-
         }
-
 
         const data =
             await response.json();
-
 
         const resultado =
             data?.choices?.[0]?.message?.content
                 ?.trim()
                 .toUpperCase();
-
 
         console.log(
             "===== DETECTOR MULTILINGÜE ====="
@@ -1448,8 +1479,7 @@ NO
             resultado
         );
 
-
-        return resultado === "SI";
+        return resultado.includes("BLOQUEAR");
 
     } catch (error) {
 
@@ -1459,9 +1489,7 @@ NO
         );
 
         return false;
-
     }
-
 }
 
 /*
