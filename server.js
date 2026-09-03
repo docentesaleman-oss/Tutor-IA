@@ -1198,23 +1198,30 @@ function prepararHistorial(
 
     }
 
+
     /*
     ============================================================
-    IMPORTANTE
+    HISTORIAL DE IDIOMA
     ============================================================
 
-    El historial NO se utiliza como fuente de contenido
-    del curso.
+    Solo conservamos solicitudes explícitas de cambio
+    de idioma.
 
-    Solo conservamos mensajes del estudiante que puedan
-    contener una solicitud explícita de idioma.
+    Se reconocen los 10 idiomas utilizados por el tutor:
 
-    Las respuestas anteriores del tutor NO se envían a Groq.
-    Las preguntas anteriores sobre otras diapositivas
-    tampoco se envían.
+    Español
+    Inglés
+    Alemán
+    Francés
+    Portugués
+    Italiano
+    Chino
+    Ruso
+    Árabe
+    Coreano
 
-    De esta manera se evita que contenido antiguo contamine
-    la diapositiva actual.
+    Las preguntas y respuestas sobre el curso NO se
+    conservan en el historial.
     ============================================================
     */
 
@@ -1238,44 +1245,164 @@ function prepararHistorial(
 
                     return (
 
+                        /*
+                        ========================================================
+                        ESPAÑOL
+                        ========================================================
+                        */
+
                         pregunta.includes("hablame en") ||
                         pregunta.includes("habla en") ||
                         pregunta.includes("responde en") ||
                         pregunta.includes("quiero que hables en") ||
                         pregunta.includes("quiero que respondas en") ||
 
+                        /*
+                        ========================================================
+                        INGLÉS
+                        ========================================================
+                        */
+
                         pregunta.includes("speak in") ||
                         pregunta.includes("respond in") ||
                         pregunta.includes("answer in") ||
+                        pregunta.includes("talk to me in") ||
+
+                        /*
+                        ========================================================
+                        ALEMÁN
+                        ========================================================
+                        */
 
                         pregunta.includes("sprich auf") ||
                         pregunta.includes("antworte auf") ||
+                        pregunta.includes("sprich in") ||
+
+                        /*
+                        ========================================================
+                        FRANCÉS
+                        ========================================================
+                        */
 
                         pregunta.includes("parle en") ||
+                        pregunta.includes("parlez en") ||
                         pregunta.includes("reponds en") ||
+                        pregunta.includes("repondez en") ||
+
+                        /*
+                        ========================================================
+                        PORTUGUÉS
+                        ========================================================
+                        */
 
                         pregunta.includes("fale em") ||
                         pregunta.includes("responda em") ||
+                        pregunta.includes("fale comigo em") ||
+
+                        /*
+                        ========================================================
+                        ITALIANO
+                        ========================================================
+                        */
 
                         pregunta.includes("parla in") ||
-                        pregunta.includes("rispondi in")
+                        pregunta.includes("rispondi in") ||
+                        pregunta.includes("parlami in") ||
+
+                        /*
+                        ========================================================
+                        CHINO
+                        ========================================================
+                        */
+
+                        pregunta.includes("用中文回答") ||
+                        pregunta.includes("用中文说") ||
+                        pregunta.includes("请用中文") ||
+                        pregunta.includes("用中文") ||
+
+                        /*
+                        ========================================================
+                        RUSO
+                        ========================================================
+                        */
+
+                        pregunta.includes("говори на русском") ||
+                        pregunta.includes("отвечай на русском") ||
+                        pregunta.includes("ответь на русском") ||
+                        pregunta.includes("на русском") ||
+
+                        /*
+                        ========================================================
+                        ÁRABE
+                        ========================================================
+                        */
+
+                        pregunta.includes("تحدث بالعربية") ||
+                        pregunta.includes("أجب بالعربية") ||
+                        pregunta.includes("أجب باللغة العربية") ||
+                        pregunta.includes("باللغة العربية") ||
+                        pregunta.includes("بالعربية") ||
+
+                        /*
+                        ========================================================
+                        COREANO
+                        ========================================================
+                        */
+
+                        pregunta.includes("한국어로 말해") ||
+                        pregunta.includes("한국어로 대답해") ||
+                        pregunta.includes("한국어로 답해") ||
+                        pregunta.includes("한국어로") ||
+
+                        /*
+                        ========================================================
+                        FORMAS ADICIONALES EXPLÍCITAS
+                        ========================================================
+                        */
+
+                        pregunta.includes("habla conmigo en") ||
+                        pregunta.includes("contéstame en") ||
+                        pregunta.includes("contestame en") ||
+                        pregunta.includes("respóndeme en") ||
+                        pregunta.includes("respondeme en") ||
+
+                        pregunta.includes("please speak in") ||
+                        pregunta.includes("please respond in") ||
+                        pregunta.includes("please answer in")
 
                     );
 
                 }
-            )
-            .slice(-5)
-            .map(
-                texto => ({
+            );
 
+
+   
+       /*
+    ============================================================
+    TOMAR SOLO LA ÚLTIMA SOLICITUD DE IDIOMA
+    ============================================================
+    */
+
+    const ultimaSolicitudIdioma =
+        historialIdioma.length > 0
+            ? historialIdioma[
+                historialIdioma.length - 1
+            ]
+            : "";
+
+
+    const resultado =
+        ultimaSolicitudIdioma
+            ? [
+                {
                     role:
                         "user",
 
                     content:
-                        texto
-
-                })
-            );
+                        ultimaSolicitudIdioma
+                }
+            ]
+            : [];
 
 
     console.log(
@@ -1283,15 +1410,20 @@ function prepararHistorial(
     );
 
     console.log(
-        "Mensajes de idioma:",
+        "Solicitudes de idioma encontradas:",
         historialIdioma.length
     );
 
+    console.log(
+        "Última preferencia de idioma:",
+        ultimaSolicitudIdioma || "Ninguna"
+    );
 
-    return historialIdioma;
+
+    return resultado;
 
 }
-
+    
 /*
 ============================================================
 LLAMAR A GROQ
