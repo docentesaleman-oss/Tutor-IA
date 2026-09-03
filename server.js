@@ -1583,6 +1583,10 @@ BLOQUEO DE RESPUESTAS DE EJERCICIOS
 ============================================================
 */
 
+console.log(
+    "===== INICIANDO DETECTOR MULTILINGÜE ====="
+);
+
 const solicitudBloqueada =
     esSolicitudDeRespuesta(
         message,
@@ -1591,6 +1595,11 @@ const solicitudBloqueada =
     await detectarSolicitudDeValidacion(
         message
     );
+
+console.log(
+    "===== RESULTADO BLOQUEO =====",
+    solicitudBloqueada
+);
 
 
 if (
