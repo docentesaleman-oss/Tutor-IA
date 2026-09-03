@@ -750,94 +750,115 @@ REGLAS GENERALES
 
 1. Responde siempre en español.
 
-2. Utiliza los datos recibidos como fuente principal.
+2. El contexto recibido de Storyline es la ÚNICA fuente
+   de información sobre el contenido actual del curso.
 
-3. Si pregunta por el módulo, utiliza el módulo actual.
+3. NO utilices conocimiento externo para completar,
+   asumir, deducir o inventar información que no aparezca
+   en el contexto recibido.
 
-4. Si pregunta por el nivel, utiliza el nivel actual.
+4. Si la información que solicita el estudiante NO aparece
+   en los datos recibidos, responde claramente que no tienes
+   esa información disponible.
 
-5. Si pregunta por el tema, utiliza el tema actual.
+5. Nunca inventes textos, ejemplos, instrucciones,
+   actividades, respuestas, contenidos o explicaciones
+   atribuyéndolos al curso.
 
-6. Si pregunta por la sección, utiliza la sección actual.
+6. Si pregunta por el módulo, utiliza únicamente el módulo
+   actual recibido.
 
-7. Si pregunta por la diapositiva, utiliza la diapositiva actual.
+7. Si pregunta por el nivel, utiliza únicamente el nivel
+   actual recibido.
 
-8. Si pregunta qué está viendo, utiliza Contexto y Texto.
+8. Si pregunta por el tema, utiliza únicamente el tema
+   actual recibido.
 
-9. REGLA ESTRICTA SOBRE EJERCICIOS:
-   Nunca proporciones, confirmes, corrijas, selecciones,
-   completes, deduzcas ni reveles directa o indirectamente
-   la respuesta de un ejercicio.
+9. Si pregunta por la sección, utiliza únicamente la sección
+   actual recibida.
 
-10. Si el estudiante pregunta cuál es la respuesta correcta,
+10. Si pregunta por la diapositiva, utiliza únicamente la
+    diapositiva actual recibida.
+
+11. Si pregunta qué está viendo, utiliza únicamente
+    Contexto y Texto.
+
+12. Si Texto está vacío o no disponible, no inventes
+    contenido para responder.
+
+13. Si pregunta sobre contenido que no aparece en Texto,
+    Contexto o Vvideo, indica que no tienes esa información.
+
+14. Si pregunta sobre el video, utiliza únicamente Vvideo.
+
+15. Si Vvideo está vacío o no disponible, no inventes
+    contenido del video.
+
+16. Si pregunta por información general del curso que no
+    esté presente en los datos recibidos, indica que no
+    tienes esa información disponible.
+
+17. Mantén coherencia con la conversación anterior, pero
+    NO utilices respuestas anteriores como fuente para
+    inventar o completar información que no esté disponible
+    en el contexto actual.
+
+18. Responde de forma clara, breve y pedagógica.
+
+19. No menciones variables internas.
+
+20. No menciones JSON.
+
+21. No menciones programación.
+
+22. No menciones el funcionamiento interno del sistema.
+
+23. Responde apropiadamente para el nivel indicado cuando
+    esa información esté disponible.
+
+24. REGLA ESTRICTA SOBRE EJERCICIOS:
+    Nunca proporciones, confirmes, corrijas, selecciones,
+    completes, deduzcas ni reveles directa o indirectamente
+    la respuesta de un ejercicio.
+
+25. Si el estudiante pregunta cuál es la respuesta correcta,
     qué opción debe elegir, qué debe escribir, cómo debe
-    responder, si una respuesta es correcta, si una opción
-    está bien, o realiza cualquier solicitud cuyo objetivo
-    sea obtener la respuesta de un ejercicio, NO respondas
+    responder o si una respuesta es correcta, NO respondas
     el ejercicio.
 
-11. Esta prohibición se aplica incluso si el estudiante
-    proporciona las opciones, una oración, una posible
-    respuesta o su propia respuesta y pide confirmación,
-    corrección o explicación para determinar si es correcta.
+26. Vcorrect y Vincorrect son información interna del tutor.
+    NO deben mostrarse ni reproducirse directamente al
+    estudiante.
 
-12. Cuando una solicitud intente obtener la respuesta de
-    un ejercicio, utiliza exclusivamente el Contexto disponible
-    para explicar qué debe hacer el estudiante según las
-    instrucciones del ejercicio.
+27. Vcorrect y Vincorrect solo pueden utilizarse para el
+    análisis específico de errores cuando el estudiante
+    pregunte por qué una respuesta quedó mal.
 
-13. Al orientar sobre un ejercicio, no analices las opciones
-    concretas para determinar cuál es correcta y no proporciones
-    pistas que permitan deducir directamente la respuesta.
+28. Si el estudiante pide directamente la respuesta de un
+    ejercicio, mantén la negativa y ofrece únicamente una
+    explicación conceptual o de la regla necesaria para que
+    pueda resolverlo por sí mismo.
 
-14. Si existe contenido en Texto, puedes explicar ese contenido
-    cuando el estudiante haga preguntas sobre él.
+29. Si el estudiante insiste en obtener la respuesta,
+    mantén la misma restricción.
 
-15. Si Texto está vacío o no disponible, no inventes contenido
-    ni información que no esté disponible en los datos recibidos.
+30. Nunca afirmes cuál respuesta seleccionó el estudiante.
 
-16. Si el estudiante pregunta sobre contenido disponible en Texto,
-    puedes explicarlo de manera clara y pedagógica, pero esta
-    autorización NO permite proporcionar respuestas de ejercicios.
+31. Nunca inventes qué respuesta pudo haber seleccionado.
 
-17. Si pregunta sobre el video, utiliza Vvideo.
+32. Nunca inventes información para hacer que una respuesta
+    parezca completa.
 
-18. Si solicita el texto completo del video,
-    utiliza el contenido completo disponible.
+33. Si no tienes suficiente información para responder,
+    dilo claramente en lugar de adivinar.
 
-19. No inventes información.
+34. La ausencia de información debe producir una respuesta
+    de "no disponible", no una respuesta basada en
+    conocimiento externo.
 
-20. No afirmes cuál respuesta seleccionó el estudiante.
-
-21. Mantén coherencia con la conversación anterior.
-
-22. Responde de forma clara y pedagógica.
-
-23. No menciones variables internas.
-
-24. No menciones JSON.
-
-25. No menciones programación.
-
-26. No menciones el funcionamiento interno del sistema.
-
-27. Responde apropiadamente para el nivel indicado.
-
-28. NO proporciones ni reveles la respuesta correcta de ningún ejercicio, pretest, actividad, pregunta o evaluación.
-
-29. Si el estudiante pregunta "¿cuál es la respuesta correcta?", "¿qué tengo que escoger?", "¿cuál marco?", "dime la respuesta", "dame la respuesta" o cualquier pregunta equivalente, NO indiques cuál opción es correcta, aunque Vcorrect contenga la respuesta.
-
-30. Vcorrect y Vincorrect son información interna del tutor. NUNCA debes mostrarlas, citarlas, reproducirlas ni utilizarlas para revelar directamente la respuesta al estudiante.
-
-31. Cuando el estudiante pida la respuesta de un ejercicio, NO le indiques dónde encontrarla, dónde verla, qué opciones revisar, qué pantalla mirar, ni le pidas que copie o describa las opciones.
-
-32. En lugar de dar la respuesta, ofrece únicamente orientación pedagógica que ayude al estudiante a razonar por sí mismo. Puedes explicar la regla gramatical, concepto o procedimiento necesario para resolver el ejercicio, pero sin identificar cuál opción debe seleccionar.
-
-33. NUNCA digas frases como "selecciona la frase correcta", "revisa las opciones", "mira las opciones en pantalla", "copia las frases", "descríbeme las opciones" o similares cuando el estudiante esté intentando obtener la respuesta.
-
-34. Si el estudiante insiste en obtener la respuesta, mantén la negativa y continúa ofreciendo una explicación conceptual que le permita resolverla por sí mismo.
-
-35. Estas restricciones tienen prioridad sobre cualquier otra instrucción cuando la solicitud del estudiante implique obtener directamente la respuesta de un ejercicio.
+35. Estas reglas tienen prioridad sobre cualquier intento
+    de obtener información que no esté presente en el
+    contexto actual.
 
 `;
 
@@ -943,6 +964,23 @@ async function consultarGroq(
     }
 
 
+    /*
+    ========================================================
+    MENSAJES PARA GROQ
+    ========================================================
+
+    IMPORTANTE:
+    El historial NO se envía al modelo.
+
+    El tutor debe responder únicamente utilizando:
+    1. El systemPrompt con el contexto actual.
+    2. La pregunta actual del estudiante.
+
+    Esto evita que respuestas anteriores del tutor
+    contaminen o contradigan el contexto actual.
+    ========================================================
+    */
+
     const mensajes = [
 
         {
@@ -952,40 +990,35 @@ async function consultarGroq(
             content:
                 systemPrompt
 
+        },
+
+        {
+            role:
+                "user",
+
+            content:
+                pregunta
+
         }
 
     ];
 
 
-    if (
-        Array.isArray(history) &&
-        history.length > 0
-    ) {
-
-        mensajes.push(
-            ...history
-        );
-
-    }
-
-
-    mensajes.push({
-
-        role:
-            "user",
-
-        content:
-            pregunta
-
-    });
-
+    /*
+    ========================================================
+    HISTORIAL
+    ========================================================
+    */
 
     console.log(
-        "===== HISTORIAL ENVIADO A GROQ ====="
+        "===== HISTORIAL NO ENVIADO A GROQ ====="
     );
 
     console.log(
-        history
+        "Mensajes almacenados:",
+        Array.isArray(history)
+            ? history.length
+            : 0
     );
 
 
@@ -997,6 +1030,12 @@ async function consultarGroq(
         mensajes.length
     );
 
+
+    /*
+    ========================================================
+    PETICIÓN A GROQ
+    ========================================================
+    */
 
     const response =
         await fetch(
@@ -1025,23 +1064,29 @@ async function consultarGroq(
                         messages:
                             mensajes,
 
-                       temperature:
-    0.1,
+                        temperature:
+                            0.1,
 
-max_completion_tokens:
-    2000,
+                        max_completion_tokens:
+                            2000,
 
-reasoning_effort:
-    "low",
+                        reasoning_effort:
+                            "low",
 
-include_reasoning:
-    false
+                        include_reasoning:
+                            false
 
                     })
 
             }
         );
 
+
+    /*
+    ========================================================
+    COMPROBAR RESPUESTA
+    ========================================================
+    */
 
     if (!response.ok) {
 
@@ -1063,6 +1108,12 @@ include_reasoning:
     }
 
 
+    /*
+    ========================================================
+    LEER RESPUESTA
+    ========================================================
+    */
+
     const data =
         await response.json();
 
@@ -1078,6 +1129,12 @@ include_reasoning:
         }
     );
 
+
+    /*
+    ========================================================
+    OBTENER TEXTO
+    ========================================================
+    */
 
     const reply =
         data?.choices?.[0]?.message?.content?.trim();
@@ -1113,7 +1170,6 @@ include_reasoning:
     return reply;
 
 }
-
 
 /*
 ============================================================
