@@ -28,11 +28,28 @@ async function askGPT(text, storylineData) {
 
         try {
 
-            history = JSON.parse(
-                localStorage.getItem(
-                    "tutorIA_chatHistory_v2"
-                ) || "[]"
-            );
+            const historialCompleto =
+    JSON.parse(
+        localStorage.getItem(
+            "tutorIA_chatHistory_v2"
+        ) || "[]"
+    );
+
+/*
+============================================================
+ENVIAR SOLO LAS ÚLTIMAS 3 INTERACCIONES
+============================================================
+Cada interacción está formada por:
+
+1 mensaje del estudiante
+1 respuesta del tutor
+
+Por eso conservamos las últimas 6 entradas.
+============================================================
+*/
+
+history =
+    historialCompleto.slice(-6);
 
         } catch (error) {
 
