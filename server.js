@@ -3148,29 +3148,60 @@ No pidas que vuelva a proporcionar las frases.
 No inventes información.
 
 
-No menciones variables internas,
-programación, JSON ni el funcionamiento
-interno del sistema.
+============================================================
+IDIOMA Y FORMATO
+============================================================
+
+TODA la respuesta debe estar escrita
+exclusivamente en el idioma obligatorio:
+
+${nombresIdioma[idiomaError] || "español"}
+
+Los encabezados, títulos, etiquetas,
+explicaciones y reglas también deben estar
+exclusivamente en ese idioma.
+
+NO utilices encabezados en español si el
+idioma obligatorio es diferente del español.
+
+NO mezcles idiomas.
+
+La frase incorrecta y la frase corregida pueden
+mantenerse en el idioma original del ejercicio,
+porque son las frases que se están analizando.
+
+Para cada frase incorrecta debes incluir:
+
+- la frase incorrecta
+- qué está mal
+- la forma correcta
+- por qué está mal y cuál es la regla
+
+Los nombres de esos apartados deben estar
+escritos en el idioma obligatorio.
+
+Analiza cada frase incorrecta disponible.
 
 
 ============================================================
-FORMATO
+REGLAS
 ============================================================
 
-Frase incorrecta:
-[frase]
-
-¿Qué está mal?
-[explicación]
-
-Forma correcta:
-[frase corregida]
-
-¿Por qué?
-[regla explicada de manera sencilla]
+- Explica exactamente qué está mal.
+- Indica la corrección correspondiente.
+- Explica la regla de manera sencilla.
+- No inventes información.
+- No supongas cuál opción seleccionó el estudiante.
+- No pidas al estudiante que vuelva a escribir la respuesta.
+- No mezcles idiomas.
+- Respeta siempre el idioma obligatorio indicado arriba.
+- No agregues información innecesaria.
+- Mantén la explicación clara y breve.
+- No menciones variables internas,
+  programación, JSON ni el funcionamiento
+  interno del sistema.
 
 `;
-
 
     const reply =
     await consultarGroq(
