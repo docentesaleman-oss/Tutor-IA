@@ -448,31 +448,204 @@ function esSolicitudDeRespuesta(texto, contexto = {}) {
     */
 
     const solicitudRespuesta =
-        pregunta.includes("respuesta correcta") ||
-        pregunta.includes("cual es la respuesta") ||
-        pregunta.includes("cual es la correcta") ||
-        pregunta.includes("cual opcion") ||
-        pregunta.includes("que opcion") ||
-        pregunta.includes("que debo elegir") ||
-        pregunta.includes("que debo escoger") ||
-        pregunta.includes("que tengo que elegir") ||
-        pregunta.includes("que tengo que escoger") ||
-        pregunta.includes("cual debo elegir") ||
-        pregunta.includes("cual debo escoger") ||
-        pregunta.includes("que selecciono") ||
-        pregunta.includes("cual selecciono") ||
-        pregunta.includes("que marco") ||
-        pregunta.includes("cual marco") ||
-        pregunta.includes("que pongo") ||
-        pregunta.includes("que escribo") ||
-        pregunta.includes("dime la respuesta") ||
-        pregunta.includes("dame la respuesta") ||
-        pregunta.includes("dime cual") ||
-        pregunta.includes("resuelve el ejercicio") ||
-        pregunta.includes("resuelveme el ejercicio") ||
-        pregunta.includes("haz el ejercicio") ||
-        pregunta.includes("hazme el ejercicio") ||
-        pregunta.includes("hazlo por mi");
+    /*
+    ========================================================
+    ESPAÑOL
+    ========================================================
+    */
+    pregunta.includes("respuesta correcta") ||
+    pregunta.includes("cual es la respuesta") ||
+    pregunta.includes("cual es la correcta") ||
+    pregunta.includes("cual opcion") ||
+    pregunta.includes("que opcion") ||
+    pregunta.includes("que debo elegir") ||
+    pregunta.includes("que debo escoger") ||
+    pregunta.includes("que tengo que elegir") ||
+    pregunta.includes("que tengo que escoger") ||
+    pregunta.includes("cual debo elegir") ||
+    pregunta.includes("cual debo escoger") ||
+    pregunta.includes("que selecciono") ||
+    pregunta.includes("cual selecciono") ||
+    pregunta.includes("que marco") ||
+    pregunta.includes("cual marco") ||
+    pregunta.includes("que pongo") ||
+    pregunta.includes("que escribo") ||
+    pregunta.includes("dime la respuesta") ||
+    pregunta.includes("dame la respuesta") ||
+    pregunta.includes("dime cual") ||
+    pregunta.includes("resuelve el ejercicio") ||
+    pregunta.includes("resuelveme el ejercicio") ||
+    pregunta.includes("haz el ejercicio") ||
+    pregunta.includes("hazme el ejercicio") ||
+    pregunta.includes("hazlo por mi") ||
+
+    /*
+    ========================================================
+    INGLÉS
+    ========================================================
+    */
+    pregunta.includes("what is the correct answer") ||
+    pregunta.includes("which is the correct answer") ||
+    pregunta.includes("what is the right answer") ||
+    pregunta.includes("which is the right answer") ||
+    pregunta.includes("which answer is correct") ||
+    pregunta.includes("what answer should i choose") ||
+    pregunta.includes("which option should i choose") ||
+    pregunta.includes("which option should i select") ||
+    pregunta.includes("what should i choose") ||
+    pregunta.includes("what should i select") ||
+    pregunta.includes("give me the answer") ||
+    pregunta.includes("tell me the answer") ||
+    pregunta.includes("solve the exercise") ||
+
+    /*
+    ========================================================
+    ALEMÁN
+    ========================================================
+    */
+    pregunta.includes("welche ist die richtige antwort") ||
+    pregunta.includes("was ist die richtige antwort") ||
+    pregunta.includes("welches ist die richtige antwort") ||
+    pregunta.includes("welche antwort ist richtig") ||
+    pregunta.includes("welche antwort ist korrekt") ||
+    pregunta.includes("was ist die richtige losung") ||
+    pregunta.includes("welche ist die richtige losung") ||
+    pregunta.includes("welche option ist richtig") ||
+    pregunta.includes("welche option ist korrekt") ||
+    pregunta.includes("welche option soll ich wahlen") ||
+    pregunta.includes("welche antwort soll ich wahlen") ||
+    pregunta.includes("was soll ich auswahlen") ||
+    pregunta.includes("welche soll ich auswahlen") ||
+    pregunta.includes("gib mir die antwort") ||
+    pregunta.includes("sag mir die antwort") ||
+    pregunta.includes("los das exercise") ||
+
+    /*
+    ========================================================
+    FRANCÉS
+    ========================================================
+    */
+    pregunta.includes("quelle est la bonne reponse") ||
+    pregunta.includes("quelle est la reponse correcte") ||
+    pregunta.includes("quelle reponse est correcte") ||
+    pregunta.includes("quelle reponse est juste") ||
+    pregunta.includes("quelle est la bonne option") ||
+    pregunta.includes("quelle option est correcte") ||
+    pregunta.includes("quelle option dois-je choisir") ||
+    pregunta.includes("que dois-je choisir") ||
+    pregunta.includes("quelle reponse dois-je choisir") ||
+    pregunta.includes("donne-moi la reponse") ||
+    pregunta.includes("donne moi la reponse") ||
+    pregunta.includes("dis-moi la reponse") ||
+    pregunta.includes("dis moi la reponse") ||
+    pregunta.includes("resous l'exercice") ||
+
+    /*
+    ========================================================
+    PORTUGUÉS
+    ========================================================
+    */
+    pregunta.includes("qual e a resposta correta") ||
+    pregunta.includes("qual é a resposta correta") ||
+    pregunta.includes("qual e a resposta certa") ||
+    pregunta.includes("qual é a resposta certa") ||
+    pregunta.includes("qual resposta esta correta") ||
+    pregunta.includes("qual resposta está correta") ||
+    pregunta.includes("qual opcao devo escolher") ||
+    pregunta.includes("qual opção devo escolher") ||
+    pregunta.includes("o que devo escolher") ||
+    pregunta.includes("qual devo escolher") ||
+    pregunta.includes("me de a resposta") ||
+    pregunta.includes("me dê a resposta") ||
+    pregunta.includes("diga me a resposta") ||
+    pregunta.includes("diga-me a resposta") ||
+
+    /*
+    ========================================================
+    ITALIANO
+    ========================================================
+    */
+    pregunta.includes("qual e la risposta corretta") ||
+    pregunta.includes("qual è la risposta corretta") ||
+    pregunta.includes("qual e la risposta giusta") ||
+    pregunta.includes("qual è la risposta giusta") ||
+    pregunta.includes("quale risposta e corretta") ||
+    pregunta.includes("quale risposta è corretta") ||
+    pregunta.includes("quale opzione devo scegliere") ||
+    pregunta.includes("quale opzione e corretta") ||
+    pregunta.includes("quale opzione è corretta") ||
+    pregunta.includes("cosa devo scegliere") ||
+    pregunta.includes("dammi la risposta") ||
+    pregunta.includes("dimmi la risposta") ||
+
+    /*
+    ========================================================
+    CHINO
+    ========================================================
+    */
+    pregunta.includes("正确答案是什么") ||
+    pregunta.includes("哪个是正确答案") ||
+    pregunta.includes("哪个答案是正确的") ||
+    pregunta.includes("正确的答案是哪一个") ||
+    pregunta.includes("我应该选择哪个答案") ||
+    pregunta.includes("我应该选哪个") ||
+    pregunta.includes("我应该选择哪个选项") ||
+    pregunta.includes("哪个选项是正确的") ||
+    pregunta.includes("告诉我答案") ||
+    pregunta.includes("给我答案") ||
+    pregunta.includes("帮我做这个练习") ||
+
+    /*
+    ========================================================
+    RUSO
+    ========================================================
+    */
+    pregunta.includes("какой правильный ответ") ||
+    pregunta.includes("каков правильный ответ") ||
+    pregunta.includes("какой ответ правильный") ||
+    pregunta.includes("какой ответ верный") ||
+    pregunta.includes("какой вариант правильный") ||
+    pregunta.includes("какой вариант верный") ||
+    pregunta.includes("какой вариант выбрать") ||
+    pregunta.includes("что мне выбрать") ||
+    pregunta.includes("какой ответ мне выбрать") ||
+    pregunta.includes("скажи мне ответ") ||
+    pregunta.includes("дай мне ответ") ||
+    pregunta.includes("реши упражнение") ||
+
+    /*
+    ========================================================
+    ÁRABE
+    ========================================================
+    */
+    pregunta.includes("ما هي الإجابة الصحيحة") ||
+    pregunta.includes("ما هو الجواب الصحيح") ||
+    pregunta.includes("أي إجابة صحيحة") ||
+    pregunta.includes("ما هي الإجابة الصحيحة") ||
+    pregunta.includes("أي خيار صحيح") ||
+    pregunta.includes("أي خيار يجب أن أختار") ||
+    pregunta.includes("ماذا يجب أن أختار") ||
+    pregunta.includes("ما الذي يجب أن أختاره") ||
+    pregunta.includes("أعطني الإجابة") ||
+    pregunta.includes("قل لي الإجابة") ||
+
+    /*
+    ========================================================
+    COREANO
+    ========================================================
+    */
+    pregunta.includes("정답이 무엇인가요") ||
+    pregunta.includes("정답이 뭐예요") ||
+    pregunta.includes("정답이 무엇입니까") ||
+    pregunta.includes("어떤 답이 맞나요") ||
+    pregunta.includes("어느 답이 맞나요") ||
+    pregunta.includes("어떤 답이 정답인가요") ||
+    pregunta.includes("어느 선택지가 맞나요") ||
+    pregunta.includes("어떤 선택지를 골라야 하나요") ||
+    pregunta.includes("무엇을 선택해야 하나요") ||
+    pregunta.includes("정답을 알려주세요") ||
+    pregunta.includes("답을 알려주세요") ||
+    pregunta.includes("이 문제를 풀어주세요");
 
 
     /*
