@@ -1346,6 +1346,126 @@ async function consultarGroq(
 
 /*
 ============================================================
+DETECTAR VALIDACIÓN EN CUALQUIER IDIOMA
+============================================================
+*/
+
+async function detectarSolicitudDeValidacion(texto) {
+
+    try {
+
+        const response =
+            await fetch(
+                "https://api.groq.com/openai/v1/chat/completions",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization":
+                            `Bearer ${process.env.GROQ_API_KEY}`
+                    },
+
+                    body: JSON.stringify({
+
+                        model:
+                            "openai/gpt-oss-20b",
+
+                        messages: [
+
+                            {
+                                role: "system",
+
+                                content: `
+Determina únicamente si el estudiante está pidiendo
+VALIDAR, CORREGIR o CONFIRMAR una respuesta, palabra,
+frase, oración o texto.
+
+La pregunta puede estar escrita en CUALQUIER idioma.
+
+Si está preguntando si algo es correcto, incorrecto,
+está bien escrito, está mal escrito, o pide confirmar
+una respuesta, responde SI.
+
+Si NO está pidiendo ninguna de esas cosas, responde NO.
+
+NO respondas la pregunta.
+
+Responde únicamente:
+SI
+o
+NO
+`
+                            },
+
+                            {
+                                role: "user",
+
+                                content: texto
+                            }
+
+                        ],
+
+                        temperature: 0,
+
+                        max_completion_tokens: 5
+
+                    })
+
+                }
+            );
+
+
+        if (!response.ok) {
+
+            return false;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const resultado =
+            data?.choices?.[0]?.message?.content
+                ?.trim()
+                .toUpperCase();
+
+
+        console.log(
+            "===== DETECTOR MULTILINGÜE ====="
+        );
+
+        console.log(
+            "Pregunta:",
+            texto
+        );
+
+        console.log(
+            "Resultado:",
+            resultado
+        );
+
+
+        return resultado === "SI";
+
+    } catch (error) {
+
+        console.error(
+            "ERROR DETECTOR MULTILINGÜE:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+/*
+============================================================
 CHAT
 ============================================================
 */
@@ -1435,13 +1555,19 @@ BLOQUEO DE RESPUESTAS DE EJERCICIOS
 ============================================================
 */
 
-if (
+const solicitudBloqueada =
     esSolicitudDeRespuesta(
         message,
         contexto
-    )
-) {
+    ) ||
+    await detectarSolicitudDeValidacion(
+        message
+    );
 
+
+if (
+    solicitudBloqueada
+) {
     console.log(
         "===== SOLICITUD BLOQUEADA ====="
     );
