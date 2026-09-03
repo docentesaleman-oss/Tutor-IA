@@ -3,6 +3,11 @@ async function askGPT(text, storylineData) {
 
     try {
 
+        const idiomaPreferido =
+            localStorage.getItem(
+                "tutorIA_idioma"
+            ) || "";
+
         console.log(
             "===== ENVIANDO AL SERVIDOR ====="
         );
@@ -16,7 +21,6 @@ async function askGPT(text, storylineData) {
             "Storyline:",
             storylineData
         );
-
 
         /*
         ========================================================
@@ -130,7 +134,10 @@ history =
                         },
 
                         history:
-                            history
+    history,
+
+language:
+    idiomaPreferido
 
                     })
 

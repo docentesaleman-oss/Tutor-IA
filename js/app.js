@@ -14,6 +14,136 @@ const CHAT_STORAGE_KEY =
 
 let chatHistory = [];
 
+/*
+============================================================
+MEMORIA DEL IDIOMA DEL ESTUDIANTE
+============================================================
+*/
+
+const LANGUAGE_STORAGE_KEY =
+    "tutorIA_idioma";
+
+let idiomaPreferido =
+    localStorage.getItem(
+        LANGUAGE_STORAGE_KEY
+    ) || "";
+
+/*
+============================================================
+DETECTAR SOLICITUD EXPLÍCITA DE IDIOMA
+============================================================
+*/
+
+function detectarIdiomaSolicitado(texto) {
+
+    const pregunta =
+        String(texto || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+
+    if (
+        pregunta.includes("hablame en espanol") ||
+        pregunta.includes("habla en espanol") ||
+        pregunta.includes("responde en espanol") ||
+        pregunta.includes("habla conmigo en espanol") ||
+        pregunta.includes("quiero que hables en espanol")
+    ) {
+        return "es";
+    }
+
+    if (
+        pregunta.includes("speak english") ||
+        pregunta.includes("speak in english") ||
+        pregunta.includes("talk to me in english") ||
+        pregunta.includes("speak with me in english") ||
+        pregunta.includes("respond in english") ||
+        pregunta.includes("answer in english") ||
+        pregunta.includes("speak to me in english")
+    ) {
+        return "en";
+    }
+
+    if (
+        pregunta.includes("sprich deutsch") ||
+        pregunta.includes("sprich auf deutsch") ||
+        pregunta.includes("sprich mit mir auf deutsch") ||
+        pregunta.includes("sprich mit mir deutsch") ||
+        pregunta.includes("sprich bitte mit mir auf deutsch") ||
+        pregunta.includes("sprich bitte deutsch") ||
+        pregunta.includes("antworte auf deutsch") ||
+        pregunta.includes("rede mit mir auf deutsch")
+    ) {
+        return "de";
+    }
+
+    if (
+        pregunta.includes("parle francais") ||
+        pregunta.includes("parle en francais") ||
+        pregunta.includes("parlez francais") ||
+        pregunta.includes("reponds en francais") ||
+        pregunta.includes("repondre en francais")
+    ) {
+        return "fr";
+    }
+
+    if (
+        pregunta.includes("fale portugues") ||
+        pregunta.includes("fale em portugues") ||
+        pregunta.includes("fale comigo em portugues") ||
+        pregunta.includes("responda em portugues")
+    ) {
+        return "pt";
+    }
+
+    if (
+        pregunta.includes("parla italiano") ||
+        pregunta.includes("parla in italiano") ||
+        pregunta.includes("parlami in italiano") ||
+        pregunta.includes("rispondi in italiano")
+    ) {
+        return "it";
+    }
+
+    if (
+        pregunta.includes("用中文说") ||
+        pregunta.includes("请用中文") ||
+        pregunta.includes("用中文回答") ||
+        pregunta.includes("请用中文回答")
+    ) {
+        return "zh";
+    }
+
+    if (
+        pregunta.includes("говори по русски") ||
+        pregunta.includes("говори на русском") ||
+        pregunta.includes("говорите на русском") ||
+        pregunta.includes("отвечай на русском")
+    ) {
+        return "ru";
+    }
+
+    if (
+        pregunta.includes("تحدث معي بالعربية") ||
+        pregunta.includes("تحدث بالعربية") ||
+        pregunta.includes("أجب بالعربية") ||
+        pregunta.includes("تكلم بالعربية")
+    ) {
+        return "ar";
+    }
+
+    if (
+        pregunta.includes("한국어로 말해줘") ||
+        pregunta.includes("한국어로 말해주세요") ||
+        pregunta.includes("한국어로 대답해줘") ||
+        pregunta.includes("한국어로 답변해줘")
+    ) {
+        return "ko";
+    }
+
+    return "";
+}
 
 /*
 ============================================================
@@ -399,6 +529,34 @@ function cargarChat() {
 
 }
 
+/*
+============================================================
+INICIAR SELECCIÓN DE IDIOMA
+============================================================
+*/
+
+function iniciarSeleccionIdioma() {
+
+    if (idiomaPreferido) {
+
+        console.log(
+            "IDIOMA GUARDADO:",
+            idiomaPreferido
+        );
+
+        return;
+
+    }
+
+    const mensajeInicial =
+        "Hola, soy el Tutor IA de Tech Language School. Bienvenido. ¿En qué idioma deseas comunicarte conmigo?";
+
+    addMessage(
+        mensajeInicial,
+        "bot"
+    );
+
+}
 
 /*
 ============================================================
@@ -652,15 +810,44 @@ ENVIAR PREGUNTA
 
 async function sendMessage() {
 
-    const text = prompt.value.trim();
+   const text = prompt.value.trim();
 
-    if (!text) {
-        return;
-    }
+if (!text) {
+    return;
+}
 
 
+/*
+============================================================
+ACTUALIZAR IDIOMA DEL ESTUDIANTE
+============================================================
+*/
 
-    addMessage(text, "user");
+const nuevoIdioma =
+    detectarIdiomaSolicitado(text);
+
+if (nuevoIdioma) {
+
+    idiomaPreferido =
+        nuevoIdioma;
+
+    localStorage.setItem(
+        LANGUAGE_STORAGE_KEY,
+        idiomaPreferido
+    );
+
+    console.log(
+        "===== IDIOMA ACTUALIZADO ====="
+    );
+
+    console.log(
+        "Nuevo idioma:",
+        idiomaPreferido
+    );
+}
+
+
+addMessage(text, "user");
 
     prompt.value = "";
 
@@ -890,6 +1077,8 @@ window.addEventListener(
     function() {
 
         cargarChat();
+
+        iniciarSeleccionIdioma();
 
 
         setTimeout(

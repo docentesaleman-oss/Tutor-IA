@@ -1034,7 +1034,10 @@ CONSTRUIR PROMPT DE CONTEXTO
 ============================================================
 */
 
-function construirPrompt(contexto) {
+function construirPrompt(
+    contexto,
+    idiomaActual = "es"
+) {
 
     return `
 
@@ -2418,6 +2421,10 @@ app.post(
                     ? req.body.history
                     : [];
 
+const idiomaGuardado =
+    limpiarCampo(
+        req.body?.language
+    );
 
             if (!message) {
 
@@ -2473,6 +2480,25 @@ const historialIA =
         history,
         message
     );
+const idiomaPersistente =
+    idiomaGuardado ||
+    detectarIdiomaPreferido(
+        historialIA
+    );
+
+console.log(
+    "===== IDIOMA FINAL ====="
+);
+
+console.log(
+    "Idioma guardado:",
+    idiomaGuardado
+);
+
+console.log(
+    "Idioma utilizado:",
+    idiomaPersistente
+);
 
 /*
 ============================================================
@@ -2521,10 +2547,8 @@ if (
     );
 
 
-   const idiomaBloqueo =
-    detectarIdiomaPreferido(
-        historialIA
-    );
+   const idiomaActual =
+    idiomaPersistente;
 
 
 /*
@@ -2931,9 +2955,7 @@ if (
 
 
         const idiomaError =
-    detectarIdiomaPreferido(
-        historialIA
-    );
+    idiomaPersistente;
 
 
 const nombresIdioma = {
@@ -3058,9 +3080,7 @@ del sistema.
     */
 
     const idiomaError =
-    detectarIdiomaPreferido(
-        historialIA
-    );
+    idiomaPersistente;
 
 
 const nombresIdioma = {
@@ -3320,6 +3340,15 @@ Eres un tutor virtual de un curso educativo.
 
 El estudiante está viendo un video.
 
+IDIOMA OBLIGATORIO DE RESPUESTA:
+
+${idiomaPersistente}
+
+Toda la explicación debe estar exclusivamente
+en este idioma.
+
+No mezcles idiomas.
+
 Pregunta:
 
 "${message}"
@@ -3390,10 +3419,11 @@ JSON ni funcionamiento interno del sistema.
             ====================================================
             */
 
-            const systemPrompt =
-                construirPrompt(
-                    contexto
-                );
+           const systemPrompt =
+    construirPrompt(
+        contexto,
+        idiomaPersistente
+    );
 
 
             const reply =
