@@ -185,7 +185,13 @@ function esDiapositivaDeVideo(contexto = {}) {
             contexto.seccion
         );
 
+    const contextoActual =
+        normalizar(
+            contexto.contexto
+        );
+
     return (
+        seccion === "multimedia video" ||
         seccion.includes("video")
     );
 
