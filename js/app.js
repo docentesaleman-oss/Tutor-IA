@@ -57,86 +57,117 @@ ACTUALIZAR CONTEXTO DE STORYLINE
 function actualizarStoryline(datos) {
 
     if (!datos || typeof datos !== "object") {
-        console.warn("STORYLINE → datos inválidos:", datos);
+
+        console.warn(
+            "STORYLINE → datos inválidos:",
+            datos
+        );
+
         return;
     }
 
+
     /*
-    ========================================================
-    REINICIAR CONTEXTO ANTERIOR
-    ========================================================
-
-    Cada vez que Storyline envía contexto nuevo,
-    primero eliminamos los valores de la diapositiva anterior.
-
-    Así una variable que ya no existe o viene vacía
-    NO conserva información antigua.
-    ========================================================
+    ============================================================
+    REINICIAR COMPLETAMENTE EL CONTEXTO ANTERIOR
+    ============================================================
     */
 
     storylineData = {
+
         tipo: "contenido",
+
         tema: "",
+
         nivel: "",
+
         modulo: "",
+
         seccion: "",
+
         diapositiva: "",
+
         contexto: "",
+
         texto: "",
+
         Vcorrect: "",
+
         Vincorrect: "",
+
         Vvideo: ""
+
     };
 
 
     /*
-    ========================================================
-    CARGAR ÚNICAMENTE LOS DATOS RECIBIDOS
-    ========================================================
+    ============================================================
+    CARGAR ÚNICAMENTE LOS DATOS RECIBIDOS AHORA
+    ============================================================
     */
 
     if (
         datos.tipo !== undefined &&
         datos.tipo !== null
     ) {
+
         storylineData.tipo =
-            String(datos.tipo).trim() || "contenido";
+            String(
+                datos.tipo
+            ).trim() ||
+            "contenido";
+
     }
 
 
     const campos = [
+
         "tema",
+
         "nivel",
+
         "modulo",
+
         "seccion",
+
         "diapositiva",
+
         "contexto",
+
         "texto",
+
         "Vcorrect",
+
         "Vincorrect",
+
         "Vvideo"
+
     ];
 
 
-    campos.forEach(function(nombre) {
+    campos.forEach(
+        function(nombre) {
 
-        if (
-            datos[nombre] !== undefined &&
-            datos[nombre] !== null
-        ) {
+            if (
+                datos[nombre] !== undefined &&
+                datos[nombre] !== null
+            ) {
 
-            storylineData[nombre] =
-                String(datos[nombre]).trim();
+                storylineData[nombre] =
+                    String(
+                        datos[nombre]
+                    ).trim();
+
+            }
 
         }
-
-    });
+    );
 
 
     /*
-    ========================================================
+    ============================================================
     MOSTRAR CONTEXTO ACTUAL
-    ========================================================
+    ============================================================
     */
 
     console.log(
@@ -192,8 +223,8 @@ function actualizarStoryline(datos) {
         "Vvideo:",
         storylineData.Vvideo
     );
-}
 
+}
 /*
 ============================================================
 COMPATIBILIDAD CON CÓDIGO ANTERIOR
