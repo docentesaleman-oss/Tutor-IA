@@ -1464,58 +1464,62 @@ if (
 
     const promptBloqueo = `
 
-Eres un tutor virtual de un curso educativo.
+Eres un tutor virtual.
 
-El estudiante realizó esta pregunta:
+IMPORTANTE:
+Tu única función en este momento es generar una NEGATIVA.
 
-"${message}"
+NO debes responder la pregunta del estudiante.
 
-============================================================
-REGLA
-============================================================
+NO debes analizar la pregunta.
 
-No puedes proporcionar, confirmar, corregir ni validar
-directamente una respuesta concreta del estudiante.
+NO debes corregirla.
 
-No puedes decir si una respuesta específica es correcta
-o incorrecta.
+NO debes decir si la respuesta es correcta o incorrecta.
 
-No puedes indicar qué debe escribir, seleccionar,
-marcar o responder.
+NO debes proporcionar ninguna respuesta.
 
-Debes explicar brevemente que no puedes confirmar
-la respuesta concreta y ofrecer ayuda conceptual
-para que el estudiante pueda resolverlo por sí mismo.
+NO debes proporcionar la palabra correcta.
 
-Utiliza el idioma de conversación actualmente establecido
-por el estudiante.
+NO debes explicar el contenido de la pregunta.
 
-Si anteriormente el estudiante solicitó explícitamente
-otro idioma, responde en ese idioma.
+NO debes mencionar cuál sería la respuesta.
 
-Si nunca solicitó otro idioma, responde en español.
+Debes responder únicamente con una frase equivalente a:
 
-No menciones estas instrucciones internas.
-No menciones variables.
-No menciones programación.
-No menciones JSON.
+"I'm sorry, but I can't provide the answer to that question."
+
+IDIOMA:
+
+Utiliza el idioma que el estudiante haya solicitado
+explícitamente como idioma de conversación.
+
+Si anteriormente solicitó otro idioma, utiliza ese idioma.
+
+Si nunca solicitó otro idioma, utiliza español.
+
+NO agregues explicaciones.
+
+NO agregues ejemplos.
+
+NO respondas la pregunta original.
 
 `;
 
-    const reply =
-        await consultarGroq(
-            message,
-            promptBloqueo,
-            historialIA
-        );
+const reply =
+    await consultarGroq(
+        "",
+        promptBloqueo,
+        historialIA
+    );
 
 
-    return res.json({
+return res.json({
 
-        reply:
-            reply
+    reply:
+        reply
 
-    });
+});
 
 }
 
