@@ -1198,66 +1198,99 @@ function prepararHistorial(
 
     }
 
+    /*
+    ============================================================
+    IMPORTANTE
+    ============================================================
 
-    let historial =
+    El historial NO se utiliza como fuente de contenido
+    del curso.
+
+    Solo conservamos mensajes del estudiante que puedan
+    contener una solicitud explícita de idioma.
+
+    Las respuestas anteriores del tutor NO se envían a Groq.
+    Las preguntas anteriores sobre otras diapositivas
+    tampoco se envían.
+
+    De esta manera se evita que contenido antiguo contamine
+    la diapositiva actual.
+    ============================================================
+    */
+
+    const historialIdioma =
         history
-            .slice(-20)
-            .map(mensaje => {
-
-                const sender =
+            .filter(
+                mensaje =>
                     mensaje?.sender === "user"
-                        ? "user"
-                        : "assistant";
-
-
-                const content =
+            )
+            .map(
+                mensaje =>
                     limpiarCampo(
                         mensaje?.text
+                    )
+            )
+            .filter(
+                texto => {
+
+                    const pregunta =
+                        normalizar(texto);
+
+                    return (
+
+                        pregunta.includes("hablame en") ||
+                        pregunta.includes("habla en") ||
+                        pregunta.includes("responde en") ||
+                        pregunta.includes("quiero que hables en") ||
+                        pregunta.includes("quiero que respondas en") ||
+
+                        pregunta.includes("speak in") ||
+                        pregunta.includes("respond in") ||
+                        pregunta.includes("answer in") ||
+
+                        pregunta.includes("sprich auf") ||
+                        pregunta.includes("antworte auf") ||
+
+                        pregunta.includes("parle en") ||
+                        pregunta.includes("reponds en") ||
+
+                        pregunta.includes("fale em") ||
+                        pregunta.includes("responda em") ||
+
+                        pregunta.includes("parla in") ||
+                        pregunta.includes("rispondi in")
+
                     );
 
-
-                return {
+                }
+            )
+            .slice(-5)
+            .map(
+                texto => ({
 
                     role:
-                        sender,
+                        "user",
 
                     content:
-                        content
+                        texto
 
-                };
-
-            })
-            .filter(mensaje =>
-                mensaje.content !== ""
+                })
             );
 
 
-    const ultimo =
-        historial[
-            historial.length - 1
-        ];
+    console.log(
+        "===== HISTORIAL FILTRADO ====="
+    );
+
+    console.log(
+        "Mensajes de idioma:",
+        historialIdioma.length
+    );
 
 
-    if (
-        ultimo &&
-        ultimo.role === "user" &&
-        normalizar(ultimo.content) ===
-            normalizar(preguntaActual)
-    ) {
-
-        historial =
-            historial.slice(
-                0,
-                -1
-            );
-
-    }
-
-
-    return historial;
+    return historialIdioma;
 
 }
-
 
 /*
 ============================================================
