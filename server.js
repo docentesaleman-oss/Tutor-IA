@@ -1907,7 +1907,7 @@ const solicitudBloqueada =
         message,
         contexto
     ) ||
-    await detectarSolicitudDeValidacion(
+    detectarSolicitudDeValidacion(
         message
     );
 
@@ -1939,62 +1939,167 @@ if (
     );
 
 
-    const promptBloqueo = `
+    let idiomaBloqueo = "es";
 
-Eres un tutor virtual.
 
-IMPORTANTE:
-Tu única función en este momento es generar una NEGATIVA.
+const historialTexto =
+    historialIA
+        .map(mensaje =>
+            normalizar(
+                mensaje.content
+            )
+        )
+        .join(" ");
 
-NO debes responder la pregunta del estudiante.
 
-NO debes analizar la pregunta.
+/*
+============================================================
+DETECTAR IDIOMA DE CONVERSACIÓN
+============================================================
+*/
 
-NO debes corregirla.
+if (
+    historialTexto.includes("hablame en aleman") ||
+    historialTexto.includes("habla en aleman") ||
+    historialTexto.includes("responde en aleman") ||
+    historialTexto.includes("quiero que hables en aleman")
+) {
 
-NO debes decir si la respuesta es correcta o incorrecta.
+    idiomaBloqueo = "de";
 
-NO debes proporcionar ninguna respuesta.
+}
 
-NO debes proporcionar la palabra correcta.
+else if (
+    historialTexto.includes("hablame en ingles") ||
+    historialTexto.includes("habla en ingles") ||
+    historialTexto.includes("responde en ingles") ||
+    historialTexto.includes("quiero que hables en ingles")
+) {
 
-NO debes explicar el contenido de la pregunta.
+    idiomaBloqueo = "en";
 
-NO debes mencionar cuál sería la respuesta.
+}
 
-Debes responder únicamente con una frase equivalente a:
+else if (
+    historialTexto.includes("hablame en frances") ||
+    historialTexto.includes("habla en frances") ||
+    historialTexto.includes("responde en frances") ||
+    historialTexto.includes("quiero que hables en frances")
+) {
 
-"I'm sorry, but I can't provide the answer to that question."
+    idiomaBloqueo = "fr";
 
-IDIOMA:
+}
 
-Utiliza el idioma que el estudiante haya solicitado
-explícitamente como idioma de conversación.
+else if (
+    historialTexto.includes("hablame en portugues") ||
+    historialTexto.includes("habla en portugues") ||
+    historialTexto.includes("responde en portugues") ||
+    historialTexto.includes("quiero que hables en portugues")
+) {
 
-Si anteriormente solicitó otro idioma, utiliza ese idioma.
+    idiomaBloqueo = "pt";
 
-Si nunca solicitó otro idioma, utiliza español.
+}
 
-NO agregues explicaciones.
+else if (
+    historialTexto.includes("hablame en italiano") ||
+    historialTexto.includes("habla en italiano") ||
+    historialTexto.includes("responde en italiano") ||
+    historialTexto.includes("quiero que hables en italiano")
+) {
 
-NO agregues ejemplos.
+    idiomaBloqueo = "it";
 
-NO respondas la pregunta original.
+}
 
-`;
+else if (
+    historialTexto.includes("hablame en chino") ||
+    historialTexto.includes("habla en chino") ||
+    historialTexto.includes("responde en chino")
+) {
 
-const reply =
-    await consultarGroq(
-        "",
-        promptBloqueo,
-        historialIA
-    );
+    idiomaBloqueo = "zh";
+
+}
+
+else if (
+    historialTexto.includes("hablame en ruso") ||
+    historialTexto.includes("habla en ruso") ||
+    historialTexto.includes("responde en ruso")
+) {
+
+    idiomaBloqueo = "ru";
+
+}
+
+else if (
+    historialTexto.includes("hablame en arabe") ||
+    historialTexto.includes("habla en arabe") ||
+    historialTexto.includes("responde en arabe")
+) {
+
+    idiomaBloqueo = "ar";
+
+}
+
+else if (
+    historialTexto.includes("hablame en coreano") ||
+    historialTexto.includes("habla en coreano") ||
+    historialTexto.includes("responde en coreano")
+) {
+
+    idiomaBloqueo = "ko";
+
+}
+
+
+/*
+============================================================
+NEGATIVA DIRECTA
+============================================================
+*/
+
+const negativas = {
+
+    es:
+        "Lo siento, pero no puedo proporcionar la respuesta a esa pregunta.",
+
+    en:
+        "I'm sorry, but I can't provide the answer to that question.",
+
+    de:
+        "Es tut mir leid, aber ich kann die Antwort auf diese Frage nicht geben.",
+
+    fr:
+        "Je suis désolé, mais je ne peux pas fournir la réponse à cette question.",
+
+    pt:
+        "Desculpe, mas não posso fornecer a resposta para essa pergunta.",
+
+    it:
+        "Mi dispiace, ma non posso fornire la risposta a questa domanda.",
+
+    zh:
+        "抱歉，我不能提供这道题的答案。",
+
+    ru:
+        "Извините, но я не могу предоставить ответ на этот вопрос.",
+
+    ar:
+        "عذرًا، لا أستطيع تقديم إجابة عن هذا السؤال.",
+
+    ko:
+        "죄송하지만 이 질문의 답변을 제공할 수 없습니다."
+
+};
 
 
 return res.json({
 
     reply:
-        reply
+        negativas[idiomaBloqueo] ||
+        negativas.es
 
 });
 
