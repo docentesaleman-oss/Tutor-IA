@@ -2654,10 +2654,7 @@ RESPUESTAS DIRECTAS DE UBICACIÓN
 */
 
 const idiomaActual =
-    detectarIdiomaPreferido(
-        historialIA
-    );
-
+    idiomaPersistente;
 
 const mensajesUbicacion = {
 
