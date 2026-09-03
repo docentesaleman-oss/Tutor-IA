@@ -3090,15 +3090,33 @@ ${nombresIdioma[idiomaError] || "español"}
 Debes realizar TODA la explicación en ese idioma.
 
 La preferencia de idioma del estudiante tiene prioridad
-sobre el idioma de las frases de Vcorrect y Vincorrect.
+sobre el idioma del contenido de Vcorrect, Vincorrect,
+Vtexto, Vvideo y cualquier otra variable del curso.
 
-Aunque las frases del ejercicio estén en inglés,
-alemán, francés o cualquier otro idioma,
-la explicación debe realizarse en:
+Las variables del curso pueden contener contenido
+en cualquier idioma.
+
+NO determines el idioma de respuesta a partir del idioma
+del contenido de esas variables.
+
+El idioma de respuesta debe ser exclusivamente el idioma
+solicitado explícitamente por el estudiante.
+
+La explicación, los encabezados, títulos y etiquetas
+deben estar completamente en:
 
 ${nombresIdioma[idiomaError] || "español"}
 
 No cambies de idioma.
+
+Si debes mostrar una frase original, mantenla exactamente
+en su idioma original.
+
+Si debes corregir una frase, escribe la frase corregida
+en el mismo idioma de la frase original.
+
+La explicación de la corrección debe estar en el idioma
+solicitado por el estudiante.
 
 El estudiante está realizando un ejercicio.
 
@@ -3166,9 +3184,14 @@ idioma obligatorio es diferente del español.
 
 NO mezcles idiomas.
 
-La frase incorrecta y la frase corregida pueden
-mantenerse en el idioma original del ejercicio,
-porque son las frases que se están analizando.
+El idioma de la frase original NO determina el idioma
+de la explicación.
+
+El idioma de Vcorrect y Vincorrect NO determina el idioma
+de la explicación.
+
+El idioma solicitado por el estudiante siempre determina
+el idioma de la explicación.
 
 Para cada frase incorrecta debes incluir:
 
