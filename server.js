@@ -1334,40 +1334,17 @@ function prepararHistorial(
 ) {
 
     if (!Array.isArray(history)) {
-
-        return [];
-
+        history = [];
     }
-
 
     /*
     ============================================================
-    HISTORIAL DE IDIOMA
-    ============================================================
-
-    Solo conservamos solicitudes explícitas de cambio
-    de idioma.
-
-    Se reconocen los 10 idiomas utilizados por el tutor:
-
-    Español
-    Inglés
-    Alemán
-    Francés
-    Portugués
-    Italiano
-    Chino
-    Ruso
-    Árabe
-    Coreano
-
-    Las preguntas y respuestas sobre el curso NO se
-    conservan en el historial.
+    DETECTAR SOLICITUDES EXPLÍCITAS DE IDIOMA
     ============================================================
     */
 
-    const historialIdioma =
-        history
+    const textosAAnalizar = [
+        ...history
             .filter(
                 mensaje =>
                     mensaje?.sender === "user"
@@ -1377,157 +1354,234 @@ function prepararHistorial(
                     limpiarCampo(
                         mensaje?.text
                     )
-            )
-            .filter(
-                texto => {
+            ),
 
-                    const pregunta =
-                        normalizar(texto);
-
-                    return (
-
-                        /*
-                        ========================================================
-                        ESPAÑOL
-                        ========================================================
-                        */
-
-                        pregunta.includes("hablame en") ||
-                        pregunta.includes("habla en") ||
-                        pregunta.includes("responde en") ||
-                        pregunta.includes("quiero que hables en") ||
-                        pregunta.includes("quiero que respondas en") ||
-
-                        /*
-                        ========================================================
-                        INGLÉS
-                        ========================================================
-                        */
-
-                        pregunta.includes("speak in") ||
-                        pregunta.includes("respond in") ||
-                        pregunta.includes("answer in") ||
-                        pregunta.includes("talk to me in") ||
-
-                        /*
-                        ========================================================
-                        ALEMÁN
-                        ========================================================
-                        */
-
-                        pregunta.includes("sprich auf") ||
-                        pregunta.includes("antworte auf") ||
-                        pregunta.includes("sprich in") ||
-
-                        /*
-                        ========================================================
-                        FRANCÉS
-                        ========================================================
-                        */
-
-                        pregunta.includes("parle en") ||
-                        pregunta.includes("parlez en") ||
-                        pregunta.includes("reponds en") ||
-                        pregunta.includes("repondez en") ||
-
-                        /*
-                        ========================================================
-                        PORTUGUÉS
-                        ========================================================
-                        */
-
-                        pregunta.includes("fale em") ||
-                        pregunta.includes("responda em") ||
-                        pregunta.includes("fale comigo em") ||
-
-                        /*
-                        ========================================================
-                        ITALIANO
-                        ========================================================
-                        */
-
-                        pregunta.includes("parla in") ||
-                        pregunta.includes("rispondi in") ||
-                        pregunta.includes("parlami in") ||
-
-                        /*
-                        ========================================================
-                        CHINO
-                        ========================================================
-                        */
-
-                        pregunta.includes("用中文回答") ||
-                        pregunta.includes("用中文说") ||
-                        pregunta.includes("请用中文") ||
-                        pregunta.includes("用中文") ||
-
-                        /*
-                        ========================================================
-                        RUSO
-                        ========================================================
-                        */
-
-                        pregunta.includes("говори на русском") ||
-                        pregunta.includes("отвечай на русском") ||
-                        pregunta.includes("ответь на русском") ||
-                        pregunta.includes("на русском") ||
-
-                        /*
-                        ========================================================
-                        ÁRABE
-                        ========================================================
-                        */
-
-                        pregunta.includes("تحدث بالعربية") ||
-                        pregunta.includes("أجب بالعربية") ||
-                        pregunta.includes("أجب باللغة العربية") ||
-                        pregunta.includes("باللغة العربية") ||
-                        pregunta.includes("بالعربية") ||
-
-                        /*
-                        ========================================================
-                        COREANO
-                        ========================================================
-                        */
-
-                        pregunta.includes("한국어로 말해") ||
-                        pregunta.includes("한국어로 대답해") ||
-                        pregunta.includes("한국어로 답해") ||
-                        pregunta.includes("한국어로") ||
-
-                        /*
-                        ========================================================
-                        FORMAS ADICIONALES EXPLÍCITAS
-                        ========================================================
-                        */
-
-                        pregunta.includes("habla conmigo en") ||
-                        pregunta.includes("contéstame en") ||
-                        pregunta.includes("contestame en") ||
-                        pregunta.includes("respóndeme en") ||
-                        pregunta.includes("respondeme en") ||
-
-                        pregunta.includes("please speak in") ||
-                        pregunta.includes("please respond in") ||
-                        pregunta.includes("please answer in")
-
-                    );
-
-                }
-            );
+        limpiarCampo(
+            preguntaActual
+        )
+    ];
 
 
-   
-       /*
+    const solicitudesIdioma =
+        textosAAnalizar.filter(
+            texto => {
+
+                const pregunta =
+                    normalizar(texto);
+
+                return (
+
+                    /*
+                    ========================================================
+                    ESPAÑOL
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en espanol") ||
+                    pregunta.includes("habla en espanol") ||
+                    pregunta.includes("responde en espanol") ||
+                    pregunta.includes("quiero que hables en espanol") ||
+                    pregunta.includes("quiero que respondas en espanol") ||
+                    pregunta.includes("habla conmigo en espanol") ||
+                    pregunta.includes("respondeme en espanol") ||
+
+                    /*
+                    ========================================================
+                    INGLÉS
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en ingles") ||
+                    pregunta.includes("habla en ingles") ||
+                    pregunta.includes("responde en ingles") ||
+                    pregunta.includes("quiero que hables en ingles") ||
+                    pregunta.includes("quiero que respondas en ingles") ||
+                    pregunta.includes("habla conmigo en ingles") ||
+                    pregunta.includes("respondeme en ingles") ||
+                    pregunta.includes("speak in english") ||
+                    pregunta.includes("speak to me in english") ||
+                    pregunta.includes("talk to me in english") ||
+                    pregunta.includes("respond in english") ||
+                    pregunta.includes("answer in english") ||
+                    pregunta.includes("please speak in english") ||
+                    pregunta.includes("please respond in english") ||
+                    pregunta.includes("please answer in english") ||
+
+                    /*
+                    ========================================================
+                    ALEMÁN
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en aleman") ||
+                    pregunta.includes("habla en aleman") ||
+                    pregunta.includes("responde en aleman") ||
+                    pregunta.includes("quiero que hables en aleman") ||
+                    pregunta.includes("quiero que respondas en aleman") ||
+                    pregunta.includes("habla conmigo en aleman") ||
+                    pregunta.includes("respondeme en aleman") ||
+                    pregunta.includes("sprich auf deutsch") ||
+                    pregunta.includes("sprich bitte auf deutsch") ||
+                    pregunta.includes("sprich mit mir auf deutsch") ||
+                    pregunta.includes("sprich bitte mit mir auf deutsch") ||
+                    pregunta.includes("sprich deutsch") ||
+                    pregunta.includes("antworte auf deutsch") ||
+                    pregunta.includes("antworte bitte auf deutsch") ||
+                    pregunta.includes("antworte mir auf deutsch") ||
+                    pregunta.includes("sprich in deutsch") ||
+
+                    /*
+                    ========================================================
+                    FRANCÉS
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en frances") ||
+                    pregunta.includes("habla en frances") ||
+                    pregunta.includes("responde en frances") ||
+                    pregunta.includes("quiero que hables en frances") ||
+                    pregunta.includes("quiero que respondas en frances") ||
+                    pregunta.includes("parle en francais") ||
+                    pregunta.includes("parle-moi en francais") ||
+                    pregunta.includes("parle moi en francais") ||
+                    pregunta.includes("parle avec moi en francais") ||
+                    pregunta.includes("parlez en francais") ||
+                    pregunta.includes("reponds en francais") ||
+                    pregunta.includes("reponds-moi en francais") ||
+                    pregunta.includes("repondez en francais") ||
+                    pregunta.includes("repondez-moi en francais") ||
+
+                    /*
+                    ========================================================
+                    PORTUGUÉS
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en portugues") ||
+                    pregunta.includes("habla en portugues") ||
+                    pregunta.includes("responde en portugues") ||
+                    pregunta.includes("quiero que hables en portugues") ||
+                    pregunta.includes("quiero que respondas en portugues") ||
+                    pregunta.includes("fale em portugues") ||
+                    pregunta.includes("fale comigo em portugues") ||
+                    pregunta.includes("fale por favor em portugues") ||
+                    pregunta.includes("responda em portugues") ||
+                    pregunta.includes("responda por favor em portugues") ||
+
+                    /*
+                    ========================================================
+                    ITALIANO
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en italiano") ||
+                    pregunta.includes("habla en italiano") ||
+                    pregunta.includes("responde en italiano") ||
+                    pregunta.includes("quiero que hables en italiano") ||
+                    pregunta.includes("quiero que respondas en italiano") ||
+                    pregunta.includes("parla in italiano") ||
+                    pregunta.includes("parla con me in italiano") ||
+                    pregunta.includes("parlami in italiano") ||
+                    pregunta.includes("rispondi in italiano") ||
+                    pregunta.includes("rispondimi in italiano") ||
+
+                    /*
+                    ========================================================
+                    CHINO
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en chino") ||
+                    pregunta.includes("habla en chino") ||
+                    pregunta.includes("responde en chino") ||
+                    pregunta.includes("请用中文") ||
+                    pregunta.includes("请用中文回答") ||
+                    pregunta.includes("请用中文说") ||
+                    pregunta.includes("用中文回答") ||
+                    pregunta.includes("用中文说") ||
+                    pregunta.includes("用中文") ||
+
+                    /*
+                    ========================================================
+                    RUSO
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en ruso") ||
+                    pregunta.includes("habla en ruso") ||
+                    pregunta.includes("responde en ruso") ||
+                    pregunta.includes("говори на русском") ||
+                    pregunta.includes("говори со мной на русском") ||
+                    pregunta.includes("пожалуйста говори на русском") ||
+                    pregunta.includes("отвечай на русском") ||
+                    pregunta.includes("ответь на русском") ||
+                    pregunta.includes("отвечай мне на русском") ||
+                    pregunta.includes("на русском") ||
+
+                    /*
+                    ========================================================
+                    ÁRABE
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en arabe") ||
+                    pregunta.includes("habla en arabe") ||
+                    pregunta.includes("responde en arabe") ||
+                    pregunta.includes("تحدث بالعربية") ||
+                    pregunta.includes("تحدث معي بالعربية") ||
+                    pregunta.includes("تحدث معي باللغة العربية") ||
+                    pregunta.includes("أجب بالعربية") ||
+                    pregunta.includes("أجب باللغة العربية") ||
+                    pregunta.includes("أجبني بالعربية") ||
+                    pregunta.includes("باللغة العربية") ||
+                    pregunta.includes("بالعربية") ||
+
+                    /*
+                    ========================================================
+                    COREANO
+                    ========================================================
+                    */
+
+                    pregunta.includes("hablame en coreano") ||
+                    pregunta.includes("habla en coreano") ||
+                    pregunta.includes("responde en coreano") ||
+                    pregunta.includes("한국어로 말해") ||
+                    pregunta.includes("한국어로 말해주세요") ||
+                    pregunta.includes("한국어로 말해줘") ||
+                    pregunta.includes("한국어로 대답해") ||
+                    pregunta.includes("한국어로 대답해주세요") ||
+                    pregunta.includes("한국어로 답해") ||
+                    pregunta.includes("한국어로 답해주세요") ||
+                    pregunta.includes("한국어로") ||
+
+                    /*
+                    ========================================================
+                    FORMAS GENERALES EN INGLÉS
+                    ========================================================
+                    */
+
+                    pregunta.includes("please speak in") ||
+                    pregunta.includes("please speak to me in") ||
+                    pregunta.includes("please talk to me in") ||
+                    pregunta.includes("please respond in") ||
+                    pregunta.includes("please answer in")
+
+                );
+
+            }
+        );
+
+
+    /*
     ============================================================
     TOMAR SOLO LA ÚLTIMA SOLICITUD DE IDIOMA
     ============================================================
     */
 
     const ultimaSolicitudIdioma =
-        historialIdioma.length > 0
-            ? historialIdioma[
-                historialIdioma.length - 1
+        solicitudesIdioma.length > 0
+            ? solicitudesIdioma[
+                solicitudesIdioma.length - 1
             ]
             : "";
 
@@ -1552,7 +1606,7 @@ function prepararHistorial(
 
     console.log(
         "Solicitudes de idioma encontradas:",
-        historialIdioma.length
+        solicitudesIdioma.length
     );
 
     console.log(
@@ -1565,6 +1619,7 @@ function prepararHistorial(
 
 }
 
+    
 /*
 ============================================================
 DETECTAR IDIOMA ACTUAL DE LA CONVERSACIÓN
@@ -1628,18 +1683,20 @@ function detectarIdiomaPreferido(historialIA = []) {
     */
 
     if (
-        historialTexto.includes("hablame en aleman") ||
-        historialTexto.includes("habla en aleman") ||
-        historialTexto.includes("responde en aleman") ||
-        historialTexto.includes("quiero que hables en aleman") ||
-        historialTexto.includes("quiero que respondas en aleman") ||
-        historialTexto.includes("sprich auf deutsch") ||
-        historialTexto.includes("antworte auf deutsch") ||
-        historialTexto.includes("sprich deutsch") ||
-        historialTexto.includes("antworte auf deutsch")
-    ) {
-        return "de";
-    }
+    historialTexto.includes("hablame en aleman") ||
+    historialTexto.includes("habla en aleman") ||
+    historialTexto.includes("responde en aleman") ||
+    historialTexto.includes("quiero que hables en aleman") ||
+    historialTexto.includes("quiero que respondas en aleman") ||
+    historialTexto.includes("sprich auf deutsch") ||
+    historialTexto.includes("sprich bitte auf deutsch") ||
+    historialTexto.includes("sprich mit mir auf deutsch") ||
+    historialTexto.includes("sprich bitte mit mir auf deutsch") ||
+    historialTexto.includes("sprich deutsch") ||
+    historialTexto.includes("antworte auf deutsch")
+) {
+    return "de";
+}
 
 
     /*
