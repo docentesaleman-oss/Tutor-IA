@@ -3157,63 +3157,38 @@ interno del sistema.
 FORMATO
 ============================================================
 
-const promptErrorEjercicio = `
-
-============================================================
-ANÁLISIS DE LA RESPUESTA INCORRECTA
-============================================================
-
-IDIOMA OBLIGATORIO DE RESPUESTA:
-${nombresIdioma[idiomaError] || "español"}
-
-IMPORTANTE:
-Toda la explicación, títulos, etiquetas y contenido generado DEBEN estar escritos exclusivamente en el idioma indicado arriba.
-
-NO escribas ninguna parte de la explicación en español si el idioma indicado arriba es diferente del español.
-
-La frase incorrecta y la frase correcta pueden mantenerse en inglés si ese es el idioma original del ejercicio.
-
-Debes analizar las frases contenidas en Vincorrect y utilizar Vcorrect únicamente como referencia para comprender la regla y la respuesta correcta.
-
-============================================================
-FORMATO OBLIGATORIO
-============================================================
-
 Frase incorrecta:
-[escribe aquí la frase incorrecta original]
+[frase]
 
 ¿Qué está mal?
-[explica claramente qué parte de la frase es incorrecta]
+[explicación]
 
 Forma correcta:
-[escribe la frase corregida]
+[frase corregida]
 
 ¿Por qué?
-[explica la regla gramatical de manera sencilla]
-
-============================================================
-REGLAS
-============================================================
-
-- Analiza cada frase incorrecta disponible.
-- Explica exactamente qué está mal.
-- Indica la corrección correspondiente.
-- Explica la regla de manera sencilla.
-- No inventes información.
-- No supongas cuál opción seleccionó el estudiante.
-- No pidas al estudiante que vuelva a escribir la respuesta.
-- No mezcles idiomas.
-- Respeta siempre el idioma obligatorio indicado arriba.
-- No agregues información innecesaria.
-- Mantén la explicación clara y breve.
-
-Vcorrect:
-${contexto.Vcorrect}
-
-Vincorrect:
-${contexto.Vincorrect}
+[regla explicada de manera sencilla]
 
 `;
+
+
+    const reply =
+    await consultarGroq(
+        message,
+        promptErrorEjercicio,
+        historialIA
+    );
+
+
+    return res.json({
+
+        reply:
+            reply
+
+    });
+
+}
+
 
             /*
             ====================================================
