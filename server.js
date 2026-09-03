@@ -691,16 +691,26 @@ ${contexto.texto || "No disponible"}
 CONTENIDO DEL VIDEO
 ============================================================
 
-El siguiente contenido corresponde al video
-actual que está viendo el estudiante.
+Vvideo contiene información EXCLUSIVAMENTE para preguntas
+que se refieran explícitamente al video.
 
-Utiliza esta información como fuente principal
-para responder preguntas relacionadas con el video.
+NO utilices Vvideo para explicar la lección,
+la diapositiva, el contexto ni el texto actual.
+
+Solo utiliza Vvideo cuando el estudiante pregunte
+explícitamente por el video, por ejemplo:
+
+- "¿De qué trata el video?"
+- "¿Qué explica el video?"
+- "¿Qué dice el video?"
+- "Explícame el video."
+
+Si la pregunta NO se refiere explícitamente al video,
+IGNORA COMPLETAMENTE Vvideo.
 
 Vvideo:
 
 ${contexto.Vvideo || "No disponible"}
-
 
 ============================================================
 DATOS DEL EJERCICIO
@@ -780,22 +790,29 @@ REGLAS GENERALES
 10. Si pregunta por la diapositiva, utiliza únicamente la
     diapositiva actual recibida.
 
-11. Si pregunta qué está viendo, utiliza únicamente
-    Contexto y Texto.
+11. Si pregunta qué está viendo, qué está haciendo,
+    qué contiene esta diapositiva o pide que le expliquen
+    esta lección, utiliza ÚNICAMENTE Contexto y Texto.
 
-12. Si Texto está vacío o no disponible, no inventes
-    contenido para responder.
+12. Si Texto está vacío o no disponible, utiliza únicamente
+    Contexto y no inventes contenido.
 
-13. Si pregunta sobre contenido que no aparece en Texto,
-    Contexto o Vvideo, indica que no tienes esa información.
+13. Si pregunta sobre el contenido de la lección actual,
+    utiliza únicamente Contexto y Texto.
 
-14. Si pregunta sobre el video, utiliza únicamente Vvideo.
+14. NO utilices Vvideo para responder preguntas sobre
+    la lección, diapositiva, sección, actividad o texto
+    actual.
 
-15. Si Vvideo está vacío o no disponible, no inventes
-    contenido del video.
+15. Vvideo solo puede utilizarse cuando el estudiante
+    pregunte EXPLÍCITAMENTE por el video, por ejemplo:
+    "¿De qué trata el video?",
+    "¿Qué explica el video?",
+    "¿Qué dice el video?",
+    "Explícame el video."
 
-16. Si pregunta por información general del curso que no
-    esté presente en los datos recibidos, indica que no
+16. Si Vvideo está vacío o no disponible y el estudiante
+    pregunta explícitamente por el video, indica que no
     tienes esa información disponible.
 
 17. Mantén coherencia con la conversación anterior, pero
