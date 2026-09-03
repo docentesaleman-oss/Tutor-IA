@@ -825,6 +825,17 @@ ocurre cuando el estudiante lo solicita explícitamente.
 sobre el idioma predeterminado español, pero no modifica
 ninguna de las demás reglas del tutor.
 
+1G. El historial de conversación puede utilizarse únicamente
+    para recordar la preferencia de idioma del estudiante.
+
+1H. Si en el historial existe una solicitud explícita de cambio
+    de idioma, esa solicitud debe mantenerse como la preferencia
+    actual del estudiante hasta que solicite otro idioma.
+
+1I. El historial NO constituye una fuente de información sobre
+    el contenido del curso. Para el contenido educativo utiliza
+    únicamente el contexto actual de Storyline.
+
 2. El contexto recibido de Storyline es la ÚNICA fuente
    de información sobre el contenido actual del curso.
 
@@ -1070,20 +1081,23 @@ async function consultarGroq(
 
     /*
     ========================================================
-    MENSAJES PARA GROQ
+    HISTORIAL DE CONVERSACIÓN
     ========================================================
 
-    IMPORTANTE:
-    El historial NO se envía al modelo.
+    El historial se utiliza ÚNICAMENTE para recordar
+    preferencias del estudiante, especialmente el idioma
+    solicitado.
 
-    El tutor debe responder únicamente utilizando:
-    1. El systemPrompt con el contexto actual.
-    2. La pregunta actual del estudiante.
-
-    Esto evita que respuestas anteriores del tutor
-    contaminen o contradigan el contexto actual.
+    NO debe utilizarse como fuente de información del curso.
+    El contenido del curso siempre proviene del contexto
+    actual de Storyline.
     ========================================================
     */
+
+    const historialIdioma = Array.isArray(history)
+        ? history
+        : [];
+
 
     const mensajes = [
 
@@ -1093,8 +1107,44 @@ async function consultarGroq(
 
             content:
                 systemPrompt
-
         },
+
+        /*
+        ====================================================
+        HISTORIAL
+        ====================================================
+
+        Se incluye para que el tutor pueda recordar
+        preferencias de conversación como el idioma.
+
+        El system prompt establece que este historial
+        NO es fuente del contenido del curso.
+        ====================================================
+        */
+
+        ...historialIdioma
+            .slice(-20)
+            .map(mensaje => {
+
+                return {
+
+                    role:
+                        mensaje.role === "assistant"
+                            ? "assistant"
+                            : "user",
+
+                    content:
+                        String(
+                            mensaje.content || ""
+                        )
+
+                };
+
+            })
+            .filter(
+                mensaje =>
+                    mensaje.content.trim() !== ""
+            ),
 
         {
             role:
@@ -1102,27 +1152,18 @@ async function consultarGroq(
 
             content:
                 pregunta
-
         }
 
     ];
 
 
-    /*
-    ========================================================
-    HISTORIAL
-    ========================================================
-    */
-
     console.log(
-        "===== HISTORIAL NO ENVIADO A GROQ ====="
+        "===== HISTORIAL ENVIADO A GROQ ====="
     );
 
     console.log(
-        "Mensajes almacenados:",
-        Array.isArray(history)
-            ? history.length
-            : 0
+        "Mensajes:",
+        historialIdioma.length
     );
 
 
@@ -1738,7 +1779,7 @@ el error concreto.
 Puedes explicar únicamente la dinámica general
 del ejercicio y el procedimiento que debe seguir.
 
-Responde siempre en español.
+
 
 No menciones variables internas,
 programación, JSON ni el funcionamiento interno
@@ -1822,7 +1863,6 @@ No pidas que vuelva a proporcionar las frases.
 
 No inventes información.
 
-Responde siempre en español.
 
 No menciones variables internas,
 programación, JSON ni el funcionamiento
@@ -1970,7 +2010,7 @@ No inventes información.
 No agregues información externa como si
 hubiera aparecido en el video.
 
-Responde siempre en español.
+
 
 No menciones variables, programación,
 JSON ni funcionamiento interno del sistema.
