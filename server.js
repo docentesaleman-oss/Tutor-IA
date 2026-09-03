@@ -3153,9 +3153,6 @@ programación, JSON ni el funcionamiento
 interno del sistema.
 
 
-============================================================
-FORMATO
-============================================================
 
 const promptErrorEjercicio = `
 
