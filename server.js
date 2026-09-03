@@ -1240,11 +1240,11 @@ async function consultarGroq(
                         temperature:
                             0.1,
 
-                        max_completion_tokens:
+                       max_completion_tokens:
     100,
 
 reasoning_effort:
-    "none",
+    "low",
 
 include_reasoning:
     false
