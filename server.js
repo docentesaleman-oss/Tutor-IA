@@ -3376,12 +3376,15 @@ El estudiante está viendo un video.
 
 IDIOMA OBLIGATORIO DE RESPUESTA:
 
-${idiomaPersistente}
+${nombresIdioma[idiomaPersistente] || "español"}
 
 Toda la explicación debe estar exclusivamente
 en este idioma.
 
 No mezcles idiomas.
+
+El idioma del contenido de Vvideo
+NO determina el idioma de respuesta.
 
 Pregunta:
 
