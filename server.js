@@ -2451,6 +2451,10 @@ app.post(
                 )
                     ? req.body.history
                     : [];
+const idiomaGuardado =
+    typeof req.body?.language === "string"
+        ? req.body.language.trim()
+        : "";
 
 const idiomaGuardado =
     limpiarCampo(
@@ -2511,11 +2515,11 @@ const historialIA =
         history,
         message
     );
+
 const idiomaPersistente =
     idiomaGuardado ||
-    detectarIdiomaPreferido(
-        historialIA
-    );
+    detectarIdiomaPreferido(historialIA) ||
+    "es";
 
 console.log(
     "===== IDIOMA FINAL ====="
