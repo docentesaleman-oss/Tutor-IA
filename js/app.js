@@ -997,10 +997,18 @@ addMessage(text, "user");
             );
 
 
-        addMessage(
-            response,
-            "bot"
-        );
+        const respuestaLimpia =
+    response
+        .replace(/\*\*(.*?)\*\*/gs, "$1")
+        .replace(/\*(.*?)\*/gs, "$1")
+        .replace(/__(.*?)__/gs, "$1")
+        .replace(/_(.*?)_/gs, "$1")
+        .replace(/<br\s*\/?>/gi, "\n");
+
+addMessage(
+    respuestaLimpia,
+    "bot"
+);
 
 
     } catch (error) {
