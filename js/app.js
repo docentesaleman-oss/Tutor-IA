@@ -58,6 +58,7 @@ function detectarIdiomaSolicitado(texto) {
     pregunta.includes("hablame ahora en ingles") ||
     pregunta.includes("hablame en ingles por favor") ||
     pregunta.includes("hablame ahora en ingles por favor") ||
+    pregunta.includes("hablame unicamente en ingles") ||
     pregunta.includes("habla en ingles") ||
     pregunta.includes("responde en ingles") ||
     pregunta.includes("respondeme en ingles") ||
