@@ -409,6 +409,32 @@ function esPreguntaDeTexto(texto) {
 
 /*
 ============================================================
+DETECTAR PREGUNTAS SOBRE QUÉ HACER EN EL EJERCICIO
+============================================================
+*/
+
+function esPreguntaSobreInstruccionesEjercicio(texto) {
+
+    const pregunta =
+        normalizar(texto);
+
+    return (
+        pregunta.includes("que debo hacer") ||
+        pregunta.includes("que tengo que hacer") ||
+        pregunta.includes("que hay que hacer") ||
+        pregunta.includes("como hago este ejercicio") ||
+        pregunta.includes("como se hace este ejercicio") ||
+        pregunta.includes("que debo hacer en este ejercicio") ||
+        pregunta.includes("que tengo que hacer en este ejercicio") ||
+        pregunta.includes("que debo hacer en esta actividad") ||
+        pregunta.includes("que tengo que hacer en esta actividad") ||
+        pregunta.includes("explicame que debo hacer") ||
+        pregunta.includes("explicame que tengo que hacer")
+    );
+}
+
+/*
+============================================================
 BLOQUEAR SOLICITUDES DE RESPUESTA DE EJERCICIOS
 ============================================================
 */
@@ -2540,6 +2566,41 @@ console.log(
 
 /*
 ============================================================
+INSTRUCCIONES DEL EJERCICIO
+============================================================
+*/
+
+if (
+    esPreguntaSobreInstruccionesEjercicio(message) &&
+    contexto.contexto &&
+    (
+        contexto.seccion
+            .toLowerCase()
+            .includes("pretest") ||
+        contexto.seccion
+            .toLowerCase()
+            .includes("posttest") ||
+        contexto.contexto
+    )
+) {
+
+    console.log(
+        "===== INSTRUCCIONES DEL EJERCICIO ====="
+    );
+
+    console.log(
+        "Contexto utilizado:",
+        contexto.contexto
+    );
+
+    return res.json({
+        reply:
+            contexto.contexto
+    });
+}
+
+/*
+============================================================
 BLOQUEO DE RESPUESTAS DE EJERCICIOS
 ============================================================
 */
@@ -2631,11 +2692,8 @@ const negativas = {
 
 
 return res.json({
-
     reply:
-        negativas[idiomaBloqueo] ||
-        negativas.es
-
+        "No puedo darte directamente la respuesta de un ejercicio ni decirte qué opción seleccionar."
 });
 
 }
