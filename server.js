@@ -2456,10 +2456,7 @@ const idiomaGuardado =
         ? req.body.language.trim()
         : "";
 
-const idiomaGuardado =
-    limpiarCampo(
-        req.body?.language
-    );
+
 
             if (!message) {
 
