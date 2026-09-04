@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -46,10 +46,6 @@
 </div>
 
 
-<!-- ============================================================
-     TUTOR
-     ============================================================ -->
-
 <div id="chat">
 
     <div id="header">
@@ -68,29 +64,19 @@
 
     <div id="inputArea">
 
-        <textarea
-            id="prompt"
-            placeholder="Escribe aquí..."
-            rows="1">
-        </textarea>
+    <textarea
+        id="prompt"
+        placeholder="Escribe aquí..."
+        rows="1">
+    </textarea>
 
-        <button
-            id="send"
-            type="button"
-            title="Enviar"
-            aria-label="Enviar">
-            ➤
-        </button>
+    <button id="send" type="button" title="Enviar" aria-label="Enviar">
+        ➤
+    </button>
 
-        <button
-            id="clearChat"
-            type="button"
-            title="Eliminar chat"
-            aria-label="Eliminar chat">
-            🗑
-        </button>
-
-    </div>
+    <button id="clearChat" type="button" title="Eliminar chat" aria-label="Eliminar chat">
+        🗑
+    </button>
 
 </div>
 
@@ -102,11 +88,11 @@
 
 
 <!-- ============================================================
-     TIEMPO DE ESPERA
+     PANTALLA DE CARGA
      
      10000 = 10 segundos
      
-     Si necesitas aumentar el tiempo:
+     Si quieres cambiarlo:
      15000 = 15 segundos
      20000 = 20 segundos
      ============================================================ -->
@@ -115,9 +101,7 @@
 
 setTimeout(function(){
 
-    document.getElementById("loadingScreen").classList.add("hidden");
-
-    document.getElementById("chat").classList.add("show");
+    document.getElementById("loadingScreen").style.display = "none";
 
 }, 10000);
 
@@ -127,4 +111,4 @@ setTimeout(function(){
 </body>
 
 </html>
-
+```
