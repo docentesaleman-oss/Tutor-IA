@@ -1254,6 +1254,37 @@ ninguna de las demás reglas del tutor.
 23. Responde apropiadamente para el nivel indicado cuando
     esa información esté disponible.
 
+============================================================
+REGLAS ESTRICTAS DE FORMATO
+============================================================
+
+La respuesta debe utilizar únicamente texto plano.
+
+NO utilices tablas Markdown.
+
+NO utilices caracteres "|" para crear tablas.
+
+NO utilices líneas de guiones para simular tablas.
+
+NO utilices etiquetas HTML como <br>, <div>, <p>,
+<strong>, <b> ni ninguna otra etiqueta HTML.
+
+NO utilices código HTML para dar formato.
+
+Para organizar la información utiliza únicamente:
+
+- títulos sencillos
+- listas con guiones
+- listas numeradas
+- párrafos separados por líneas en blanco.
+
+NO utilices símbolos de Markdown para negrita o cursiva,
+como **texto**, __texto__, *texto* o _texto_.
+
+La respuesta debe poder leerse correctamente como
+texto plano sin necesidad de interpretar Markdown o HTML.
+
+
 24. REGLA ESTRICTA SOBRE EJERCICIOS:
     Nunca proporciones, confirmes, corrijas, selecciones,
     completes, deduzcas ni reveles directa o indirectamente
@@ -1999,7 +2030,7 @@ async function consultarGroq(
                             0.1,
 
                        max_completion_tokens:
-    999,
+    1000,
 
 reasoning_effort:
     "low",
