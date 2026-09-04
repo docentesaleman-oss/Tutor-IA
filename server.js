@@ -2572,16 +2572,7 @@ INSTRUCCIONES DEL EJERCICIO
 
 if (
     esPreguntaSobreInstruccionesEjercicio(message) &&
-    contexto.contexto &&
-    (
-        contexto.seccion
-            .toLowerCase()
-            .includes("pretest") ||
-        contexto.seccion
-            .toLowerCase()
-            .includes("posttest") ||
-        contexto.contexto
-    )
+    contexto.contexto
 ) {
 
     console.log(
@@ -2593,9 +2584,65 @@ if (
         contexto.contexto
     );
 
+    const nombresIdiomaInstrucciones = {
+        es: "español",
+        en: "inglés",
+        de: "alemán",
+        fr: "francés",
+        pt: "portugués",
+        it: "italiano",
+        zh: "chino",
+        ru: "ruso",
+        ar: "árabe",
+        ko: "coreano"
+    };
+
+    const idiomaInstrucciones =
+        nombresIdiomaInstrucciones[
+            idiomaPersistente
+        ] || "español";
+
+    const promptInstrucciones = `
+
+Eres un tutor virtual de un curso educativo.
+
+El estudiante pregunta qué debe hacer en la actividad actual.
+
+IDIOMA OBLIGATORIO DE RESPUESTA:
+${idiomaInstrucciones}
+
+Instrucción actual de la actividad:
+"${contexto.contexto}"
+
+TAREA:
+
+Explica únicamente qué debe hacer el estudiante
+según la instrucción proporcionada.
+
+Si la instrucción está escrita en otro idioma,
+tradúcela al idioma obligatorio de respuesta.
+
+NO proporciones las respuestas del ejercicio.
+NO indiques qué opción debe seleccionar.
+NO resuelvas el ejercicio.
+NO agregues información que no esté en la instrucción.
+NO inventes pasos adicionales.
+
+La respuesta completa debe estar exclusivamente en:
+${idiomaInstrucciones}
+
+`;
+
+    const reply =
+        await consultarGroq(
+            message,
+            promptInstrucciones,
+            []
+        );
+
     return res.json({
         reply:
-            contexto.contexto
+            reply
     });
 }
 
