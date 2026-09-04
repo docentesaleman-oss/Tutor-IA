@@ -552,9 +552,10 @@ function iniciarSeleccionIdioma() {
         "Hola, soy el Tutor IA de Tech Language School. Bienvenido. ¿En qué idioma deseas comunicarte conmigo?";
 
     addMessage(
-        mensajeInicial,
-        "bot"
-    );
+    mensajeInicial,
+    "bot",
+    false
+);
 
 }
 
