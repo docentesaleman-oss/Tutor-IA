@@ -999,13 +999,33 @@ addMessage(text, "user");
     );
 
 
-        const respuestaLimpia =
+       const respuestaLimpia =
     response
+        // Eliminar negritas y cursivas Markdown
         .replace(/\*\*(.*?)\*\*/gs, "$1")
         .replace(/\*(.*?)\*/gs, "$1")
         .replace(/__(.*?)__/gs, "$1")
         .replace(/_(.*?)_/gs, "$1")
-        .replace(/<br\s*\/?>/gi, "\n");
+
+        // Eliminar encabezados Markdown: #, ##, ###
+        .replace(/^\s*#{1,6}\s*/gm, "")
+
+        // Eliminar separadores Markdown: ---, ***, ___
+        .replace(/^\s*([-*_])(?:\s*\1){2,}\s*$/gm, "")
+
+        // Convertir filas de tablas Markdown en texto normal
+        .replace(/^\s*\|(.+)\|\s*$/gm, "$1")
+        .replace(/^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/gm, "")
+
+        // Eliminar separadores | de las tablas
+        .replace(/\s*\|\s*/g, " — ")
+
+        // Convertir <br> en salto de línea
+        .replace(/<br\s*\/?>/gi, "\n")
+
+        // Limpiar líneas vacías excesivas
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
 
 addMessage(
     respuestaLimpia,
