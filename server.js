@@ -3403,10 +3403,23 @@ REGLAS
 
 
                 if (
-                    contexto.Vvideo
-                ) {
+    contexto.Vvideo
+) {
 
-                    const promptVideo = `
+    const nombresIdioma = {
+        es: "español",
+        en: "inglés",
+        de: "alemán",
+        fr: "francés",
+        pt: "portugués",
+        it: "italiano",
+        zh: "chino",
+        ru: "ruso",
+        ar: "árabe",
+        ko: "coreano"
+    };
+
+    const promptVideo = `
 
 Eres un tutor virtual de un curso educativo.
 
