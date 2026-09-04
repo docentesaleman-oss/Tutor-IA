@@ -1612,44 +1612,50 @@ function prepararHistorial(
     ============================================================
     */
 
-    const ultimaSolicitudIdioma =
-        solicitudesIdioma.length > 0
-            ? solicitudesIdioma[
-                solicitudesIdioma.length - 1
-            ]
-            : "";
+    const historialConversacion =
+    history
+        .map(function(mensaje) {
+
+            return {
+                role:
+                    mensaje?.sender === "assistant" ||
+                    mensaje?.sender === "bot"
+                        ? "assistant"
+                        : "user",
+
+                content:
+                    limpiarCampo(
+                        mensaje?.text
+                    )
+            };
+
+        })
+        .filter(function(mensaje) {
+
+            return mensaje.content.trim() !== "";
+
+        })
+        .slice(-6);
 
 
-    const resultado =
-        ultimaSolicitudIdioma
-            ? [
-                {
-                    role:
-                        "user",
+console.log(
+    "===== HISTORIAL PARA EL TUTOR ====="
+);
 
-                    content:
-                        ultimaSolicitudIdioma
-                }
-            ]
-            : [];
+console.log(
+    "Mensajes enviados al Tutor:",
+    historialConversacion.length
+);
 
-
-    console.log(
-        "===== HISTORIAL FILTRADO ====="
-    );
-
-    console.log(
-        "Solicitudes de idioma encontradas:",
-        solicitudesIdioma.length
-    );
-
-    console.log(
-        "Última preferencia de idioma:",
-        ultimaSolicitudIdioma || "Ninguna"
-    );
+console.log(
+    "Últimas 3 conversaciones:",
+    Math.floor(
+        historialConversacion.length / 2
+    )
+);
 
 
-    return resultado;
+return historialConversacion;
 
 }
 
