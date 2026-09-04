@@ -1,12 +1,14 @@
 javascript
-async function askGPT(text, storylineData) {
+async function askGPT(text, storylineData, idiomaActual) {
 
     try {
 
         const idiomaPreferido =
-            localStorage.getItem(
-                "tutorIA_idioma"
-            ) || "";
+    idiomaActual ||
+    localStorage.getItem(
+        "tutorIA_idioma"
+    ) ||
+    "";
 
         console.log(
             "===== ENVIANDO AL SERVIDOR ====="

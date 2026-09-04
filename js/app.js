@@ -992,10 +992,11 @@ addMessage(text, "user");
 
 
         const response =
-            await askGPT(
-                text,
-                contextoParaPregunta
-            );
+    await askGPT(
+        text,
+        contextoParaPregunta,
+        idiomaPreferido
+    );
 
 
         const respuestaLimpia =
