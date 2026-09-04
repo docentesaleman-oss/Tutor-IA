@@ -53,17 +53,30 @@ function detectarIdiomaSolicitado(texto) {
         return "es";
     }
 
-    if (
-        pregunta.includes("speak english") ||
-        pregunta.includes("speak in english") ||
-        pregunta.includes("talk to me in english") ||
-        pregunta.includes("speak with me in english") ||
-        pregunta.includes("respond in english") ||
-        pregunta.includes("answer in english") ||
-        pregunta.includes("speak to me in english")
-    ) {
-        return "en";
-    }
+   if (
+    pregunta.includes("hablame en ingles") ||
+    pregunta.includes("hablame ahora en ingles") ||
+    pregunta.includes("hablame en ingles por favor") ||
+    pregunta.includes("hablame ahora en ingles por favor") ||
+    pregunta.includes("habla en ingles") ||
+    pregunta.includes("responde en ingles") ||
+    pregunta.includes("respondeme en ingles") ||
+    pregunta.includes("quiero que hables en ingles") ||
+    pregunta.includes("quiero que respondas en ingles") ||
+    pregunta.includes("habla conmigo en ingles") ||
+    pregunta.includes("speak english") ||
+    pregunta.includes("speak in english") ||
+    pregunta.includes("talk to me in english") ||
+    pregunta.includes("speak with me in english") ||
+    pregunta.includes("respond in english") ||
+    pregunta.includes("answer in english") ||
+    pregunta.includes("speak to me in english") ||
+    pregunta.includes("please speak in english") ||
+    pregunta.includes("please respond in english") ||
+    pregunta.includes("please answer in english")
+) {
+    return "en";
+}
 
     if (
         pregunta.includes("sprich deutsch") ||
