@@ -114,6 +114,10 @@ function obtenerContextoStoryline(storyline) {
         storyline?.vvideo ??
         "";
 
+const Vsugerencia =
+    storyline?.Vsugerencia ??
+    storyline?.vsugerencia ??
+    "";
 
     return {
 
@@ -165,7 +169,11 @@ function obtenerContextoStoryline(storyline) {
         Vvideo:
             limpiarCampo(
                 Vvideo
-            )
+            ),
+Vsugerencia:
+    limpiarCampo(
+        Vsugerencia
+    )
 
     };
 
@@ -1098,6 +1106,49 @@ ${contexto.contexto || "No disponible"}
 Texto:
 ${contexto.texto || "No disponible"}
 
+============================================================
+REGLAS PARA SUGERENCIAS
+============================================================
+
+Las sugerencias mostradas al estudiante son accesos directos
+a preguntas específicas.
+
+Si la pregunta del estudiante corresponde a una de estas
+sugerencias, aplica obligatoriamente la siguiente regla:
+
+"¿Qué debo hacer en este ejercicio?"
+Utiliza exclusivamente el Contexto actual de la diapositiva
+para explicar al estudiante qué debe hacer.
+Explica la dinámica o las instrucciones del ejercicio.
+NO proporciones ni deduzcas la respuesta correcta.
+
+"¿Por qué me quedó mal la respuesta?"
+Utiliza Vcorrect y Vincorrect exclusivamente para explicar
+el error.
+No reveles cuál opción seleccionó el estudiante.
+No muestres Vcorrect ni Vincorrect directamente.
+
+"¿De qué trata el video?"
+Utiliza exclusivamente Vvideo.
+
+"Transcríbeme el video."
+Utiliza exclusivamente Vvideo y proporciona la transcripción
+disponible.
+
+"Explícame esta lección."
+Utiliza exclusivamente Contexto y Texto de la diapositiva
+actual.
+
+"¿De qué trata la conversación?"
+Utiliza exclusivamente el Texto y el Contexto disponibles
+en la diapositiva actual.
+No utilices conocimiento externo.
+
+Si una de estas sugerencias solicita información que no está
+disponible en la diapositiva actual, indica claramente que
+esa información no está disponible.
+
+Nunca utilices información de una diapositiva anterior.
 
 ============================================================
 CONTENIDO DEL VIDEO
