@@ -242,8 +242,7 @@ function actualizarStoryline(datos) {
         Vincorrect: "",
 
         Vvideo: "",
-
-	Vsugerencia: ""
+Vsugerencia: ""
 
     };
 
