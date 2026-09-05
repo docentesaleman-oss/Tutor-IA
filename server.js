@@ -1502,6 +1502,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "ingles" ||
                     pregunta.includes("hablame en ingles") ||
                     pregunta.includes("habla en ingles") ||
                     pregunta.includes("responde en ingles") ||
@@ -1524,6 +1525,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "aleman" ||
                     pregunta.includes("hablame en aleman") ||
                     pregunta.includes("habla en aleman") ||
                     pregunta.includes("responde en aleman") ||
@@ -1547,6 +1549,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "frances" ||
                     pregunta.includes("hablame en frances") ||
                     pregunta.includes("habla en frances") ||
                     pregunta.includes("responde en frances") ||
@@ -1568,6 +1571,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "portugues" ||
                     pregunta.includes("hablame en portugues") ||
                     pregunta.includes("habla en portugues") ||
                     pregunta.includes("responde en portugues") ||
@@ -1585,6 +1589,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "italiano" ||
                     pregunta.includes("hablame en italiano") ||
                     pregunta.includes("habla en italiano") ||
                     pregunta.includes("responde en italiano") ||
@@ -1602,6 +1607,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "chino" ||
                     pregunta.includes("hablame en chino") ||
                     pregunta.includes("habla en chino") ||
                     pregunta.includes("responde en chino") ||
@@ -1618,6 +1624,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "ruso" ||
                     pregunta.includes("hablame en ruso") ||
                     pregunta.includes("habla en ruso") ||
                     pregunta.includes("responde en ruso") ||
@@ -1634,7 +1641,7 @@ function prepararHistorial(
                     ÁRABE
                     ========================================================
                     */
-
+                    pregunta === "arabe" ||
                     pregunta.includes("hablame en arabe") ||
                     pregunta.includes("habla en arabe") ||
                     pregunta.includes("responde en arabe") ||
@@ -1653,6 +1660,7 @@ function prepararHistorial(
                     ========================================================
                     */
 
+                    pregunta === "coreano" ||
                     pregunta.includes("hablame en coreano") ||
                     pregunta.includes("habla en coreano") ||
                     pregunta.includes("responde en coreano") ||

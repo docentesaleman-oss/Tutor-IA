@@ -188,7 +188,8 @@ let storylineData = {
     Vincorrect: "",
 
     Vvideo: "",
-Vsugerencia: ""
+    
+    Vsugerencia: ""
 
 };
 
@@ -241,7 +242,8 @@ function actualizarStoryline(datos) {
         Vincorrect: "",
 
         Vvideo: "",
-Vsugerencia: ""
+
+	Vsugerencia: ""
 
     };
 
