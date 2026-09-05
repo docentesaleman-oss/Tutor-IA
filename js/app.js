@@ -187,7 +187,8 @@ let storylineData = {
 
     Vincorrect: "",
 
-    Vvideo: ""
+    Vvideo: "",
+Vsugerencia: ""
 
 };
 
@@ -239,7 +240,8 @@ function actualizarStoryline(datos) {
 
         Vincorrect: "",
 
-        Vvideo: ""
+        Vvideo: "",
+Vsugerencia: ""
 
     };
 
@@ -284,7 +286,8 @@ function actualizarStoryline(datos) {
 
         "Vincorrect",
 
-        "Vvideo"
+       "Vvideo",
+"Vsugerencia"
 
     ];
 
@@ -368,7 +371,260 @@ function actualizarStoryline(datos) {
         storylineData.Vvideo
     );
 
+console.log(
+    "Vsugerencia:",
+    storylineData.Vsugerencia
+);
+
+mostrarSugerencias();
+
 }
+
+/*
+============================================================
+SUGERENCIAS DEL TUTOR
+============================================================
+*/
+
+function mostrarSugerencias() {
+
+    let contenedor =
+        document.getElementById("suggestions");
+
+    if (!contenedor) {
+
+        contenedor =
+            document.createElement("div");
+
+        contenedor.id =
+            "suggestions";
+
+        const inputArea =
+            document.getElementById("inputArea");
+
+        if (!inputArea) {
+            return;
+        }
+
+        inputArea.parentNode.insertBefore(
+            contenedor,
+            inputArea
+        );
+    }
+
+    contenedor.innerHTML = "";
+
+    if (!idiomaPreferido) {
+
+        contenedor.style.display =
+            "none";
+
+        return;
+    }
+
+    const textoSugerencias =
+        storylineData.Vsugerencia || "";
+
+    if (!textoSugerencias.trim()) {
+
+        contenedor.style.display =
+            "none";
+
+        return;
+    }
+
+    const sugerencias =
+        textoSugerencias
+            .split(",")
+            .map(s => s.trim())
+            .filter(s => s !== "");
+
+    if (sugerencias.length === 0) {
+
+        contenedor.style.display =
+            "none";
+
+        return;
+    }
+
+    contenedor.style.display =
+        "flex";
+
+    sugerencias.forEach(
+        function(sugerencia) {
+
+            const boton =
+                document.createElement("button");
+
+            boton.type =
+                "button";
+
+            boton.className =
+                "suggestion";
+
+            boton.textContent =
+                traducirSugerencia(
+                    sugerencia
+                );
+
+            boton.addEventListener(
+                "click",
+                function() {
+
+                    prompt.value =
+                        boton.textContent;
+
+                    sendMessage();
+
+                }
+            );
+
+            contenedor.appendChild(
+                boton
+            );
+
+        }
+    );
+}
+
+
+function normalizarSugerencia(texto) {
+
+    return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /[¿?¡!.,]/g,
+            ""
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+}
+
+
+function traducirSugerencia(sugerencia) {
+
+    const clave =
+        normalizarSugerencia(
+            sugerencia
+        );
+
+    const traducciones = {
+
+        "por que me quedo mal la respuesta": {
+
+            es: "¿Por qué me quedó mal la respuesta?",
+            en: "Why did I get the answer wrong?",
+            de: "Warum war meine Antwort falsch?",
+            fr: "Pourquoi ma réponse était-elle incorrecte ?",
+            pt: "Por que minha resposta ficou errada?",
+            it: "Perché la mia risposta era sbagliata?",
+            zh: "为什么我的答案错了？",
+            ru: "Почему мой ответ оказался неправильным?",
+            ar: "لماذا كانت إجابتي خاطئة؟",
+            ko: "왜 제 답이 틀렸나요?"
+
+        },
+
+        "que debo hacer en este ejercicio": {
+
+            es: "¿Qué debo hacer en este ejercicio?",
+            en: "What do I have to do in this exercise?",
+            de: "Was muss ich bei dieser Übung machen?",
+            fr: "Que dois-je faire dans cet exercice ?",
+            pt: "O que devo fazer neste exercício?",
+            it: "Cosa devo fare in questo esercizio?",
+            zh: "这道练习我需要做什么？",
+            ru: "Что мне нужно сделать в этом упражнении?",
+            ar: "ماذا يجب أن أفعل في هذا التمرين؟",
+            ko: "이 연습문제에서 무엇을 해야 하나요?"
+
+        },
+
+        "de que trata el video": {
+
+            es: "¿De qué trata el video?",
+            en: "What is the video about?",
+            de: "Worum geht es in dem Video?",
+            fr: "De quoi parle la vidéo ?",
+            pt: "Sobre o que é o vídeo?",
+            it: "Di cosa parla il video?",
+            zh: "这个视频讲的是什么？",
+            ru: "О чем это видео?",
+            ar: "ماذا يتناول هذا الفيديو؟",
+            ko: "이 비디오는 무엇에 관한 내용인가요?"
+
+        },
+
+        "transcribeme el video": {
+
+            es: "Transcríbeme el video.",
+            en: "Transcribe the video for me.",
+            de: "Transkribiere das Video für mich.",
+            fr: "Transcris-moi la vidéo.",
+            pt: "Transcreva o vídeo para mim.",
+            it: "Trascrivimi il video.",
+            zh: "请把视频转录给我。",
+            ru: "Расшифруй видео для меня.",
+            ar: "اكتب لي نص الفيديو.",
+            ko: "비디오 내용을 글로 옮겨 주세요."
+
+        },
+
+        "explicame esta leccion": {
+
+            es: "Explícame esta lección.",
+            en: "Explain this lesson to me.",
+            de: "Erkläre mir diese Lektion.",
+            fr: "Explique-moi cette leçon.",
+            pt: "Explique esta lição para mim.",
+            it: "Spiegami questa lezione.",
+            zh: "请给我解释一下这一课。",
+            ru: "Объясни мне этот урок.",
+            ar: "اشرح لي هذا الدرس.",
+            ko: "이 수업을 설명해 주세요."
+
+        },
+
+        "de que trata la conversacion": {
+
+            es: "¿De qué trata la conversación?",
+            en: "What is the conversation about?",
+            de: "Worum geht es in dem Gespräch?",
+            fr: "De quoi parle la conversation ?",
+            pt: "Sobre o que é a conversa?",
+            it: "Di cosa parla la conversazione?",
+            zh: "这段对话讲的是什么？",
+            ru: "О чем этот разговор?",
+            ar: "ما موضوع هذه المحادثة؟",
+            ko: "이 대화는 무엇에 관한内容인가요?"
+
+        }
+
+    };
+
+    const idioma =
+        idiomaPreferido || "es";
+
+    if (
+        traducciones[clave] &&
+        traducciones[clave][idioma]
+    ) {
+
+        return traducciones[clave][idioma];
+
+    }
+
+    return sugerencia;
+}
+
 /*
 ============================================================
 COMPATIBILIDAD CON CÓDIGO ANTERIOR
@@ -859,6 +1115,9 @@ if (nuevoIdioma) {
         "Nuevo idioma:",
         idiomaPreferido
     );
+
+mostrarSugerencias();
+
 }
 
 

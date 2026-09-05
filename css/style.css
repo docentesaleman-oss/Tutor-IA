@@ -263,3 +263,59 @@ font-size:17px;
 background:#555;
 
 }
+
+/* ============================================================
+   SUGERENCIAS DEL TUTOR
+   ============================================================ */
+
+#suggestions{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+    padding:0 20px 8px;
+
+    background:#F7F7F8;
+
+}
+
+
+.suggestion{
+
+    width:100%;
+
+    min-height:28px;
+
+    box-sizing:border-box;
+
+    padding:5px 10px;
+
+    background:white;
+
+    color:#333;
+
+    border:1px solid #ddd;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    font-size:13px;
+
+    font-family:Arial;
+
+    display:block;
+
+}
+
+
+.suggestion:hover{
+
+    background:#f0f0f0;
+
+}
