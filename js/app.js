@@ -54,6 +54,7 @@ function detectarIdiomaSolicitado(texto) {
     }
 
    if (
+pregunta === "ingles" ||
     pregunta.includes("hablame en ingles") ||
     pregunta.includes("hablame ahora en ingles") ||
     pregunta.includes("hablame en ingles por favor") ||
@@ -242,7 +243,7 @@ function actualizarStoryline(datos) {
         Vincorrect: "",
 
         Vvideo: "",
-Vsugerencia: ""
+        Vsugerencia: ""
 
     };
 
