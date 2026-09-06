@@ -13,6 +13,19 @@
 </head>
 
 <body>
+<div id="loadingScreen">
+
+    <div class="loadingContent">
+
+        <div class="loadingSpinner"></div>
+
+        <div class="loadingText">
+            Hola, estamos cargando tu Tutor IA personalizado
+        </div>
+
+    </div>
+
+</div>
 
 <div id="chat">
 
@@ -55,6 +68,96 @@
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 
+<script>
+
+async function controlarPantallaCarga() {
+
+    const loadingScreen =
+        document.getElementById("loadingScreen");
+
+    try {
+
+        const respuesta =
+            await fetch("/server-status");
+
+        const datos =
+            await respuesta.json();
+
+        const instanciaActual =
+            datos.instanceId;
+
+        const instanciaGuardada =
+            localStorage.getItem(
+                "tutorIA_instanciaServidor"
+            );
+
+
+        /*
+        ====================================================
+        MISMA INSTANCIA
+        NO MOSTRAR CARGA
+        ====================================================
+        */
+
+        if (
+            instanciaGuardada ===
+            instanciaActual
+        ) {
+
+            loadingScreen.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        /*
+        ====================================================
+        NUEVA INSTANCIA
+        MOSTRAR CARGA
+        ====================================================
+        */
+
+        localStorage.setItem(
+            "tutorIA_instanciaServidor",
+            instanciaActual
+        );
+
+
+        setTimeout(() => {
+
+            loadingScreen.style.display =
+                "none";
+
+        }, 10000);
+
+
+    } catch (error) {
+
+        /*
+        SI EL SERVIDOR AÚN ESTÁ CARGANDO,
+        MANTENER LA PANTALLA DURANTE 10 SEGUNDOS
+        */
+
+        setTimeout(() => {
+
+            loadingScreen.style.display =
+                "none";
+
+        }, 10000);
+
+    }
+
+}
+
+
+window.addEventListener(
+    "load",
+    controlarPantallaCarga
+);
+
+</script>
 </body>
 
 </html>

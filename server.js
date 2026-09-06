@@ -14,6 +14,16 @@ const __dirname =
 const app =
     express();
 
+/*
+============================================================
+IDENTIFICADOR DE INSTANCIA DEL SERVIDOR
+============================================================
+*/
+
+const ID_INSTANCIA_SERVIDOR =
+    Date.now().toString() +
+    "-" +
+    Math.random().toString(36).substring(2);
 
 /*
 ============================================================
@@ -2514,6 +2524,27 @@ function detectarSolicitudDeValidacion(texto) {
     return resultado;
 
 }
+
+/*
+============================================================
+ESTADO DEL SERVIDOR
+============================================================
+*/
+
+app.get(
+    "/server-status",
+    (req, res) => {
+
+        res.json({
+
+            instanceId:
+                ID_INSTANCIA_SERVIDOR
+
+        });
+
+    }
+);
+
 /*
 ============================================================
 CHAT
