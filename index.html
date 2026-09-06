@@ -120,34 +120,35 @@ async function controlarPantallaCarga() {
         */
 
         localStorage.setItem(
-            "tutorIA_instanciaServidor",
-            instanciaActual
-        );
+    "tutorIA_instanciaServidor",
+    instanciaActual
+);
 
 
-        setTimeout(() => {
+loadingScreen.style.display =
+    "flex";
 
-            loadingScreen.style.display =
-                "none";
 
-        }, 10000);
+setTimeout(() => {
+
+    loadingScreen.style.display =
+        "none";
+
+}, 10000);
 
 
     } catch (error) {
 
-        /*
-        SI EL SERVIDOR AÚN ESTÁ CARGANDO,
-        MANTENER LA PANTALLA DURANTE 10 SEGUNDOS
-        */
+    loadingScreen.style.display =
+        "flex";
 
-        setTimeout(() => {
 
-            loadingScreen.style.display =
-                "none";
+    setTimeout(() => {
 
-        }, 10000);
+        loadingScreen.style.display =
+            "none";
 
-    }
+    }, 10000);
 
 }
 

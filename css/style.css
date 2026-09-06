@@ -328,6 +328,8 @@ PANTALLA DE CARGA DEL TUTOR IA
 
 #loadingScreen{
 
+    display:none;
+
     position:fixed;
 
     top:0;
