@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TECH Language School</title>
+<title>Sofi-IA Language School</title>
 
 <link rel="stylesheet" href="css/style.css">
 
@@ -32,7 +32,7 @@
     <div id="header">
 
         <div class="title">
-            TECH Language School
+            Sofi-IA Language School
         </div>
 
         <div class="status">
@@ -70,74 +70,44 @@
 
 <script>
 
-async function controlarPantallaCarga() {
+function controlarPantallaCarga() {
 
     const loadingScreen =
-        document.getElementById("loadingScreen");
-
-    try {
-
-        const respuesta =
-            await fetch("/server-status");
-
-        const datos =
-            await respuesta.json();
-
-        const instanciaActual =
-            datos.instanceId;
-
-        const instanciaGuardada =
-            localStorage.getItem(
-                "tutorIA_instanciaServidor"
-            );
+        document.getElementById(
+            "loadingScreen"
+        );
 
 
-        /*
-        ====================================================
-        MISMA INSTANCIA
-        NO MOSTRAR CARGA
-        ====================================================
-        */
-
-        if (
-            instanciaGuardada ===
-            instanciaActual
-        ) {
-
-            loadingScreen.style.display =
-                "none";
-
-            return;
-
-        }
+    const cargaMostrada =
+        localStorage.getItem(
+            "tutorIA_pantallaCargaMostrada"
+        );
 
 
-        /*
-        ====================================================
-        NUEVA INSTANCIA
-        MOSTRAR CARGA
-        ====================================================
-        */
+    /*
+    ====================================================
+    SI YA SE MOSTRÓ
+    ====================================================
+    */
 
-        localStorage.setItem(
-    "tutorIA_instanciaServidor",
-    instanciaActual
-);
+    if (
+        cargaMostrada === "true"
+    ) {
 
+        loadingScreen.style.display =
+            "none";
 
-loadingScreen.style.display =
-    "flex";
+        return;
 
-
-setTimeout(() => {
-
-    loadingScreen.style.display =
-        "none";
-
-}, 10000);
+    }
 
 
-    } catch (error) {
+    /*
+    ====================================================
+    PRIMERA VEZ
+    MOSTRAR PANTALLA
+    ====================================================
+    */
 
     loadingScreen.style.display =
         "flex";
@@ -147,6 +117,13 @@ setTimeout(() => {
 
         loadingScreen.style.display =
             "none";
+
+
+        localStorage.setItem(
+            "tutorIA_pantallaCargaMostrada",
+            "true"
+        );
+
 
     }, 10000);
 
@@ -159,6 +136,7 @@ window.addEventListener(
 );
 
 </script>
-</body>
+
+       </body>
 
 </html>
