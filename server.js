@@ -447,7 +447,7 @@ function esPreguntaSobreInstruccionesEjercicio(texto) {
         pregunta.includes("que debo hacer en esta actividad") ||
         pregunta.includes("que tengo que hacer en esta actividad") ||
         pregunta.includes("explicame que debo hacer") ||
-        pregunta.includes("explicame que tengo que hacer")
+        pregunta.includes("explicame que tengo que hacer") ||
     );
 }
 
