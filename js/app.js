@@ -958,53 +958,6 @@ if (sender === "user") {
 
     }
 
-/*
-============================================================
-REPRODUCIR RESPUESTA DEL TUTOR
-SOLO SI LA PREGUNTA FUE POR VOZ
-============================================================
-*/
-
-if (
-    sender !== "user" &&
-    guardar === true &&
-    respuestaPorVoz === true
-) {
-
-    hablarRespuesta(
-        text
-    );
-
-
-    /*
-    ========================================================
-    DESACTIVAR VOZ PARA LA SIGUIENTE RESPUESTA
-    ========================================================
-    */
-
-    respuestaPorVoz =
-        false;
-
-}
-
-/*
-============================================================
-REPRODUCIR RESPUESTA DEL TUTOR
-============================================================
-*/
-
-if (
-    sender !== "user" &&
-    guardar === true
-) {
-
-    hablarRespuesta(
-        text
-    );
-
-}
-
-}
 
 /*
 ============================================================
@@ -1139,7 +1092,9 @@ ENVIAR PREGUNTA
 ============================================================
 */
 
-async function sendMessage() {
+async function sendMessage(
+    usarVoz = false
+) {
 
    const text = prompt.value.trim();
 
@@ -1366,8 +1321,15 @@ addMessage(
 );
 
 
-    } catch (error) {
+if (
+    usarVoz === true
+) {
 
+    hablarRespuesta(
+        respuestaLimpia
+    );
+
+}
         console.error(
             "ERROR AL ENVIAR:",
             error
