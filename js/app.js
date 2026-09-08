@@ -958,7 +958,34 @@ if (sender === "user") {
 
     }
 
+/*
+============================================================
+REPRODUCIR RESPUESTA DEL TUTOR
+SOLO SI LA PREGUNTA FUE POR VOZ
+============================================================
+*/
 
+if (
+    sender !== "user" &&
+    guardar === true &&
+    respuestaPorVoz === true
+) {
+
+    hablarRespuesta(
+        text
+    );
+
+
+    /*
+    ========================================================
+    DESACTIVAR VOZ PARA LA SIGUIENTE RESPUESTA
+    ========================================================
+    */
+
+    respuestaPorVoz =
+        false;
+
+}
 
 /*
 ============================================================
@@ -1442,6 +1469,14 @@ let mediaRecorder =
 let audioChunks =
     [];
 
+/*
+============================================================
+CONTROL DE RESPUESTA POR VOZ
+============================================================
+*/
+
+let respuestaPorVoz =
+    false;
 
 /* ============================================================
 INICIAR / DETENER GRABACIÓN
@@ -1630,6 +1665,15 @@ ENVIAR AUDIO PARA TRANSCRIPCIÓN
         prompt.value =
             textoTranscrito.trim();
 
+/*
+=====================================
+INDICAR QUE LA RESPUESTA
+DEBE SER POR VOZ
+=====================================
+*/
+
+respuestaPorVoz =
+    true;
 
         /*
         =====================================
