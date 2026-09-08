@@ -958,6 +958,53 @@ if (sender === "user") {
 
     }
 
+/*
+============================================================
+REPRODUCIR RESPUESTA DEL TUTOR
+SOLO SI LA PREGUNTA FUE POR VOZ
+============================================================
+*/
+
+if (
+    sender !== "user" &&
+    guardar === true &&
+    respuestaPorVoz === true
+) {
+
+    hablarRespuesta(
+        text
+    );
+
+
+    /*
+    ========================================================
+    DESACTIVAR VOZ PARA LA SIGUIENTE RESPUESTA
+    ========================================================
+    */
+
+    respuestaPorVoz =
+        false;
+
+}
+
+/*
+============================================================
+REPRODUCIR RESPUESTA DEL TUTOR
+============================================================
+*/
+
+if (
+    sender !== "user" &&
+    guardar === true
+) {
+
+    hablarRespuesta(
+        text
+    );
+
+}
+
+}
 
 /*
 ============================================================
