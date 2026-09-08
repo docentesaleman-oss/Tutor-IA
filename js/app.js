@@ -470,16 +470,21 @@ function mostrarSugerencias() {
                 );
 
             boton.addEventListener(
-                "click",
-                function() {
+    "click",
+    function() {
 
-                    prompt.value =
-                        boton.textContent;
+        contenedor.innerHTML = "";
 
-                    sendMessage();
+        contenedor.style.display =
+            "none";
 
-                }
-            );
+        prompt.value =
+            boton.textContent;
+
+        sendMessage();
+
+    }
+);
 
             contenedor.appendChild(
                 boton
