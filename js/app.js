@@ -925,12 +925,20 @@ function addMessage(
 
 
     messages.appendChild(
-        message
-    );
+    message
+);
 
+if (sender === "user") {
 
     messages.scrollTop =
         messages.scrollHeight;
+
+} else {
+
+    messages.scrollTop =
+        message.offsetTop - 10;
+
+}
 
 
     if (guardar) {
