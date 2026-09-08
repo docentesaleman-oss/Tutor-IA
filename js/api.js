@@ -215,3 +215,107 @@ language:
     }
 
 }
+
+/* ============================================================
+TRANSCRIBIR AUDIO
+============================================================ */
+
+async function transcribirAudio(
+    audioBlob
+) {
+
+    try {
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "audio",
+            audioBlob,
+            "grabacion.webm"
+        );
+
+
+        console.log(
+            "===== ENVIANDO AUDIO PARA TRANSCRIPCIÓN ====="
+        );
+
+
+        const response =
+            await fetch(
+                "/transcribe",
+                {
+
+                    method:
+                        "POST",
+
+                    body:
+                        formData
+
+                }
+            );
+
+
+        /*
+        =====================================================
+        COMPROBAR RESPUESTA
+        =====================================================
+        */
+
+        if (
+            !response.ok
+        ) {
+
+            console.error(
+                "ERROR TRANSCRIPCIÓN:",
+                response.status
+            );
+
+
+            return "";
+
+        }
+
+
+        /*
+        =====================================================
+        RECIBIR TRANSCRIPCIÓN
+        =====================================================
+        */
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "===== TRANSCRIPCIÓN RECIBIDA ====="
+        );
+
+
+        console.log(
+            data
+        );
+
+
+        return (
+            data.text ||
+            ""
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "ERROR AL TRANSCRIBIR AUDIO:",
+            error
+        );
+
+
+        return "";
+
+    }
+
+}

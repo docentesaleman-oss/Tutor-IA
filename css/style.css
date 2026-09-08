@@ -397,3 +397,52 @@ PANTALLA DE CARGA DEL TUTOR IA
     }
 
 }
+
+/* ============================================================
+MICRÓFONO
+============================================================ */
+
+#microphone {
+
+    background:
+        #3493CF;
+
+}
+
+
+/* ============================================================
+ESTADO GRABANDO
+============================================================ */
+
+#microphone.recording {
+
+    animation:
+        microphonePulse 1s infinite;
+
+}
+
+
+@keyframes microphonePulse {
+
+    0% {
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        transform:
+            scale(1.15);
+
+    }
+
+    100% {
+
+        transform:
+            scale(1);
+
+    }
+
+}

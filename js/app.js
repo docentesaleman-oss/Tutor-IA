@@ -1406,3 +1406,201 @@ window.addEventListener(
 
     }
 );
+
+/* ============================================================
+SISTEMA DE MICRÓFONO
+============================================================ */
+
+const microphone =
+    document.getElementById(
+        "microphone"
+    );
+
+
+let mediaRecorder =
+    null;
+
+
+let audioChunks =
+    [];
+
+
+/* ============================================================
+INICIAR / DETENER GRABACIÓN
+============================================================ */
+
+microphone.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            /*
+            =================================================
+            SI YA ESTÁ GRABANDO
+            DETENER
+            =================================================
+            */
+
+            if (
+                mediaRecorder &&
+                mediaRecorder.state === "recording"
+            ) {
+
+                mediaRecorder.stop();
+
+                microphone.classList.remove(
+                    "recording"
+                );
+
+                microphone.textContent =
+                    "🎤";
+
+                return;
+
+            }
+
+
+            /*
+            =================================================
+            SOLICITAR MICRÓFONO
+            =================================================
+            */
+
+            const stream =
+                await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+
+
+            /*
+            =================================================
+            CREAR GRABADOR
+            =================================================
+            */
+
+            mediaRecorder =
+                new MediaRecorder(
+                    stream
+                );
+
+
+            audioChunks =
+                [];
+
+
+            /*
+            =================================================
+            RECIBIR AUDIO
+            =================================================
+            */
+
+            mediaRecorder.addEventListener(
+                "dataavailable",
+                function(event) {
+
+                    if (
+                        event.data.size > 0
+                    ) {
+
+                        audioChunks.push(
+                            event.data
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /*
+            =================================================
+            CUANDO TERMINA LA GRABACIÓN
+            =================================================
+            */
+
+            mediaRecorder.addEventListener(
+                "stop",
+                function() {
+
+                    const audioBlob =
+                        new Blob(
+                            audioChunks,
+                            {
+                                type:
+                                    "audio/webm"
+                            }
+                        );
+
+
+                    console.log(
+                        "===== AUDIO GRABADO ====="
+                    );
+
+
+                    console.log(
+                        audioBlob
+                    );
+
+
+                    /*
+                    =========================================
+                    DETENER MICRÓFONO
+                    =========================================
+                    */
+
+                    stream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+
+                    /*
+                    =========================================
+                    AQUÍ MÁS ADELANTE ENVIAREMOS
+                    EL AUDIO A GROQ
+                    =========================================
+                    */
+
+                }
+            );
+
+
+            /*
+            =================================================
+            INICIAR GRABACIÓN
+            =================================================
+            */
+
+            mediaRecorder.start();
+
+
+            microphone.classList.add(
+                "recording"
+            );
+
+
+            microphone.textContent =
+                "⏹";
+
+
+            console.log(
+                "===== GRABACIÓN INICIADA ====="
+            );
+
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "Error al acceder al micrófono:",
+                error
+            );
+
+        }
+
+    }
+);

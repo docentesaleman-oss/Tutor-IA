@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import multer from "multer";
 
 const __filename =
     fileURLToPath(import.meta.url);
@@ -13,6 +14,16 @@ const __dirname =
 
 const app =
     express();
+
+/* ============================================================
+CONFIGURACIÓN PARA RECIBIR AUDIO
+============================================================ */
+
+const upload =
+    multer({
+        storage:
+            multer.memoryStorage()
+    });
 
 /*
 ============================================================
@@ -2541,6 +2552,257 @@ app.get(
                 ID_INSTANCIA_SERVIDOR
 
         });
+
+    }
+);
+
+/* ============================================================
+TRANSCRIBIR AUDIO CON GROQ WHISPER
+============================================================ */
+
+app.post(
+    "/transcribe",
+
+    upload.single(
+        "audio"
+    ),
+
+    async (
+        req,
+        res
+    ) => {
+
+        try {
+
+            console.log(
+                "===== SOLICITUD DE TRANSCRIPCIÓN ====="
+            );
+
+
+            /*
+            =================================================
+            VALIDAR AUDIO
+            =================================================
+            */
+
+            if (
+                !req.file
+            ) {
+
+                return res.status(400).json({
+
+                    error:
+                        "No se recibió ningún audio."
+
+                });
+
+            }
+
+
+            console.log(
+                "Audio recibido:"
+            );
+
+
+            console.log(
+                "Nombre:",
+                req.file.originalname
+            );
+
+
+            console.log(
+                "Tipo:",
+                req.file.mimetype
+            );
+
+
+            console.log(
+                "Tamaño:",
+                req.file.size
+            );
+
+
+            /*
+            =================================================
+            VALIDAR API KEY
+            =================================================
+            */
+
+            if (
+                !process.env.GROQ_API_KEY
+            ) {
+
+                throw new Error(
+                    "GROQ_API_KEY no está configurada."
+                );
+
+            }
+
+
+            /*
+            =================================================
+            CREAR FORMDATA PARA GROQ
+            =================================================
+            */
+
+            const formData =
+                new FormData();
+
+
+            const audioBlob =
+                new Blob(
+                    [
+                        req.file.buffer
+                    ],
+                    {
+
+                        type:
+                            req.file.mimetype ||
+                            "audio/webm"
+
+                    }
+                );
+
+
+            formData.append(
+                "file",
+
+                audioBlob,
+
+                req.file.originalname ||
+                "grabacion.webm"
+            );
+
+
+            formData.append(
+                "model",
+
+                "whisper-large-v3-turbo"
+            );
+
+
+            /*
+            =================================================
+            ENVIAR AUDIO A GROQ
+            =================================================
+            */
+
+            console.log(
+                "===== ENVIANDO AUDIO A GROQ WHISPER ====="
+            );
+
+
+            const response =
+                await fetch(
+                    "https://api.groq.com/openai/v1/audio/transcriptions",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${process.env.GROQ_API_KEY}`
+
+                        },
+
+                        body:
+                            formData
+
+                    }
+                );
+
+
+            /*
+            =================================================
+            COMPROBAR RESPUESTA
+            =================================================
+            */
+
+            if (
+                !response.ok
+            ) {
+
+                const error =
+                    await response.text();
+
+
+                console.error(
+                    "===== ERROR GROQ WHISPER ====="
+                );
+
+
+                console.error(
+                    error
+                );
+
+
+                throw new Error(
+                    "Groq respondió con HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            /*
+            =================================================
+            LEER TRANSCRIPCIÓN
+            =================================================
+            */
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "===== TRANSCRIPCIÓN RECIBIDA ====="
+            );
+
+
+            console.log(
+                data
+            );
+
+
+            /*
+            =================================================
+            RESPONDER AL FRONTEND
+            =================================================
+            */
+
+            return res.json({
+
+                text:
+                    data.text ||
+                    ""
+
+            });
+
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "===== ERROR /transcribe ====="
+            );
+
+
+            console.error(
+                error
+            );
+
+
+            return res.status(500).json({
+
+                error:
+                    "Ocurrió un error al transcribir el audio."
+
+            });
+
+        }
 
     }
 );
