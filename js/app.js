@@ -1557,12 +1557,87 @@ microphone.addEventListener(
                         );
 
 
-                    /*
-                    =========================================
-                    AQUÍ MÁS ADELANTE ENVIAREMOS
-                    EL AUDIO A GROQ
-                    =========================================
-                    */
+                   /*
+=========================================
+ENVIAR AUDIO PARA TRANSCRIPCIÓN
+=========================================
+*/
+
+(async function() {
+
+    try {
+
+        const textoTranscrito =
+            await transcribirAudio(
+                audioBlob
+            );
+
+
+        /*
+        =====================================
+        COMPROBAR TRANSCRIPCIÓN
+        =====================================
+        */
+
+        if (
+            !textoTranscrito ||
+            !textoTranscrito.trim()
+        ) {
+
+            console.warn(
+                "No se recibió ninguna transcripción."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "===== TEXTO TRANSCRITO ====="
+        );
+
+
+        console.log(
+            textoTranscrito
+        );
+
+
+        /*
+        =====================================
+        COLOCAR TEXTO EN EL CHAT
+        =====================================
+        */
+
+        prompt.value =
+            textoTranscrito.trim();
+
+
+        /*
+        =====================================
+        ENVIAR AUTOMÁTICAMENTE AL TUTOR
+        =====================================
+        */
+
+        sendMessage();
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "===== ERROR PROCESANDO AUDIO ====="
+        );
+
+
+        console.error(
+            error
+        );
+
+    }
+
+})();
 
                 }
             );
