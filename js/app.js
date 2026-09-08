@@ -1368,15 +1368,8 @@ addMessage(
 );
 
 
-if (
-    usarVoz === true
-) {
+    } catch (error) {
 
-    hablarRespuesta(
-        respuestaLimpia
-    );
-
-}
         console.error(
             "ERROR AL ENVIAR:",
             error
