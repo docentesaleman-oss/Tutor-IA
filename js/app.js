@@ -1320,6 +1320,15 @@ addMessage(
     "bot"
 );
 
+if (
+    usarVoz === true
+) {
+
+    hablarRespuesta(
+        respuestaLimpia
+    );
+
+}
 
     } catch (error) {
 
