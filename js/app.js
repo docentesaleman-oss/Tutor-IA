@@ -1323,22 +1323,6 @@ addMessage(
 
 }
 
-/*
-============================================================
-REPRODUCIR VOZ ÚNICAMENTE SI LA PREGUNTA
-PROVIENE DEL MICRÓFONO
-============================================================
-*/
-
-if (
-    usarVoz === true
-) {
-
-    hablarRespuesta(
-        respuestaLimpia
-    );
-
-}
 
 /*
 ============================================================
