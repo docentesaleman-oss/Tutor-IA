@@ -941,44 +941,6 @@ if (sender === "user") {
 }
 
 
-    if (guardar) {
-
-        chatHistory.push({
-
-            sender:
-                sender,
-
-            text:
-                text
-
-        });
-
-
-        guardarChat();
-
-    }
-
-
-
-/*
-============================================================
-REPRODUCIR RESPUESTA DEL TUTOR
-============================================================
-*/
-
-if (
-    sender !== "user" &&
-    guardar === true
-) {
-
-    hablarRespuesta(
-        text
-    );
-
-}
-
-}
-
 /*
 ============================================================
 RECIBIR CONTEXTO DESDE STORYLINE
@@ -1112,7 +1074,9 @@ ENVIAR PREGUNTA
 ============================================================
 */
 
-async function sendMessage() {
+async function sendMessage(
+    usarVoz = false
+) {
 
    const text = prompt.value.trim();
 
@@ -1356,6 +1320,23 @@ addMessage(
 
 
     send.disabled = false;
+
+}
+
+/*
+============================================================
+REPRODUCIR VOZ ÚNICAMENTE SI LA PREGUNTA
+PROVIENE DEL MICRÓFONO
+============================================================
+*/
+
+if (
+    usarVoz === true
+) {
+
+    hablarRespuesta(
+        respuestaLimpia
+    );
 
 }
 
@@ -1637,7 +1618,9 @@ ENVIAR AUDIO PARA TRANSCRIPCIÓN
         =====================================
         */
 
-        sendMessage();
+        sendMessage(
+    true
+);
 
 
     } catch (
