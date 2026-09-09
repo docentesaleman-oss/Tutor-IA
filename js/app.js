@@ -940,6 +940,24 @@ if (sender === "user") {
 
 }
 
+if (guardar) {
+
+    chatHistory.push({
+
+        sender:
+            sender,
+
+        text:
+            text
+
+    });
+
+
+    guardarChat();
+
+}
+
+}
 
 /*
 ============================================================
