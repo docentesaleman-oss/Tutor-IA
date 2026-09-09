@@ -2030,60 +2030,23 @@ async function consultarGroq(
 
     const mensajes = [
 
-        {
-            role:
-                "system",
+    {
+        role:
+            "system",
 
-            content:
-                systemPrompt
-        },
+        content:
+            systemPrompt
+    },
 
-        /*
-        ====================================================
-        HISTORIAL
-        ====================================================
+    {
+        role:
+            "user",
 
-        Se incluye para que el tutor pueda recordar
-        preferencias de conversación como el idioma.
+        content:
+            pregunta
+    }
 
-        El system prompt establece que este historial
-        NO es fuente del contenido del curso.
-        ====================================================
-        */
-
-        ...historialIdioma
-            .slice(-20)
-            .map(mensaje => {
-
-                return {
-
-                    role:
-                        mensaje.role === "assistant"
-                            ? "assistant"
-                            : "user",
-
-                    content:
-                        String(
-                            mensaje.content || ""
-                        )
-
-                };
-
-            })
-            .filter(
-                mensaje =>
-                    mensaje.content.trim() !== ""
-            ),
-
-        {
-            role:
-                "user",
-
-            content:
-                pregunta
-        }
-
-    ];
+];
 
 
     console.log(
