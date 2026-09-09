@@ -2881,6 +2881,63 @@ console.log(
 
 /*
 ============================================================
+RESPUESTA DIRECTA PARA CAMBIO DE IDIOMA
+============================================================
+*/
+
+if (
+    detectarIdiomaSolicitado(message)
+) {
+
+    const mensajesIdioma = {
+
+        es:
+            "Claro, continuaré respondiéndote en español. ¿Cómo puedo ayudarte?",
+
+        en:
+            "Sure, I'll continue responding in English. How can I help you?",
+
+        de:
+            "Natürlich, ich werde dir weiterhin auf Deutsch antworten. Wie kann ich dir helfen?",
+
+        fr:
+            "Bien sûr, je continuerai à vous répondre en français. Comment puis-je vous aider ?",
+
+        pt:
+            "Claro, continuarei respondendo em português. Como posso ajudar você?",
+
+        it:
+            "Certo, continuerò a risponderti in italiano. Come posso aiutarti?",
+
+        zh:
+            "好的，我会继续用中文回答你。我可以怎样帮助你？",
+
+        ru:
+            "Конечно, я продолжу отвечать вам на русском языке. Чем я могу помочь?",
+
+        ar:
+            "بالتأكيد، سأواصل الرد عليك باللغة العربية. كيف يمكنني مساعدتك؟",
+
+        ko:
+            "물론입니다. 앞으로 한국어로 계속 답변드리겠습니다. 무엇을 도와드릴까요?"
+    };
+
+
+    return res.json({
+
+        reply:
+            mensajesIdioma[
+                idiomaPersistente
+            ] ||
+            mensajesIdioma.es
+
+    });
+
+}
+
+
+/*
+============================================================
 INSTRUCCIONES DEL EJERCICIO
 ============================================================
 */
