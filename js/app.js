@@ -958,6 +958,25 @@ if (sender === "user") {
 
     }
 
+
+
+/*
+============================================================
+REPRODUCIR RESPUESTA DEL TUTOR
+============================================================
+*/
+
+if (
+    sender !== "user" &&
+    guardar === true
+) {
+
+    hablarRespuesta(
+        text
+    );
+
+}
+
 }
 
 /*
@@ -1093,9 +1112,7 @@ ENVIAR PREGUNTA
 ============================================================
 */
 
-async function sendMessage(
-    usarVoz = false
-) {
+async function sendMessage() {
 
    const text = prompt.value.trim();
 
@@ -1320,16 +1337,6 @@ addMessage(
     respuestaLimpia,
     "bot"
 );
-
-if (
-    usarVoz === true
-) {
-
-    hablarRespuesta(
-        respuestaLimpia
-    );
-
-
 
 
     } catch (error) {
@@ -1630,9 +1637,7 @@ ENVIAR AUDIO PARA TRANSCRIPCIÓN
         =====================================
         */
 
-        sendMessage(
-    true
-);
+        sendMessage();
 
 
     } catch (
