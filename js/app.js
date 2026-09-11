@@ -414,6 +414,8 @@ function mostrarSugerencias() {
         );
     }
 
+    configurarEstilosSugerencias();
+
     contenedor.innerHTML = "";
 
     if (!idiomaPreferido) {
@@ -450,7 +452,29 @@ function mostrarSugerencias() {
     }
 
     contenedor.style.display =
-        "flex";
+        "block";
+
+    contenedor.className =
+        "tutor-suggestions";
+
+    const titulo =
+        document.createElement("p");
+
+    titulo.className =
+        "tutor-suggestions__title";
+
+    titulo.textContent =
+        obtenerTituloSugerencias();
+
+    const lista =
+        document.createElement("div");
+
+    lista.className =
+        "tutor-suggestions__list";
+
+    contenedor.appendChild(titulo);
+
+    contenedor.appendChild(lista);
 
     sugerencias.forEach(
         function(sugerencia) {
@@ -462,12 +486,37 @@ function mostrarSugerencias() {
                 "button";
 
             boton.className =
-                "suggestion";
+                "suggestion tutor-suggestions__option";
 
-            boton.textContent =
-                traducirSugerencia(
-                    sugerencia
-                );
+            const texto =
+                traducirSugerencia(sugerencia);
+
+            const etiqueta =
+                document.createElement("span");
+
+            etiqueta.className =
+                "tutor-suggestions__label";
+
+            etiqueta.textContent =
+                texto;
+
+            const flecha =
+                document.createElement("span");
+
+            flecha.className =
+                "tutor-suggestions__arrow";
+
+            flecha.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            flecha.textContent =
+                "›";
+
+            boton.appendChild(etiqueta);
+
+            boton.appendChild(flecha);
 
             boton.addEventListener(
     "click",
@@ -479,19 +528,158 @@ function mostrarSugerencias() {
             "none";
 
         prompt.value =
-            boton.textContent;
+            texto;
 
         sendMessage();
 
     }
 );
 
-            contenedor.appendChild(
+            lista.appendChild(
                 boton
             );
 
         }
     );
+
+    if (prompt) {
+
+        prompt.placeholder =
+            obtenerPlaceholderPregunta();
+
+    }
+}
+
+
+function obtenerTituloSugerencias() {
+
+    const titulos = {
+
+        es: "¿En qué puedo ayudarte?",
+        en: "How can I help you?",
+        de: "Wie kann ich dir helfen?",
+        fr: "Comment puis-je vous aider ?",
+        pt: "Como posso ajudar você?",
+        it: "Come posso aiutarti?",
+        zh: "我能帮你什么？",
+        ru: "Чем я могу помочь?",
+        ar: "كيف يمكنني مساعدتك؟",
+        ko: "무엇을 도와드릴까요?"
+
+    };
+
+    return titulos[idiomaPreferido] || titulos.es;
+}
+
+
+function obtenerPlaceholderPregunta() {
+
+    const placeholders = {
+
+        es: "Escribe tu pregunta aquí...",
+        en: "Write your question here...",
+        de: "Schreibe deine Frage hier...",
+        fr: "Écrivez votre question ici...",
+        pt: "Escreva sua pergunta aqui...",
+        it: "Scrivi qui la tua domanda...",
+        zh: "在这里写下你的问题...",
+        ru: "Напишите свой вопрос здесь...",
+        ar: "اكتب سؤالك هنا...",
+        ko: "여기에 질문을 입력하세요..."
+
+    };
+
+    return placeholders[idiomaPreferido] || placeholders.es;
+}
+
+
+function configurarEstilosSugerencias() {
+
+    if (document.getElementById("tutor-suggestions-styles")) {
+        return;
+    }
+
+    const estilos =
+        document.createElement("style");
+
+    estilos.id =
+        "tutor-suggestions-styles";
+
+    estilos.textContent = `
+        .tutor-suggestions {
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0 0 8px;
+            padding: 9px 10px;
+            border: 1px solid #d9e8f7;
+            border-radius: 12px;
+            background: #f7fbff;
+            box-shadow: 0 2px 8px rgba(33, 82, 130, 0.08);
+        }
+
+        .tutor-suggestions__title {
+            margin: 0 0 7px;
+            padding: 7px 10px;
+            border-radius: 7px;
+            background: #e6f3ff;
+            color: #173e71;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .tutor-suggestions__list {
+            overflow: hidden;
+            border: 1px solid #e1ebf5;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .tutor-suggestions__option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 25px;
+            margin: 0;
+            padding: 6px 10px;
+            border: 0;
+            border-bottom: 1px solid #e7eef6;
+            background: #ffffff;
+            color: #17477e;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.25;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .tutor-suggestions__option:last-child {
+            border-bottom: 0;
+        }
+
+        .tutor-suggestions__option:hover,
+        .tutor-suggestions__option:focus-visible {
+            background: #eef7ff;
+            outline: none;
+        }
+
+        .tutor-suggestions__label {
+            padding-right: 8px;
+        }
+
+        .tutor-suggestions__arrow {
+            flex: 0 0 auto;
+            color: #1b5d9f;
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 12px;
+        }
+    `;
+
+    document.head.appendChild(estilos);
 }
 
 
