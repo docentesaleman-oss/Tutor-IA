@@ -44,6 +44,7 @@ function detectarIdiomaSolicitado(texto) {
             .trim();
 
     if (
+        pregunta === "espanol" ||
         pregunta.includes("hablame en espanol") ||
         pregunta.includes("habla en espanol") ||
         pregunta.includes("responde en espanol") ||
@@ -81,6 +82,12 @@ pregunta === "ingles" ||
 }
 
     if (
+        pregunta === "aleman" ||
+        pregunta.includes("hablame en aleman") ||
+        pregunta.includes("habla en aleman") ||
+        pregunta.includes("responde en aleman") ||
+        pregunta.includes("quiero que hables en aleman") ||
+        pregunta.includes("quiero que respondas en aleman") ||
         pregunta.includes("sprich deutsch") ||
         pregunta.includes("sprich auf deutsch") ||
         pregunta.includes("sprich mit mir auf deutsch") ||
@@ -94,6 +101,12 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "frances" ||
+        pregunta.includes("hablame en frances") ||
+        pregunta.includes("habla en frances") ||
+        pregunta.includes("responde en frances") ||
+        pregunta.includes("quiero que hables en frances") ||
+        pregunta.includes("quiero que respondas en frances") ||
         pregunta.includes("parle francais") ||
         pregunta.includes("parle en francais") ||
         pregunta.includes("parlez francais") ||
@@ -104,6 +117,12 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "portugues" ||
+        pregunta.includes("hablame en portugues") ||
+        pregunta.includes("habla en portugues") ||
+        pregunta.includes("responde en portugues") ||
+        pregunta.includes("quiero que hables en portugues") ||
+        pregunta.includes("quiero que respondas en portugues") ||
         pregunta.includes("fale portugues") ||
         pregunta.includes("fale em portugues") ||
         pregunta.includes("fale comigo em portugues") ||
@@ -113,6 +132,12 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "italiano" ||
+        pregunta.includes("hablame en italiano") ||
+        pregunta.includes("habla en italiano") ||
+        pregunta.includes("responde en italiano") ||
+        pregunta.includes("quiero que hables en italiano") ||
+        pregunta.includes("quiero que respondas en italiano") ||
         pregunta.includes("parla italiano") ||
         pregunta.includes("parla in italiano") ||
         pregunta.includes("parlami in italiano") ||
@@ -122,6 +147,10 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "chino" ||
+        pregunta.includes("hablame en chino") ||
+        pregunta.includes("habla en chino") ||
+        pregunta.includes("responde en chino") ||
         pregunta.includes("用中文说") ||
         pregunta.includes("请用中文") ||
         pregunta.includes("用中文回答") ||
@@ -131,6 +160,10 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "ruso" ||
+        pregunta.includes("hablame en ruso") ||
+        pregunta.includes("habla en ruso") ||
+        pregunta.includes("responde en ruso") ||
         pregunta.includes("говори по русски") ||
         pregunta.includes("говори на русском") ||
         pregunta.includes("говорите на русском") ||
@@ -140,6 +173,10 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "arabe" ||
+        pregunta.includes("hablame en arabe") ||
+        pregunta.includes("habla en arabe") ||
+        pregunta.includes("responde en arabe") ||
         pregunta.includes("تحدث معي بالعربية") ||
         pregunta.includes("تحدث بالعربية") ||
         pregunta.includes("أجب بالعربية") ||
@@ -149,6 +186,10 @@ pregunta === "ingles" ||
     }
 
     if (
+        pregunta === "coreano" ||
+        pregunta.includes("hablame en coreano") ||
+        pregunta.includes("habla en coreano") ||
+        pregunta.includes("responde en coreano") ||
         pregunta.includes("한국어로 말해줘") ||
         pregunta.includes("한국어로 말해주세요") ||
         pregunta.includes("한국어로 대답해줘") ||
@@ -297,14 +338,23 @@ function actualizarStoryline(datos) {
     campos.forEach(
         function(nombre) {
 
+            const valor =
+                nombre === "texto"
+                    ? (
+                        datos.texto ??
+                        datos.Vtexto ??
+                        datos.vTexto
+                    )
+                    : datos[nombre];
+
             if (
-                datos[nombre] !== undefined &&
-                datos[nombre] !== null
+                valor !== undefined &&
+                valor !== null
             ) {
 
                 storylineData[nombre] =
                     String(
-                        datos[nombre]
+                        valor
                     ).trim();
 
             }
@@ -807,6 +857,33 @@ function traducirSugerencia(sugerencia) {
 
     const idioma =
         idiomaPreferido || "es";
+
+    Object.assign(
+        traducciones,
+        {
+            "explicame esta actividad": {
+                es: "Explícame esta actividad.", en: "Explain this activity to me.", de: "Erkläre mir diese Aktivität.", fr: "Explique-moi cette activité.", pt: "Explique esta atividade para mim.", it: "Spiegami questa attività.", zh: "请给我解释一下这项活动。", ru: "Объясни мне это задание.", ar: "اشرح لي هذا النشاط.", ko: "이 활동을 설명해 주세요."
+            },
+            "explicame el vocabulario": {
+                es: "Explícame el vocabulario.", en: "Explain the vocabulary to me.", de: "Erkläre mir den Wortschatz.", fr: "Explique-moi le vocabulaire.", pt: "Explique o vocabulário para mim.", it: "Spiegami il vocabolario.", zh: "请给我解释一下词汇。", ru: "Объясни мне лексику.", ar: "اشرح لي المفردات.", ko: "어휘를 설명해 주세요."
+            },
+            "explicame la gramatica": {
+                es: "Explícame la gramática.", en: "Explain the grammar to me.", de: "Erkläre mir die Grammatik.", fr: "Explique-moi la grammaire.", pt: "Explique a gramática para mim.", it: "Spiegami la grammatica.", zh: "请给我解释一下语法。", ru: "Объясни мне грамматику.", ar: "اشرح لي القواعد النحوية.", ko: "문법을 설명해 주세요."
+            },
+            "explicame la pronunciacion": {
+                es: "Explícame la pronunciación.", en: "Explain the pronunciation to me.", de: "Erkläre mir die Aussprache.", fr: "Explique-moi la prononciation.", pt: "Explique a pronúncia para mim.", it: "Spiegami la pronuncia.", zh: "请给我解释一下发音。", ru: "Объясни мне произношение.", ar: "اشرح لي النطق.", ko: "발음을 설명해 주세요."
+            },
+            "dame una pista": {
+                es: "Dame una pista.", en: "Give me a hint.", de: "Gib mir einen Hinweis.", fr: "Donne-moi un indice.", pt: "Dê-me uma pista.", it: "Dammi un indizio.", zh: "给我一个提示。", ru: "Дай мне подсказку.", ar: "أعطني تلميحًا.", ko: "힌트를 주세요."
+            },
+            "dame mas ejemplos": {
+                es: "Dame más ejemplos.", en: "Give me more examples.", de: "Gib mir mehr Beispiele.", fr: "Donne-moi plus d’exemples.", pt: "Dê-me mais exemplos.", it: "Fammi altri esempi.", zh: "给我更多例子。", ru: "Приведи больше примеров.", ar: "أعطني المزيد من الأمثلة.", ko: "예시를 더 보여 주세요."
+            },
+            "explicame esto de otra forma": {
+                es: "Explícame esto de otra forma.", en: "Explain this in another way.", de: "Erkläre mir das auf eine andere Weise.", fr: "Explique-moi cela d’une autre manière.", pt: "Explique isso de outra forma.", it: "Spiegami questo in un altro modo.", zh: "请用另一种方式解释这个。", ru: "Объясни это по-другому.", ar: "اشرح هذا بطريقة أخرى.", ko: "다른 방식으로 설명해 주세요."
+            }
+        }
+    );
 
     if (
         traducciones[clave] &&
@@ -1527,7 +1604,7 @@ if (
 
 
         addMessage(
-            "Error al conectar con el servidor.",
+            obtenerMensajeNoDisponible(),
             "bot"
         );
 
@@ -1536,6 +1613,27 @@ if (
 
     send.disabled = false;
 
+}
+
+
+function obtenerMensajeNoDisponible() {
+
+    const mensajes = {
+
+        es: "En este momento no puedo ayudarte con esa consulta. Inténtalo de nuevo más tarde.",
+        en: "I can't help with that request right now. Please try again later.",
+        de: "Ich kann dir bei dieser Anfrage im Moment nicht helfen. Bitte versuche es später erneut.",
+        fr: "Je ne peux pas vous aider avec cette demande pour le moment. Veuillez réessayer plus tard.",
+        pt: "No momento, não posso ajudar com essa solicitação. Tente novamente mais tarde.",
+        it: "Al momento non posso aiutarti con questa richiesta. Riprova più tardi.",
+        zh: "目前我无法帮助处理这个请求，请稍后再试。",
+        ru: "Сейчас я не могу помочь с этим запросом. Пожалуйста, попробуйте позже.",
+        ar: "لا يمكنني مساعدتك في هذا الطلب الآن. يُرجى المحاولة مرة أخرى لاحقًا.",
+        ko: "지금은 이 요청을 도와드릴 수 없습니다. 나중에 다시 시도해 주세요."
+
+    };
+
+    return mensajes[idiomaPreferido] || mensajes.es;
 }
 
 
@@ -1967,65 +2065,60 @@ function hablarRespuesta(
     =========================================================
     */
 
-    const mensaje =
-        new SpeechSynthesisUtterance(
-            texto
-        );
+    const idiomaVoz =
+        idiomasVoz[idiomaGuardado] || "es-ES";
 
+    const codigoBase =
+        idiomaVoz.split("-")[0].toLowerCase();
 
-    mensaje.lang =
-        idiomasVoz[
-            idiomaGuardado
-        ] ||
-        "es-ES";
+    function reproducir() {
 
+        const voces =
+            window.speechSynthesis.getVoices();
 
-    /*
-    =========================================================
-    VELOCIDAD DE LA VOZ
-    =========================================================
-    */
-
-    mensaje.rate =
-        1;
-
-
-    /*
-    =========================================================
-    TONO
-    =========================================================
-    */
-
-    mensaje.pitch =
-        1;
-
-
-    console.log(
-        "===== TUTOR HABLANDO ====="
-    );
-
-
-    console.log(
-        "Idioma:",
-        mensaje.lang
-    );
-
-
-    /*
-    =========================================================
-    REPRODUCIR VOZ
-    =========================================================
-    */
-
-    setTimeout(
-        function() {
-
-            window.speechSynthesis.speak(
-                mensaje
+        const voz =
+            voces.find(
+                candidata =>
+                    candidata.lang
+                        .toLowerCase()
+                        .startsWith(codigoBase)
             );
 
-        },
-        100
+        if (!voz) {
+
+            console.warn(
+                "No hay una voz instalada para el idioma:",
+                idiomaVoz
+            );
+
+            return;
+        }
+
+        const mensaje =
+            new SpeechSynthesisUtterance(texto);
+
+        mensaje.lang = voz.lang;
+        mensaje.voice = voz;
+        mensaje.rate = 1;
+        mensaje.pitch = 1;
+
+        console.log("===== TUTOR HABLANDO =====");
+        console.log("Voz:", voz.name, voz.lang);
+
+        window.speechSynthesis.speak(mensaje);
+    }
+
+    if (window.speechSynthesis.getVoices().length > 0) {
+
+        reproducir();
+
+        return;
+    }
+
+    window.speechSynthesis.addEventListener(
+        "voiceschanged",
+        reproducir,
+        { once: true }
     );
 
 }
