@@ -5,7 +5,7 @@ function key(){return `practice_history_${btoa(unescape(encodeURIComponent(state
 function save(){if(state.Vlink)localStorage.setItem(key(),JSON.stringify({language:state.language,history:state.history}))}
 function showTutor(message){state.lastTutorMessage=message;text.textContent=message}
 function renderHistory(){historyList.innerHTML="";state.history.forEach(item=>{const entry=document.createElement("article");entry.className=`history-entry ${item.role}`;const label=document.createElement("strong");label.textContent=item.role==="tutor"?"Tutor":"You";const body=document.createElement("span");body.textContent=item.text;entry.append(label,body);historyList.append(entry)});historyList.scrollTop=historyList.scrollHeight}
-function add(role,message){state.history.push({role,text:message});save();renderHistory();if(role==="tutor")showTutor(message)}
+function add(role,message){state.history.push({role,text:message});save();renderHistory();if(state.history.length>1)historyPanel.hidden=false;if(role==="tutor")showTutor(message)}
 function setSuggestions(items=[]){suggestions.innerHTML="";items.slice(0,3).forEach(item=>{const button=document.createElement("button");button.type="button";button.textContent=item;button.onclick=()=>send(item,false);suggestions.append(button)})}
 function closeWriter(){composer.hidden=true;stage.classList.remove("is-writing")}
 function speechLocale(){return({en:"en-US",es:"es-ES",de:"de-DE",fr:"fr-FR",pt:"pt-BR",it:"it-IT",zh:"zh-CN",ru:"ru-RU",ar:"ar-SA",ko:"ko-KR"})[state.language]||"en-US"}
