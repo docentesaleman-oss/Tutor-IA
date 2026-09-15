@@ -8,8 +8,9 @@
   <section class="suggestion-card" aria-label="Suggested phrases"><p class="hint">💡 You can say…</p><div id="suggestions" class="suggestions"></div></section>
   <section class="natural-note"><span>▣</span><p>Keep the conversation natural.<br>You can ask questions, request clarification, or share your opinion.</p></section>
   <section class="voice-area"><div class="wave" aria-hidden="true">⌁⌁⌁</div><button id="microphone" class="microphone" type="button" aria-label="Press to speak">🎙</button><div class="wave right" aria-hidden="true">⌁⌁⌁</div><p id="voice-label">Press to speak</p></section>
-  <button id="write" class="corner-action write" type="button"><span>⌨</span>Write</button><button id="help" class="corner-action help" type="button"><span>?</span>Help</button>
+  <button id="history-toggle" class="corner-action history" type="button"><span>☰</span>History</button><button id="write" class="corner-action write" type="button"><span>⌨</span>Write</button><button id="help" class="corner-action help" type="button"><span>?</span>Help</button>
   <form id="composer" class="composer" hidden><button id="close-writer" class="close-writer" type="button" aria-label="Close writing">×</button><textarea id="message" rows="2" placeholder="Write your answer…" aria-label="Your answer"></textarea><button type="submit">Send</button></form>
+  <aside id="history-panel" class="history-panel" hidden aria-label="Conversation history"><header><strong>Conversation</strong><button id="close-history" type="button" aria-label="Close history">×</button></header><div id="history-list" class="history-list"></div></aside>
   <p id="status" class="status" aria-live="polite"></p>
 </main>
 <dialog id="help-dialog"><button id="close-help" type="button" aria-label="Close">×</button><h2>Need help?</h2><p>Speak naturally, choose an idea, or ask for another example.</p></dialog>

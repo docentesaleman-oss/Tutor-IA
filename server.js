@@ -114,17 +114,23 @@ function extraerBloquesPractica(texto) {
 function obtenerIdiomaPractica(mensaje, idiomaActual = "en") {
     const texto = normalizar(mensaje);
     const idiomas = [
-        ["es", ["habla en espanol", "respondeme en espanol", "speak spanish", "speak in spanish"]],
-        ["en", ["habla en ingles", "respondeme en ingles", "speak english", "speak in english"]],
-        ["fr", ["parle en francais", "speak french"]],
-        ["pt", ["fale em portugues", "speak portuguese"]]
+        ["es", ["habla en espanol", "respondeme en espanol", "speak spanish", "speak in spanish", "respond in spanish"]],
+        ["en", ["habla en ingles", "respondeme en ingles", "speak english", "speak in english", "respond in english"]],
+        ["de", ["habla en aleman", "respondeme en aleman", "sprich deutsch", "speak german", "speak in german"]],
+        ["fr", ["parle en francais", "habla en frances", "speak french", "speak in french"]],
+        ["pt", ["fale em portugues", "habla en portugues", "speak portuguese", "speak in portuguese"]],
+        ["it", ["parla italiano", "habla en italiano", "speak italian", "speak in italian"]],
+        ["zh", ["habla en chino", "speak chinese", "speak mandarin", "用中文", "中文"]],
+        ["ru", ["говори по русски", "говори на русском", "habla en ruso", "speak russian", "speak in russian"]],
+        ["ar", ["تحدث بالعربية", "habla en arabe", "speak arabic", "speak in arabic"]],
+        ["ko", ["한국어로", "habla en coreano", "speak korean", "speak in korean"]]
     ];
     const encontrado = idiomas.find(([, frases]) => frases.some(frase => texto.includes(frase)));
     return encontrado ? encontrado[0] : idiomaActual;
 }
 
 function nombreIdiomaPractica(codigo) {
-    return ({ en: "English", es: "Spanish", fr: "French", pt: "Portuguese" })[codigo] || "English";
+    return ({ en: "English", es: "Spanish", de: "German", fr: "French", pt: "Portuguese", it: "Italian", zh: "Chinese", ru: "Russian", ar: "Arabic", ko: "Korean" })[codigo] || "English";
 }
 
 function construirPromptPractica(bloques, idioma, historial = []) {
