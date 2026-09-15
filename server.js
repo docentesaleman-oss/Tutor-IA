@@ -85,6 +85,14 @@ function limpiarTextoPractica(valor) {
     return String(valor || "").replace(/\r\n/g, "\n").trim();
 }
 
+function limpiarRespuestaPractica(valor) {
+    return String(valor || "")
+        .replace(/\*\*/g, "")
+        .replace(/__/g, "")
+        .replace(/`/g, "")
+        .trim();
+}
+
 function separarListaPractica(texto) {
     return limpiarTextoPractica(texto)
         .split(/,|\n/)
@@ -206,7 +214,7 @@ app.post("/practice/chat", async (req, res) => {
         const bloques = await cargarPracticaDesdeVlink(req.body?.Vlink);
         const language = obtenerIdiomaPractica(message, limpiarTextoPractica(req.body?.language) || "en");
         const history = Array.isArray(req.body?.history) ? req.body.history : [];
-        const reply = await consultarGroq(message, construirPromptPractica(bloques, language, history), []);
+        const reply = limpiarRespuestaPractica(await consultarGroq(message, construirPromptPractica(bloques, language, history), []));
         return res.json({ reply, language });
     } catch (error) {
         console.error("===== ERROR PRÁCTICA GUIADA =====", error);
