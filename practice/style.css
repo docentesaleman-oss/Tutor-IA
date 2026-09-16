@@ -488,3 +488,6 @@ dialog p {
     border-radius: 9px;
 }
 
+
+/* El cuadro de escritura siempre queda por delante del historial. */
+.composer{z-index:10}

@@ -4,7 +4,8 @@ const state = {
     history: [],
     lastTutorMessage: "",
     voiceMode: false,
-    waitingForTutor: false
+    waitingForTutor: false,
+    scriptIndex: -1
 };
 
 const stage = document.querySelector(".stage"),
@@ -32,7 +33,8 @@ function save() {
             key(),
             JSON.stringify({
                 language: state.language,
-                history: state.history
+                history: state.history,
+                scriptIndex: state.scriptIndex
             })
         );
 }
@@ -192,6 +194,7 @@ async function loadPractice(vlink) {
         state.history = Array.isArray(stored.history)
             ? stored.history
             : [];
+        state.scriptIndex = Number.isInteger(stored.scriptIndex) ? stored.scriptIndex : -1;
 
         renderHistory();
 
@@ -214,6 +217,9 @@ async function loadPractice(vlink) {
 
         setSuggestions(data.suggestions);
 
+
+        if (state.scriptIndex < 0)
+            state.scriptIndex = Number.isInteger(data.openingIndex) ? data.openingIndex : -1;
         const last = [...state.history]
             .reverse()
             .find(item => item.role === "tutor");
@@ -259,7 +265,8 @@ async function send(value, replyWithVoice = false) {
                 Vlink: state.Vlink,
                 message,
                 language: state.language,
-                history: state.history.slice(-8)
+                history: state.history.slice(-8),
+                scriptIndex: state.scriptIndex
             })
         });
 
@@ -272,6 +279,7 @@ async function send(value, replyWithVoice = false) {
 
         state.language = data.language || state.language;
 
+        state.scriptIndex = Number.isInteger(data.scriptIndex) ? data.scriptIndex : state.scriptIndex;
         add("tutor", data.reply);
 
         status.textContent = "";
