@@ -21,6 +21,19 @@ const stage = document.querySelector(".stage"),
 
 let recognition = null;
 
+/* Evita zoom por gestos y atajos mientras la interacción está activa. */
+document.addEventListener("wheel", event => {
+    if (event.ctrlKey) event.preventDefault();
+}, { passive: false });
+
+document.addEventListener("keydown", event => {
+    if (event.ctrlKey && ["+", "=", "-", "_", "0"].includes(event.key))
+        event.preventDefault();
+});
+
+["gesturestart", "gesturechange", "gestureend"].forEach(type => {
+    document.addEventListener(type, event => event.preventDefault(), { passive: false });
+});
 function key() {
     return `practice_history_${btoa(
         unescape(encodeURIComponent(state.Vlink))
