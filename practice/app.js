@@ -21,22 +21,6 @@ const stage = document.querySelector(".stage"),
 
 let recognition = null;
 
-/* Lienzo fijo como Storyline: 760 × 532, escalado proporcionalmente para mostrarse completo. */
-function ajustarLienzoPractice() {
-    const anchoBase = 760;
-    const altoBase = 532;
-    const escala = Math.min(
-        window.innerWidth / anchoBase,
-        window.innerHeight / altoBase
-    );
-
-    stage.style.setProperty(
-        "--practice-fit-scale",
-        Math.max(0.1, escala).toFixed(4)
-    );
-}
-
-
 function key() {
     return `practice_history_${btoa(
         unescape(encodeURIComponent(state.Vlink))
@@ -439,6 +423,10 @@ if (Recognition) {
             "Speech recognition is not available in this browser.";
 }
 
+document.getElementById("close-practice").onclick = () => {
+    window.parent.postMessage({ type: "CLOSE_SECOND_TUTOR" }, "*");
+};
+
 function receive(data) {
     const vlink =
         data?.Vlink ||
@@ -461,10 +449,7 @@ window.addEventListener("message", event => {
         receive(event.data);
 });
 
-window.addEventListener("resize", ajustarLienzoPractice);
-window.visualViewport?.addEventListener("resize", ajustarLienzoPractice);
 window.addEventListener("DOMContentLoaded", () => {
-    ajustarLienzoPractice();
     const vlink =
         new URLSearchParams(location.search).get("Vlink");
 
