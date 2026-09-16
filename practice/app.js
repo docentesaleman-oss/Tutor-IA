@@ -303,6 +303,13 @@ composer.addEventListener("submit", event => {
     send();
 });
 
+input.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        send();
+    }
+});
+
 document.getElementById("write").onclick = () => {
     const opening = composer.hidden;
 
