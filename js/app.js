@@ -13,6 +13,56 @@ const CHAT_STORAGE_KEY =
     "tutorIA_chatHistory_v2";
 
 let chatHistory = [];
+let identificadorContextoActual = "";
+let temaDeAyudaActual = "";
+
+function crearIdentificadorContexto(datos = {}) {
+    return [
+        datos.modulo,
+        datos.seccion,
+        datos.diapositiva,
+        datos.contexto,
+        datos.texto,
+        datos.Vvideo
+    ].map(valor => String(valor || "").trim()).join("|");
+}
+
+function limpiarChatPorCambioDeDiapositiva() {
+    chatHistory = [];
+    temaDeAyudaActual = "";
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+
+    const messages = document.getElementById("messages");
+    if (messages) {
+        messages.innerHTML = "";
+    }
+}
+
+function normalizarConsulta(texto) {
+    return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
+function esConsultaSobreVideo(texto) {
+    return normalizarConsulta(texto).includes("video");
+}
+
+function esContinuacionDeExplicacion(texto) {
+    const pregunta = normalizarConsulta(texto);
+    return [
+        "explicame mas",
+        "puedes explicarme mas",
+        "explica mas",
+        "dame mas detalles",
+        "puedes ampliar",
+        "amplia la explicacion",
+        "cuentame mas",
+        "continua"
+    ].some(patron => pregunta.includes(patron));
+}
 
 /*
 ============================================================
@@ -361,6 +411,16 @@ function actualizarStoryline(datos) {
 
         }
     );
+
+    const nuevoIdentificador = crearIdentificadorContexto(storylineData);
+
+    if (
+        nuevoIdentificador &&
+        nuevoIdentificador !== identificadorContextoActual
+    ) {
+        limpiarChatPorCambioDeDiapositiva();
+        identificadorContextoActual = nuevoIdentificador;
+    }
 
 
     /*
@@ -1544,9 +1604,15 @@ addMessage(text, "user");
         );
 
 
+        const continuacionVideo =
+            temaDeAyudaActual === "video" &&
+            esContinuacionDeExplicacion(text);
+
         const response =
     await askGPT(
-        text,
+        continuacionVideo
+            ? `Explica el video actual con más detalle. ${text}`
+            : text,
         contextoParaPregunta,
         idiomaPreferido
     );
@@ -1584,6 +1650,11 @@ addMessage(
     respuestaLimpia,
     "bot"
 );
+
+temaDeAyudaActual =
+    esConsultaSobreVideo(text) || continuacionVideo
+        ? "video"
+        : "";
 
 if (
     usarVoz === true
