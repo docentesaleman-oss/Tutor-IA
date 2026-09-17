@@ -27,15 +27,8 @@ function crearIdentificadorContexto(datos = {}) {
     ].map(valor => String(valor || "").trim()).join("|");
 }
 
-function limpiarChatPorCambioDeDiapositiva() {
-    chatHistory = [];
+function reiniciarContextoPorCambioDeDiapositiva() {
     temaDeAyudaActual = "";
-    localStorage.removeItem(CHAT_STORAGE_KEY);
-
-    const messages = document.getElementById("messages");
-    if (messages) {
-        messages.innerHTML = "";
-    }
 }
 
 function normalizarConsulta(texto) {
@@ -418,7 +411,7 @@ function actualizarStoryline(datos) {
         nuevoIdentificador &&
         nuevoIdentificador !== identificadorContextoActual
     ) {
-        limpiarChatPorCambioDeDiapositiva();
+        reiniciarContextoPorCambioDeDiapositiva();
         identificadorContextoActual = nuevoIdentificador;
     }
 
