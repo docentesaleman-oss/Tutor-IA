@@ -278,7 +278,7 @@ async function send(value, replyWithVoice = false) {
                 Vlink: state.Vlink,
                 message,
                 language: state.language,
-                history: state.history.slice(-8),
+                history: state.history.slice(-16),
                 scriptIndex: state.scriptIndex
             })
         });
@@ -473,5 +473,4 @@ window.addEventListener("DOMContentLoaded", () => {
             "Hi! Your guided conversation will begin in a moment."
         );
 });
-
 
