@@ -249,7 +249,7 @@ async function loadPractice(vlink) {
     }
 }
 
-async function send(value, replyWithVoice = false) {
+async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     const message = String(value || input.value).trim();
 
     if (!message)
@@ -279,7 +279,8 @@ async function send(value, replyWithVoice = false) {
                 message,
                 language: state.language,
                 history: state.history.slice(-16),
-                scriptIndex: state.scriptIndex
+                scriptIndex: state.scriptIndex,
+                voiceAlternatives
             })
         });
 
@@ -363,6 +364,7 @@ if (Recognition) {
 
     recognition.interimResults = false;
     recognition.continuous = false;
+    recognition.maxAlternatives = 5;
 
     recognition.onstart = () => {
         mic.classList.add("is-listening");
@@ -377,9 +379,14 @@ if (Recognition) {
         state.waitingForTutor = true;
         voiceLabel.textContent = "Sending your answer…";
 
+        const alternatives = Array.from(event.results[0])
+            .map(result => result.transcript)
+            .filter(Boolean);
+
         send(
-            event.results[0][0].transcript,
-            true
+            alternatives[0],
+            true,
+            alternatives.slice(1)
         );
     };
 
@@ -473,4 +480,3 @@ window.addEventListener("DOMContentLoaded", () => {
             "Hi! Your guided conversation will begin in a moment."
         );
 });
-
