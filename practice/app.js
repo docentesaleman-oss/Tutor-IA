@@ -263,7 +263,6 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     add("student", message);
 
     input.value = "";
-    closeWriter();
 
     status.textContent = "Thinking…";
     state.waitingForTutor = replyWithVoice;
