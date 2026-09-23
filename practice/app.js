@@ -20,6 +20,7 @@ const stage = document.querySelector(".stage"),
     historyList = document.getElementById("history-list");
 
 let recognition = null;
+const VOICE_REPLY_TIMEOUT_MS = 45000;
 
 /* Evita zoom por gestos y atajos mientras la interacción está activa. */
 document.addEventListener("wheel", event => {
@@ -266,6 +267,11 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
 
     status.textContent = "Thinking…";
     state.waitingForTutor = replyWithVoice;
+    const controller = new AbortController();
+    const timeout = setTimeout(
+        () => controller.abort(),
+        VOICE_REPLY_TIMEOUT_MS
+    );
 
     try {
         const response = await fetch("/practice/chat", {
@@ -280,7 +286,8 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
                 history: state.history.slice(-16),
                 scriptIndex: state.scriptIndex,
                 voiceAlternatives
-            })
+            }),
+            signal: controller.signal
         });
 
         const data = await response.json();
@@ -303,11 +310,15 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
             startListening();
         }
     } catch (error) {
-        status.textContent = error.message;
+        status.textContent = error.name === "AbortError"
+            ? "The reply took too long. Please try again."
+            : error.message;
         state.waitingForTutor = false;
 
         if (replyWithVoice)
             startListening();
+    } finally {
+        clearTimeout(timeout);
     }
 }
 
@@ -390,11 +401,17 @@ if (Recognition) {
     };
 
     recognition.onerror = event => {
-        if (event.error !== "aborted")
+        if (event.error !== "aborted") {
             status.textContent =
                 event.error === "not-allowed"
                     ? "Microphone permission is required."
                     : "I could not hear that. Please try again.";
+
+            state.waitingForTutor = false;
+
+            if (state.voiceMode)
+                setTimeout(startListening, 250);
+        }
     };
 
     recognition.onend = () => {
