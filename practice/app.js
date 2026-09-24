@@ -5,6 +5,7 @@ const state = {
     lastTutorMessage: "",
     voiceMode: false,
     waitingForTutor: false,
+    requestInFlight: false,
     scriptIndex: -1
 };
 
@@ -256,6 +257,11 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     if (!message)
         return;
 
+    if (state.requestInFlight) {
+        status.textContent = "Please wait for the tutor's reply.";
+        return;
+    }
+
     if (!state.Vlink) {
         status.textContent = "The activity link is still loading.";
         return;
@@ -266,6 +272,7 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     input.value = "";
 
     status.textContent = "Thinking…";
+    state.requestInFlight = true;
     state.waitingForTutor = replyWithVoice;
     const controller = new AbortController();
     const timeout = setTimeout(
@@ -319,6 +326,7 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
             startListening();
     } finally {
         clearTimeout(timeout);
+        state.requestInFlight = false;
     }
 }
 
@@ -477,6 +485,21 @@ function receive(data) {
 window.recibirDatosStoryline = receive;
 window.cargarVlink = loadPractice;
 
+function requestPracticeVlink() {
+    window.parent?.postMessage(
+        { type: "PRACTICE_READY" },
+        "*"
+    );
+
+    try {
+        const player = window.parent?.GetPlayer?.();
+        const vlink = player?.GetVar?.("Vlink");
+
+        if (vlink)
+            loadPractice(vlink);
+    } catch {}
+}
+
 window.addEventListener("message", event => {
     if (
         event.data?.type === "practice-vlink" ||
@@ -491,8 +514,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (vlink)
         loadPractice(vlink);
-    else
+    else {
         showTutor(
             "Hi! Your guided conversation will begin in a moment."
         );
+
+        requestPracticeVlink();
+        setTimeout(requestPracticeVlink, 500);
+        setTimeout(requestPracticeVlink, 1500);
+    }
 });
