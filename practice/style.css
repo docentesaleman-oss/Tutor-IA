@@ -481,7 +481,7 @@ dialog p {
     box-shadow: 0 3px 10px #002d3370;
 }
 
-/* Dejar libre el área principal para mostrar la conversación. */
+/* Keep the main area clear for the conversation. */
 .wordmark,
 .tutor-message,
 .suggestion-card {
