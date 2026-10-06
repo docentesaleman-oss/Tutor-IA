@@ -480,3 +480,33 @@ dialog p {
     cursor: pointer;
     box-shadow: 0 3px 10px #002d3370;
 }
+
+/* Dejar libre el área principal para mostrar la conversación. */
+.wordmark,
+.tutor-message,
+.suggestion-card {
+    display: none;
+}
+
+.history-panel {
+    left: 57%;
+    top: 4%;
+}
+
+.composer {
+    left: 12%;
+    bottom: 20%;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+    .history-panel {
+        left: 44%;
+        top: 4%;
+    }
+
+    .composer {
+        left: 12%;
+        bottom: 20%;
+    }
+}
