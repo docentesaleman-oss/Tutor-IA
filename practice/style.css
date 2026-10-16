@@ -409,3 +409,33 @@ dialog p {
     }
 
 }
+
+/* Keep the main area clear for the conversation. */
+.wordmark,
+.tutor-message,
+.suggestion-card {
+    display: none;
+}
+
+.history-panel {
+    left: 57%;
+    top: 4%;
+}
+
+.composer {
+    left: 12%;
+    bottom: 20%;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+    .history-panel {
+        left: 44%;
+        top: 4%;
+    }
+
+    .composer {
+        left: 12%;
+        bottom: 20%;
+    }
+}
