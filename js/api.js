@@ -153,22 +153,6 @@ language:
         ========================================================
         */
 
-        if (!response.ok) {
-
-            console.error(
-                "ERROR HTTP:",
-                response.status
-            );
-
-
-            return (
-                "Error del servidor: " +
-                response.status
-            );
-
-        }
-
-
         /*
         ========================================================
         CONVERTIR RESPUESTA
@@ -177,6 +161,17 @@ language:
 
         const data =
             await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "ERROR HTTP:",
+                response.status,
+                data
+            );
+
+        }
 
 
         console.log(
