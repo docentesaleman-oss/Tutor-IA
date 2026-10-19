@@ -6,7 +6,10 @@ const state = {
     voiceMode: false,
     waitingForTutor: false,
     requestInFlight: false,
-    scriptIndex: -1
+    scriptIndex: -1,
+    closed: false,
+    sessionId: 0,
+    activeRequest: null
 };
 
 const stage = document.querySelector(".stage"),
@@ -158,7 +161,7 @@ function speakTutorReply(message) {
 }
 
 function startListening() {
-    if (!recognition || !state.voiceMode || state.waitingForTutor)
+    if (state.closed || !recognition || !state.voiceMode || state.waitingForTutor)
         return;
 
     try {
@@ -172,7 +175,10 @@ function stopVoiceMode() {
     state.waitingForTutor = false;
 
     try {
-        recognition?.stop();
+        if (recognition?.abort)
+            recognition.abort();
+        else
+            recognition?.stop();
     } catch {}
 
     speechSynthesis.cancel();
@@ -182,6 +188,10 @@ function stopVoiceMode() {
 }
 
 async function loadPractice(vlink) {
+    if (state.closed) {
+        state.closed = false;
+        state.sessionId++;
+    }
     state.Vlink = String(vlink || "").trim();
 
     if (!state.Vlink) {
@@ -241,6 +251,9 @@ async function loadPractice(vlink) {
 }
 
 async function send(value, replyWithVoice = false, voiceAlternatives = []) {
+    if (state.closed)
+        return;
+
     const message = String(value || "").trim();
 
     if (!message)
@@ -261,7 +274,9 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     status.textContent = "Thinking…";
     state.requestInFlight = true;
     state.waitingForTutor = replyWithVoice;
+    const requestSession = state.sessionId;
     const controller = new AbortController();
+    state.activeRequest = controller;
     const timeout = setTimeout(
         () => controller.abort(),
         VOICE_REPLY_TIMEOUT_MS
@@ -279,12 +294,16 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
                 language: state.language,
                 history: state.history.slice(-16),
                 scriptIndex: state.scriptIndex,
-                voiceAlternatives
+                voiceAlternatives,
+                inputMode: replyWithVoice ? "spoken" : "written"
             }),
             signal: controller.signal
         });
 
         const data = await response.json();
+
+        if (state.closed || requestSession !== state.sessionId)
+            return;
 
         if (!response.ok)
             throw new Error(
@@ -304,6 +323,9 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
             startListening();
         }
     } catch (error) {
+        if (state.closed || requestSession !== state.sessionId)
+            return;
+
         status.textContent = error.name === "AbortError"
             ? "The reply took too long. Please try again."
             : error.message;
@@ -313,7 +335,10 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
             startListening();
     } finally {
         clearTimeout(timeout);
-        state.requestInFlight = false;
+        if (state.activeRequest === controller) {
+            state.activeRequest = null;
+            state.requestInFlight = false;
+        }
     }
 }
 
@@ -430,9 +455,34 @@ if (Recognition) {
             "Speech recognition is not available in this browser.";
 }
 
-document.getElementById("close-practice").onclick = () => {
+function closePractice() {
+    if (state.closed)
+        return;
+
+    state.closed = true;
+    state.sessionId++;
+    state.waitingForTutor = false;
+    state.requestInFlight = false;
+
+    const activeRequest = state.activeRequest;
+    state.activeRequest = null;
+    activeRequest?.abort();
+
+    stopVoiceMode();
+    speechSynthesis.cancel();
+    status.textContent = "";
     window.parent.postMessage({ type: "CLOSE_SECOND_TUTOR" }, "*");
-};
+}
+
+document.getElementById("close-practice").onclick = closePractice;
+
+window.addEventListener("pagehide", () => {
+    state.closed = true;
+    state.sessionId++;
+    state.activeRequest?.abort();
+    stopVoiceMode();
+    speechSynthesis.cancel();
+});
 
 function receive(data) {
     const vlink =
