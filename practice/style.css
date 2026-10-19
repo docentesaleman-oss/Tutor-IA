@@ -439,3 +439,23 @@ dialog p {
         bottom: 20%;
     }
 }
+
+
+.close-practice {
+    position: fixed;
+    z-index: 20;
+    top: 2.2%;
+    right: 2.2%;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #075384;
+    color: #fff;
+    font-size: 31px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 3px 10px #002d3370;
+}

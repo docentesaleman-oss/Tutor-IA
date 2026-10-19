@@ -11,12 +11,10 @@ const state = {
 
 const stage = document.querySelector(".stage"),
     text = document.getElementById("tutor-text"),
-    input = document.getElementById("message"),
     status = document.getElementById("status"),
     suggestions = document.getElementById("suggestions"),
     mic = document.getElementById("microphone"),
     voiceLabel = document.getElementById("voice-label"),
-    composer = document.getElementById("composer"),
     historyPanel = document.getElementById("history-panel"),
     historyList = document.getElementById("history-list");
 
@@ -109,19 +107,10 @@ function setSuggestions(items = []) {
     suggestions.innerHTML = "";
 
     items.slice(0, 3).forEach(item => {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.textContent = item;
-        button.onclick = () => send(item, false);
-
-        suggestions.append(button);
+        const phrase = document.createElement("span");
+        phrase.textContent = item;
+        suggestions.append(phrase);
     });
-}
-
-function closeWriter() {
-    composer.hidden = true;
-    stage.classList.remove("is-writing");
 }
 
 function speechLocale() {
@@ -252,7 +241,7 @@ async function loadPractice(vlink) {
 }
 
 async function send(value, replyWithVoice = false, voiceAlternatives = []) {
-    const message = String(value || input.value).trim();
+    const message = String(value || "").trim();
 
     if (!message)
         return;
@@ -268,8 +257,6 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
     }
 
     add("student", message);
-
-    input.value = "";
 
     status.textContent = "Thinking…";
     state.requestInFlight = true;
@@ -329,30 +316,6 @@ async function send(value, replyWithVoice = false, voiceAlternatives = []) {
         state.requestInFlight = false;
     }
 }
-
-composer.addEventListener("submit", event => {
-    event.preventDefault();
-    send();
-});
-
-input.addEventListener("keydown", event => {
-    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
-        event.preventDefault();
-        send();
-    }
-});
-
-document.getElementById("write").onclick = () => {
-    const opening = composer.hidden;
-
-    composer.hidden = !opening;
-    stage.classList.toggle("is-writing", opening);
-
-    if (opening)
-        input.focus();
-};
-
-document.getElementById("close-writer").onclick = closeWriter;
 
 document.getElementById("help").onclick = () =>
     document.getElementById("help-dialog").showModal();
