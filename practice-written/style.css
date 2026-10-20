@@ -19,7 +19,7 @@ body {
     height: 100%;
     min-height: 400px;
     overflow: hidden;
-    background: url("image.jpg") center / cover no-repeat;
+    background: url("image.jpg") center 20% / cover no-repeat;
 }
 
 .stage::before {
@@ -297,7 +297,7 @@ dialog p { line-height: 1.5; }
     padding: 16px;
 }
 .composer {
-    left: 42.5%;
+    left: 66%;
     width: min(48%, 920px);
     padding: 8px;
 }
@@ -306,4 +306,21 @@ dialog p { line-height: 1.5; }
     .history-panel { top: 7%; left: 30%; width: 66%; height: 55%; padding: 12px; }
     .composer { left: 30%; width: 67%; padding: 8px; }
     .composer textarea { min-height: 38px; }
+}
+/* Mantiene el texto y los controles sin cambios de tamaño o selección accidental. */
+html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+*, *::before, *::after {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+.composer textarea {
+    resize: none;
+    -webkit-user-select: none;
+    user-select: none;
 }

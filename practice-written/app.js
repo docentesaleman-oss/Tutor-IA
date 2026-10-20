@@ -86,3 +86,18 @@ function requestPracticeVlink() {
 requestPracticeVlink();
 setTimeout(requestPracticeVlink, 500);
 setTimeout(requestPracticeVlink, 1500);
+
+// Prevent common page zoom gestures and keyboard shortcuts from changing the layout.
+document.addEventListener("keydown", event => {
+    if ((event.ctrlKey || event.metaKey) && ["+", "=", "-", "_", "0"].includes(event.key)) {
+        event.preventDefault();
+    }
+});
+document.addEventListener("wheel", event => {
+    if (event.ctrlKey) event.preventDefault();
+}, { passive: false });
+document.addEventListener("gesturestart", event => event.preventDefault(), { passive: false });
+document.addEventListener("gesturechange", event => event.preventDefault(), { passive: false });
+document.addEventListener("touchmove", event => {
+    if (event.touches.length > 1) event.preventDefault();
+}, { passive: false });
