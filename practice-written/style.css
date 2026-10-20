@@ -288,3 +288,22 @@ dialog p { line-height: 1.5; }
     .history-panel { top: 7%; left: 30%; width: 66%; height: 55%; padding: 12px; }
     .history-entry { font-size: 12px; }
 }
+/* Ajustes de tamaño y centrado solicitados. */
+.history-panel {
+    top: 3%;
+    left: 46.5%;
+    width: min(40%, 760px);
+    height: 72%;
+    padding: 16px;
+}
+.composer {
+    left: 42.5%;
+    width: min(48%, 920px);
+    padding: 8px;
+}
+.composer textarea { min-height: 40px; }
+@media (max-width: 700px) {
+    .history-panel { top: 7%; left: 30%; width: 66%; height: 55%; padding: 12px; }
+    .composer { left: 30%; width: 67%; padding: 8px; }
+    .composer textarea { min-height: 38px; }
+}
