@@ -25,7 +25,6 @@ function renderHistory() {
 }
 function add(role, message) {
     const cleanMessage = cleanReply(message); state.history.push({ role, text: cleanMessage }); save(); renderHistory();
-    if (state.history.length > 1) historyPanel.hidden = false;
     if (role === "tutor") showTutor(cleanMessage);
 }
 function setSuggestions(items = []) {
@@ -72,8 +71,6 @@ composer.addEventListener("submit", event => { event.preventDefault(); send(); }
 input.addEventListener("keydown", event => { if (event.key === "Enter" && !event.shiftKey && !event.isComposing) { event.preventDefault(); send(); } });
 document.getElementById("help").onclick = () => document.getElementById("help-dialog").showModal();
 document.getElementById("close-help").onclick = () => document.getElementById("help-dialog").close();
-document.getElementById("history-toggle").onclick = () => { historyPanel.hidden = !historyPanel.hidden; if (!historyPanel.hidden) renderHistory(); };
-document.getElementById("close-history").onclick = () => historyPanel.hidden = true;
 document.getElementById("close-practice").onclick = () => window.parent.postMessage({ type: "CLOSE_THIRD_TUTOR" }, "*");
 function receive(data) { const vlink = data?.Vlink || data?.vlink || data?.datos?.Vlink || data?.datos?.vlink; if (vlink) loadPractice(vlink); }
 window.recibirDatosStoryline = receive; window.cargarVlink = loadPractice;
