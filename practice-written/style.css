@@ -366,3 +366,21 @@ dialog p { line-height: 1.5; }
 @media (max-width: 700px) {
     .tool-result { left: 3%; bottom: 17%; width: 24%; max-height: 28vh; }
 }
+.tool-result { padding: 38px 14px 12px; }
+.tool-result-close {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 27px;
+    height: 27px;
+    padding: 0;
+    border: 1px solid #bfe4f4;
+    border-radius: 50%;
+    background: #e8f7ff;
+    color: #075384;
+    font: 700 20px/1 Arial, sans-serif;
+    cursor: pointer;
+}
+.tool-result-close:hover { background: #d7effc; }

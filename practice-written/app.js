@@ -141,6 +141,14 @@ function insertPhrase(phrase) {
 function showToolResult(action, data) {
     toolResult.innerHTML = "";
     toolResult.hidden = false;
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "tool-result-close";
+    closeButton.textContent = "×";
+    closeButton.setAttribute("aria-label", state.language === "es" ? "Cerrar" : "Close");
+    closeButton.title = state.language === "es" ? "Cerrar" : "Close";
+    closeButton.addEventListener("click", clearToolResult);
+    toolResult.append(closeButton);
     if (action === "phrases" && Array.isArray(data.phrases) && data.phrases.length) {
         const heading = document.createElement("strong");
         heading.className = "tool-result-title";
