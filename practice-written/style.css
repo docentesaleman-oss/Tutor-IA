@@ -65,7 +65,7 @@ body { font-family: Arial, sans-serif; color: #075384; background: #1b3435; }
 .history-panel {
     position: absolute;
     z-index: 5;
-    top: 3%;
+    top: 5%;
     left: 46.5%;
     width: min(40%, 760px);
     height: 72%;
