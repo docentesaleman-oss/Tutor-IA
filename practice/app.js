@@ -537,3 +537,41 @@ window.addEventListener("DOMContentLoaded", () => {
         setTimeout(requestPracticeVlink, 1500);
     }
 });
+
+/* Keep the open history panel clear of the tutor and suggestion cards behind it. */
+const historyVisibilityObserver = new MutationObserver(() => {
+    stage.classList.toggle("history-open", !historyPanel.hidden);
+});
+historyVisibilityObserver.observe(historyPanel, {
+    attributes: true,
+    attributeFilter: ["hidden"]
+});
+stage.classList.toggle("history-open", !historyPanel.hidden);
+
+/* Add the tutor portrait and the requested display name to history entries. */
+const historyEntryObserver = new MutationObserver(() => {
+    historyList.querySelectorAll(".history-entry.tutor").forEach(entry => {
+        const label = entry.querySelector("strong");
+        if (label && label.textContent !== "IA Tutor")
+            label.textContent = "IA Tutor";
+
+        if (!entry.querySelector(".history-avatar")) {
+            const avatar = document.createElement("img");
+            avatar.className = "history-avatar";
+            avatar.src = "Perfil.png";
+            avatar.alt = "IA Tutor";
+            entry.prepend(avatar);
+        }
+    });
+});
+historyEntryObserver.observe(historyList, { childList: true, subtree: true });
+
+/* Keep page zoom, text selection, and native image dragging disabled. */
+document.addEventListener("keydown", event => {
+    if ((event.ctrlKey || event.metaKey) &&
+        ["+", "=", "-", "_", "0", "Add", "Subtract", "NumpadAdd", "NumpadSubtract"].includes(event.key))
+        event.preventDefault();
+}, true);
+document.addEventListener("contextmenu", event => event.preventDefault());
+document.addEventListener("selectstart", event => event.preventDefault());
+document.addEventListener("dragstart", event => event.preventDefault());
