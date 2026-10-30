@@ -36,10 +36,15 @@ button { font: inherit; cursor: pointer; }
 .natural-note p strong { font-size:11px; }
 .natural-note .note-chevron { margin-left:auto; color:#8698a4; font-size:22px; }
 .voice-area { position:absolute; z-index:5; bottom:2.2%; left:42%; display:grid; align-items:center; justify-items:center; width:19%; min-width:205px; text-align:center; }
-.microphone-art { position:absolute; z-index:0; top:0; left:50%; display:block; width:min(100%,260px); height:100px; object-fit:fill; transform:translateX(-50%); transition:filter .3s; }
+.microphone-art { position:absolute; z-index:0; top:0; left:50%; display:block; width:min(100%,260px); height:100px; object-fit:fill; transform:translateX(-50%); transition:filter .3s,transform .25s; }
 .microphone { position:relative; z-index:1; width:86px; height:86px; margin-top:7px; padding:0; border:0; border-radius:50%; background:transparent; box-shadow:none; transition:box-shadow .25s,transform .25s; }
 .microphone.is-listening { box-shadow:0 0 0 5px #ff9aa4bb,0 0 22px #ff435caa; animation:mic-pulse 1.1s ease-in-out infinite; }
 .voice-area:has(.microphone.is-listening) .microphone-art { filter:hue-rotate(130deg) saturate(1.2); }
+@media (hover:hover) {
+ .microphone:hover:not(.is-listening) { transform:scale(1.08); box-shadow:0 0 0 5px #8bd8ffbb,0 0 24px #53baffd9; }
+ .voice-area:has(.microphone:hover:not(.is-listening)) .microphone-art { filter:drop-shadow(0 0 10px #8bd8ff); transform:translateX(-50%) scale(1.05); }
+}
+.microphone:focus-visible { outline:3px solid #b8e9ff; outline-offset:6px; }
 @keyframes mic-pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.09); } }
 #voice-label { position:relative; z-index:1; margin:7px 0 0; color:#fff; text-shadow:0 1px 3px #003a52; font-size:clamp(11px,1.2vw,14px); }
 .corner-action { position:absolute; z-index:4; bottom:4%; display:grid; gap:4px; justify-items:center; border:0; background:transparent; color:#fff; text-shadow:0 1px 2px #00384e; font-size:clamp(10px,1.1vw,12px); }
