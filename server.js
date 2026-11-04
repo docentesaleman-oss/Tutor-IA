@@ -590,8 +590,11 @@ app.post("/practice/chat", async (req, res) => {
             promesaSiguiente
         ]);
         const mensajeInterpretado = interpretacionDeVoz.message;
+        const notasDeVoz = modoEntrada === "spoken"
+            ? `${interpretacionDeVoz.notas}\nSpeech recognition may omit accent marks (for example, “espanol” for “español”). Do not correct missing accent marks alone as learner errors; continue correcting other meaningful pronunciation or language errors normally.`
+            : interpretacionDeVoz.notas;
         const progreso = resumirProgresoPractica(lineas, indiceActual);
-        const reply = limpiarRespuestaPractica(await consultarModeloTexto(mensajeInterpretado, construirPromptPractica(bloques, language, historial, siguiente.text, progreso, interpretacionDeVoz.notas, modoEntrada), []));
+        const reply = limpiarRespuestaPractica(await consultarModeloTexto(mensajeInterpretado, construirPromptPractica(bloques, language, historial, siguiente.text, progreso, notasDeVoz, modoEntrada), []));
         return res.json({ reply, language, scriptIndex: siguiente.index });
     } catch (error) {
         console.error("===== ERROR PRÁCTICA GUIADA =====", error);
