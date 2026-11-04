@@ -4289,57 +4289,35 @@ estén escritas en inglés u otro idioma.
 "${message}"
 
 ============================================================
-DINÁMICA DEL EJERCICIO
+INFORMACIÓN DEL EJERCICIO
 ============================================================
 
+CONTEXTO Y DINÁMICA:
 ${contexto.contexto || "No disponible"}
+
+RESPUESTAS CORRECTAS (Vcorrect):
+${contexto.Vcorrect || "No disponible"}
+
+TEXTO DE LA DIAPOSITIVA:
+${contexto.texto || "No disponible"}
+
+Vincorrect contiene una instrucción de control, no respuestas incorrectas:
+"Usa VCorrect para determinar la respuesta correcta y VContexto para
+determinar la dinámica del ejercicio." Usa Vcorrect y el contexto para
+analizar la pregunta del estudiante. No repitas esta instrucción.
 
 ============================================================
 REGLAS
 ============================================================
 
-Explica únicamente cómo funciona la actividad
-y cómo debe proceder el estudiante para resolverla.
-
-La pregunta del estudiante puede ser:
-"¿por qué me quedó mal la respuesta?"
-
-En ese caso debes explicar que no tienes información
-sobre cuál elemento seleccionó o escribió el estudiante,
-por lo que NO puedes identificar el error específico.
-
-IMPORTANTE:
-
-NO inventes la respuesta del estudiante.
-
-NO supongas qué seleccionó.
-
-NO crees respuestas incorrectas hipotéticas.
-
-NO inventes frases como ejemplos de posibles errores.
-
-NO analices posibles errores que el estudiante pudo haber cometido.
-
-NO proporciones respuestas del ejercicio.
-
-NO proporciones palabras que correspondan a definiciones específicas.
-
-NO relaciones opciones con definiciones.
-
-NO reveles ni reconstruyas las respuestas correctas.
-
-NO intentes deducir las respuestas del ejercicio.
-
-NO pidas al estudiante que copie las opciones,
-la respuesta, el ejercicio o una captura.
-
-Si el estudiante pregunta por qué quedó mal,
-indica claramente que no puedes saber qué elemento
-seleccionó y, por esa razón, no puedes determinar
-el error concreto.
-
-Puedes explicar únicamente la dinámica general
-del ejercicio y el procedimiento que debe seguir.
+Analiza Vcorrect junto con el contexto y la dinámica para responder
+específicamente. Explica cuál es la respuesta correcta y por qué encaja
+cuando esos datos estén disponibles. Si pregunta por qué su respuesta fue
+marcada como incorrecta y no sabes qué seleccionó, aclara brevemente que no
+puedes identificar su elección concreta; aun así explica la respuesta correcta
+y el criterio que debe aplicar. No inventes su elección ni respuestas
+incorrectas hipotéticas. No respondas solo con una explicación genérica si
+Vcorrect permite analizar el ejercicio.
 
 
 
