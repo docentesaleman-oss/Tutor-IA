@@ -60,7 +60,7 @@ La clave se configura como ELEVENLABS_API_KEY en Render.
 ============================================================ */
 
 const VOCES_ELEVENLABS = {
-    es: "eZxqQzb5CuYo3Kl6EXfZ",
+    es: "hpp4J3VqNfWAUOO0d1Us",
     en: "JBFqnCBsd6RMkjVDRZzb"
 };
 
