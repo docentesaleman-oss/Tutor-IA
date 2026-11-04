@@ -105,7 +105,13 @@ app.post("/api/tts", async (req, res) => {
         );
 
         if (!respuesta.ok) {
-            console.error("ElevenLabs TTS respondió con estado:", respuesta.status);
+            const detalleError = await respuesta.json().catch(() => null);
+            const detalleSeguro = detalleError?.detail || detalleError;
+            console.error(
+                "ElevenLabs TTS respondió con error:",
+                respuesta.status,
+                detalleSeguro || "Sin detalle adicional"
+            );
             return res.status(502).json({ error: "ElevenLabs no pudo generar la voz." });
         }
 
