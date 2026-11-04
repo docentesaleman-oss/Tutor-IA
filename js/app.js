@@ -2046,7 +2046,9 @@ ENVIAR AUDIO PARA TRANSCRIPCIÓN
 VOZ DEL TUTOR
 ============================================================ */
 
-function hablarRespuesta(
+let audioElevenLabsPrincipal = null;
+
+async function hablarRespuesta(
     texto
 ) {
 
@@ -2068,6 +2070,11 @@ function hablarRespuesta(
 
     window.speechSynthesis.cancel();
 
+    if (audioElevenLabsPrincipal) {
+        audioElevenLabsPrincipal.pause();
+        audioElevenLabsPrincipal = null;
+    }
+
 
     /*
     =========================================================
@@ -2080,6 +2087,40 @@ function hablarRespuesta(
             "tutorIA_idioma"
         ) ||
         "es";
+
+    if (["es", "en", "fr"].includes(idiomaGuardado)) {
+        try {
+            const respuesta = await fetch("/api/tts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: texto, language: idiomaGuardado })
+            });
+
+            if (respuesta.ok) {
+                const url = URL.createObjectURL(await respuesta.blob());
+                const audio = new Audio(url);
+                audioElevenLabsPrincipal = audio;
+                const liberar = () => {
+                    URL.revokeObjectURL(url);
+                    if (audioElevenLabsPrincipal === audio)
+                        audioElevenLabsPrincipal = null;
+                };
+                audio.addEventListener("ended", liberar, { once: true });
+                audio.addEventListener("error", liberar, { once: true });
+                try {
+                    await audio.play();
+                    return;
+                } catch (error) {
+                    liberar();
+                    console.warn("No se pudo reproducir el audio de ElevenLabs.", error);
+                }
+            } else {
+                console.warn("ElevenLabs no generó el audio; se usará la voz del navegador.");
+            }
+        } catch (error) {
+            console.warn("ElevenLabs no está disponible; se usará la voz del navegador.", error);
+        }
+    }
 
 
     /*

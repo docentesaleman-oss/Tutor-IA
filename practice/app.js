@@ -131,31 +131,72 @@ function speechLocale() {
     })[state.language] || "en-US";
 }
 
-function speakTutorReply(message) {
-    return new Promise(resolve => {
-        speechSynthesis.cancel();
+let audioElevenLabsPractica = null;
 
-        const locale = speechLocale();
-        const languageCode = locale.slice(0, 2).toLowerCase();
+async function speakTutorReply(message) {
+    speechSynthesis.cancel();
+    if (audioElevenLabsPractica) {
+        audioElevenLabsPractica.pause();
+        audioElevenLabsPractica = null;
+    }
 
-        const voice = speechSynthesis
-            .getVoices()
-            .find(item =>
-                item.lang.toLowerCase().startsWith(languageCode)
-            );
+    const texto = cleanReply(message);
+    const idioma = state.language;
 
-        const utterance = new SpeechSynthesisUtterance(
-            cleanReply(message)
-        );
+    if (["es", "en", "fr"].includes(idioma)) {
+        try {
+            const respuesta = await fetch("/api/tts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: texto, language: idioma })
+            });
 
+            if (respuesta.ok) {
+                const url = URL.createObjectURL(await respuesta.blob());
+                const audio = new Audio(url);
+                audioElevenLabsPractica = audio;
+
+                await new Promise((resolve, reject) => {
+                    const liberar = () => {
+                        URL.revokeObjectURL(url);
+                        if (audioElevenLabsPractica === audio)
+                            audioElevenLabsPractica = null;
+                    };
+                    audio.addEventListener("ended", () => {
+                        liberar();
+                        resolve();
+                    }, { once: true });
+                    audio.addEventListener("error", () => {
+                        liberar();
+                        reject(new Error("No se pudo reproducir el audio."));
+                    }, { once: true });
+                    audio.addEventListener("pause", () => {
+                        liberar();
+                        resolve();
+                    }, { once: true });
+                    audio.play().catch(error => {
+                        liberar();
+                        reject(error);
+                    });
+                });
+                return;
+            }
+        } catch (error) {
+            console.warn("ElevenLabs no está disponible; se usará la voz del navegador.", error);
+        }
+    }
+
+    const locale = speechLocale();
+    const languageCode = locale.slice(0, 2).toLowerCase();
+    const voice = speechSynthesis.getVoices().find(item =>
+        item.lang.toLowerCase().startsWith(languageCode)
+    );
+    await new Promise(resolve => {
+        const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = voice?.lang || locale;
-
-        if (voice)
-            utterance.voice = voice;
-
+        if (voice) utterance.voice = voice;
         utterance.onend = resolve;
         utterance.onerror = resolve;
-
         speechSynthesis.speak(utterance);
     });
 }
@@ -182,6 +223,10 @@ function stopVoiceMode() {
     } catch {}
 
     speechSynthesis.cancel();
+    if (audioElevenLabsPractica) {
+        audioElevenLabsPractica.pause();
+        audioElevenLabsPractica = null;
+    }
 
     mic.classList.remove("is-listening");
     voiceLabel.textContent = "Press to speak";

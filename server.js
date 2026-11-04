@@ -54,6 +54,72 @@ app.use(
     express.static(__dirname)
 );
 
+/* ============================================================
+ELEVENLABS: VOZ DEL TUTOR (es/en/fr)
+La clave se configura como ELEVENLABS_API_KEY en Render.
+============================================================ */
+
+const VOCES_ELEVENLABS = {
+    es: "eZxqQzb5CuYo3Kl6EXfZ",
+    en: "RWLFUuahyl6QdlLs8Al5",
+    fr: "m5U7XCsc8v988k2RJAqN"
+};
+
+app.post("/api/tts", async (req, res) => {
+    const texto = String(req.body?.text || "").trim();
+    const idioma = String(req.body?.language || "").trim().toLowerCase();
+    const voz = VOCES_ELEVENLABS[idioma];
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+
+    if (!texto) {
+        return res.status(400).json({ error: "No se recibió texto para convertir." });
+    }
+
+    if (texto.length > 2500) {
+        return res.status(413).json({ error: "El texto supera el máximo permitido para voz." });
+    }
+
+    if (!voz) {
+        return res.status(400).json({ error: "Idioma de voz no disponible." });
+    }
+
+    if (!apiKey) {
+        return res.status(503).json({ error: "La voz ElevenLabs aún no está configurada." });
+    }
+
+    try {
+        const respuesta = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${voz}?output_format=mp3_44100_128`,
+            {
+                method: "POST",
+                headers: {
+                    "xi-api-key": apiKey,
+                    "Content-Type": "application/json",
+                    "Accept": "audio/mpeg"
+                },
+                signal: AbortSignal.timeout(30000),
+                body: JSON.stringify({
+                    text: texto,
+                    model_id: process.env.ELEVENLABS_TTS_MODEL || "eleven_flash_v2_5"
+                })
+            }
+        );
+
+        if (!respuesta.ok) {
+            console.error("ElevenLabs TTS respondió con estado:", respuesta.status);
+            return res.status(502).json({ error: "ElevenLabs no pudo generar la voz." });
+        }
+
+        const audio = Buffer.from(await respuesta.arrayBuffer());
+        res.set("Content-Type", respuesta.headers.get("content-type") || "audio/mpeg");
+        res.set("Cache-Control", "no-store");
+        return res.send(audio);
+    } catch (error) {
+        console.error("Error de conexión con ElevenLabs TTS:", error.message);
+        return res.status(502).json({ error: "No fue posible conectar con ElevenLabs." });
+    }
+});
+
 
 /*
 ============================================================
