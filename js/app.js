@@ -2088,7 +2088,7 @@ async function hablarRespuesta(
         ) ||
         "es";
 
-    if (["es", "en", "fr"].includes(idiomaGuardado)) {
+    if (["es", "en"].includes(idiomaGuardado)) {
         try {
             const respuesta = await fetch("/api/tts", {
                 method: "POST",

@@ -143,7 +143,7 @@ async function speakTutorReply(message) {
     const texto = cleanReply(message);
     const idioma = state.language;
 
-    if (["es", "en", "fr"].includes(idioma)) {
+    if (["es", "en"].includes(idioma)) {
         try {
             const respuesta = await fetch("/api/tts", {
                 method: "POST",

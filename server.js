@@ -55,14 +55,13 @@ app.use(
 );
 
 /* ============================================================
-ELEVENLABS: VOZ DEL TUTOR (es/en/fr)
+ELEVENLABS: VOZ DEL TUTOR (es/en)
 La clave se configura como ELEVENLABS_API_KEY en Render.
 ============================================================ */
 
 const VOCES_ELEVENLABS = {
     es: "eZxqQzb5CuYo3Kl6EXfZ",
-    en: "RWLFUuahyl6QdlLs8Al5",
-    fr: "m5U7XCsc8v988k2RJAqN"
+    en: "JBFqnCBsd6RMkjVDRZzb"
 };
 
 app.post("/api/tts", async (req, res) => {
