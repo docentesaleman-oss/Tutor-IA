@@ -148,7 +148,7 @@ async function speakTutorReply(message) {
             const respuesta = await fetch("/api/tts", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: texto, language: idioma })
+                body: JSON.stringify({ text: texto, language: idioma, source: "practice" })
             });
 
             if (respuesta.ok) {

@@ -63,11 +63,17 @@ const VOCES_ELEVENLABS = {
     es: "hpp4J3VqNfWAUOO0d1Us",
     en: "JBFqnCBsd6RMkjVDRZzb"
 };
+const VOCES_ELEVENLABS_PRACTICA = {
+    en: "hpp4J3VqNfWAUOO0d1Us"
+};
 
 app.post("/api/tts", async (req, res) => {
     const texto = String(req.body?.text || "").trim();
     const idioma = String(req.body?.language || "").trim().toLowerCase();
-    const voz = VOCES_ELEVENLABS[idioma];
+    const esPractica = req.body?.source === "practice";
+    const voz = esPractica
+        ? VOCES_ELEVENLABS_PRACTICA[idioma] || VOCES_ELEVENLABS[idioma]
+        : VOCES_ELEVENLABS[idioma];
     const apiKey = process.env.ELEVENLABS_API_KEY;
 
     if (!texto) {
